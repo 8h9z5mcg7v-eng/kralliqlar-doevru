@@ -115,7 +115,7 @@ const fountainStem=new THREE.Mesh(new THREE.CylinderGeometry(.2,.34,.85,8),fount
 const upperBowl=new THREE.Mesh(new THREE.CylinderGeometry(.7,.48,.16,10),fountainStone);upperBowl.position.y=1.22;fountain.add(upperBowl);
 const upperWater=new THREE.Mesh(new THREE.CylinderGeometry(.56,.56,.025,12),fountainWater);upperWater.position.y=1.32;fountain.add(upperWater);
 const fountainJet=new THREE.Mesh(new THREE.ConeGeometry(.12,.52,7),fountainWater);fountainJet.position.y=1.58;fountain.add(fountainJet);
-for(let i=0;i<8;i++){const a=i*Math.PI/4;const post=new THREE.Mesh(new THREE.CylinderGeometry(.045,.06,.7,6),pavingGold);post.position.set(Math.cos(a)*1.8,.35,Math.sin(a)*1.8);fountain.add(post);const chain=new THREE.Mesh(new THREE.TorusGeometry(.23,.018,4,10,Math.PI),ironDark);chain.position.set(Math.cos(a+Math.PI/8)*1.8,.28,Math.sin(a+Math.PI/8)*1.8);chain.rotation.y=-a;chain.rotation.x=Math.PI/2;fountain.add(chain)}
+for(let i=0;i<8;i++){const a=i*Math.PI/4;const post=new THREE.Mesh(new THREE.CylinderGeometry(.045,.06,.7,6),pavingGold);post.position.set(Math.cos(a)*1.8,.35,Math.sin(a)*1.8);fountain.add(post);const chain=new THREE.Mesh(new THREE.TorusGeometry(.23,.018,4,10,Math.PI),pavingDark);chain.position.set(Math.cos(a+Math.PI/8)*1.8,.28,Math.sin(a+Math.PI/8)*1.8);chain.rotation.y=-a;chain.rotation.x=Math.PI/2;fountain.add(chain)}
 fountain.position.set(0,0,-6.2);
 // Stone royal banners on either side of the main approach.
 for(const side of [-1,1]){
