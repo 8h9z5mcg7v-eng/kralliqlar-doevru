@@ -22,11 +22,12 @@ button{font:600 13px/1.25 system-ui,sans-serif;color:#fff;background:linear-grad
 button:active{transform:translateY(1px)}button:disabled{opacity:.45}.wide{width:100%;white-space:normal}
 .bottom{position:absolute;z-index:3;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:7px;padding:8px;pointer-events:auto;width:max-content;max-width:calc(100% - 20px);overflow-x:auto;overscroll-behavior-x:contain}
 .bottom button{flex:0 0 auto;min-width:84px;padding:10px;white-space:nowrap}.bottom button.active{background:linear-gradient(#d5ac5c,#805724);color:#211a0d}
+.battle-status{position:absolute;z-index:4;top:88px;left:50%;transform:translateX(-50%);padding:8px 13px;border-radius:10px;background:#231c1beF;border:1px solid #c66d54;color:#ffe0b0;font:700 12px system-ui;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}.battle-status.show{opacity:1}
 .toast{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);background:#13201ef5;border:1px solid var(--gold);padding:14px 18px;border-radius:12px;max-width:min(360px,88vw);text-align:center;line-height:1.45;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 12px 35px #0008}.toast.show{opacity:1}
 .hint{position:absolute;z-index:1;bottom:72px;left:50%;transform:translateX(-50%);font-size:11px;color:#f5f0df;background:#101c1ad9;padding:7px 11px;border-radius:8px;white-space:nowrap;max-width:calc(100% - 24px)}
 .loading{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at center,#30473a,#101b1a);z-index:10;transition:opacity .4s}.loading.hide{opacity:0;pointer-events:none}
 .loadbox{text-align:center;color:#f2d18a;font:24px Georgia,serif;letter-spacing:1px;padding:24px}.loadbox small{display:block;margin-top:10px;font:12px/1.5 system-ui;color:#e3e3d8;letter-spacing:0}
-@media(max-width:600px){.top{grid-template-columns:minmax(0,1fr) auto;gap:6px;padding:8px}.brand{padding:9px 10px;border-radius:11px}.brand strong{font-size:clamp(14px,4vw,18px);letter-spacing:0}.brand small{font-size:10px;margin-top:4px}
+@media(max-width:600px){.battle-status{top:102px}.top{grid-template-columns:minmax(0,1fr) auto;gap:6px;padding:8px}.brand{padding:9px 10px;border-radius:11px}.brand strong{font-size:clamp(14px,4vw,18px);letter-spacing:0}.brand small{font-size:10px;margin-top:4px}
 .resources{grid-template-columns:repeat(2,minmax(54px,auto));gap:6px 8px;padding:8px;font-size:11px;border-radius:11px}
 .card{top:112px;left:8px;width:min(220px,56vw);max-height:calc(100dvh - 190px);padding:11px;border-radius:12px}.card h2{font-size:17px}.muted{font-size:12px;line-height:1.4}.level{margin:9px 0 6px;font-size:12px}
 .bottom{bottom:max(7px,env(safe-area-inset-bottom));left:8px;right:8px;transform:none;width:auto;max-width:none;gap:6px;padding:6px;border-radius:12px}.bottom button{min-width:75px;padding:9px 10px;font-size:12px}.hint{display:none}}
@@ -41,7 +42,7 @@ button:active{transform:translateY(1px)}button:disabled{opacity:.45}.wide{width:
  <section class="card"><h2 id="selectedTitle">Baş Qala</h2><div class="muted" id="description">Krallığının ürəyi. Qalanı inkişaf etdir, ordunu gücləndir və yeni tikililər aç.</div><div class="level">Səviyyə: <b id="level">1</b> / 5</div><div class="bar"><span id="progress"></span></div><div class="muted" id="cost">Növbəti səviyyə: 500 🪵 · 100 🪨 · 200 🥇</div><button class="wide" id="upgrade" style="margin-top:10px">⬆ Qalanı yüksəlt</button></section>
  <div class="hint">Xəritəni sürüşdür · iki barmaqla yaxınlaşdır · tikili seç</div>
  <nav class="bottom"><button class="active" data-mode="select">🏰 Qala</button><button data-mode="barracks">🛡 Kazarma</button><button data-mode="archery">🏹 Oxçular</button><button data-mode="stable">🐎 Tövlə</button><button data-mode="farm">🌾 Ferma</button><button data-mode="train">🛡 Piyada +20</button><button data-mode="train_archer">🏹 Oxçu +20</button><button data-mode="train_cavalry">🐎 Süvari +20</button><button data-mode="attack">🔥 Düşərgəyə hücum</button></nav>
- <div class="toast" id="toast"></div>
+ <div class="battle-status" id="battleStatus">⚔️ Döyüş başlayır</div><div class="toast" id="toast"></div>
 </div>
 <div class="loading" id="loading"><div class="loadbox">KRALLIQLAR DÖVRÜ<small>Krallıq hazırlanır…</small></div></div>
 <script type="module">
@@ -98,6 +99,8 @@ function makeTroop(isEnemy=false,isCavalry=false,isArcher=false){
  if(isCavalry){const horse=new THREE.Mesh(new THREE.BoxGeometry(.34,.34,.62),leatherMat);horse.position.set(0,.35,-.28);horse.castShadow=true;g.add(horse);const neck=new THREE.Mesh(new THREE.BoxGeometry(.18,.4,.2),leatherMat);neck.position.set(0,.55,.03);neck.rotation.x=-.25;g.add(neck)}
  return g;
 }
+const enemyDisplay=new THREE.Group();scene.add(enemyDisplay);const enemyUnits=[];
+for(let i=0;i<9;i++){const cavalry=i>=7,archer=i>=4&&i<7;const unit=makeTroop(true,cavalry,archer);unit.position.set(-18+(i%3-1)*.8,.02,-9+Math.floor(i/3)*.75);unit.rotation.y=Math.PI;enemyDisplay.add(unit);enemyUnits.push({unit,home:unit.position.clone(),phase:i*.6})}
 const troopDisplay=new THREE.Group();scene.add(troopDisplay);
 for(let i=0;i<12;i++){const cavalry=i>=9,archer=i>=6&&i<9;const unit=makeTroop(false,cavalry,archer);unit.position.set((i%4-1.5)*.8,.02,6+Math.floor(i/4)*.8);troopDisplay.add(unit);troopActors.push({unit,home:unit.position.clone(),phase:i*.7})}
 
@@ -154,7 +157,7 @@ function attackCamp(){
  const total=troops.infantry+troops.archers+troops.cavalry;
  if(total<10)return toast('Hücum üçün ən azı 10 əsgər lazımdır.');
  if(battleStartedAt&&performance.now()-battleStartedAt<battleDuration)return toast('Döyüş artıq gedir!');
- battleStartedAt=performance.now();battleDuration=1800;
+ battleStartedAt=performance.now();battleDuration=2600;const bs=document.querySelector('#battleStatus');bs.textContent='⚔️ Qoşunlar qarşılaşır!';bs.classList.add('show');
  const advantage=(a,b)=>a===b?1:(a==='infantry'&&b==='cavalry')||(a==='cavalry'&&b==='archers')||(a==='archers'&&b==='infantry')?1.25:.8;
  const ours=troops.infantry*100*advantage('infantry',enemy.cavalry)+troops.archers*120*advantage('archers',enemy.infantry)+troops.cavalry*110*advantage('cavalry',enemy.archers);
  const theirs=enemy.infantry*100*advantage('infantry',troops.cavalry)+enemy.archers*120*advantage('archers',troops.infantry)+enemy.cavalry*110*advantage('cavalry',troops.archers);
@@ -175,7 +178,11 @@ setInterval(()=>{woodCount+=3+level;stoneCount+=1+Math.floor(level/2);goldCount+
 let drag=false,lastX=0,lastY=0;canvas.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;yaw-=dx*.005;pitch=THREE.MathUtils.clamp(pitch+dy*.003,.35,1.15);placeCamera()});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointercancel',()=>drag=false);canvas.addEventListener('wheel',e=>{dist=THREE.MathUtils.clamp(dist+e.deltaY*.018,10,42);placeCamera()},{passive:true});
 let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(pinch)dist=THREE.MathUtils.clamp(dist*(pinch/d),10,42);pinch=d;placeCamera()}},{passive:true});canvas.addEventListener('touchend',()=>pinch=0,{passive:true});
 function animate(){requestAnimationFrame(animate);
- if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);for(const a of troopActors){const forward=t<.5?t*2:(1-t)*2;a.unit.position.x=a.home.x+(enemyCamp.position.x*.58+a.home.x*.1-a.home.x)*forward;a.unit.position.z=a.home.z+(-10-a.home.z)*forward;a.unit.rotation.y=Math.sin(performance.now()*.008+a.phase)*.12}if(t>=1)battleStartedAt=0}
+ if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);
+ for(const a of troopActors){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+(-7+a.home.x*.08-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.8-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.sin(performance.now()*.018+a.phase)*.5}
+ for(const a of enemyUnits){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+(a.home.x< -18?-18.8:-17.2-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.4-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.PI+Math.sin(performance.now()*.02+a.phase)*.45}
+ if(t>=1){battleStartedAt=0;document.querySelector('#battleStatus').classList.remove('show');for(const a of troopActors){a.unit.position.copy(a.home)}for(const a of enemyUnits){a.unit.position.copy(a.home)}}
+}
  else{for(const a of troopActors){a.unit.position.y=.02+Math.abs(Math.sin(performance.now()*.002+a.phase))*.035;a.unit.rotation.y=Math.sin(performance.now()*.001+a.phase)*.04}}
  renderer.render(scene,camera)}animate();updateHud();addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});setTimeout(()=>document.querySelector('#loading').classList.add('hide'),500);
 </script>
