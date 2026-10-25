@@ -463,33 +463,9 @@ function buildHouse(x,z){
  box(g,2.32,.18,2.22,stoneDark,0,.1,0);
  g.position.set(x,0,z);return g;
 }
-buildHouse(9,4);buildHouse(11,1);buildHouse(-10,4);
-// Detailed crop rows, furrows and fence around the outer farm.
-const furrowMat=mat('#715738'),cropMats=[mat('#789847'),mat('#91ad50'),mat('#c5ad5d')];
-for(let i=0;i<6;i++){
- const f=new THREE.Mesh(new THREE.BoxGeometry(1.65,.055,6.3),furrowMat);f.position.set(12,.015,-5+i*1.1);scene.add(f);
- for(let j=0;j<11;j++){
-  const crop=new THREE.Group();scene.add(crop);
-  for(let side=-1;side<=1;side++){
-   const stalk=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.48,5),cropMats[(i+j+side+3)%cropMats.length]);stalk.position.set(side*.18,.25,0);stalk.rotation.z=(side*.13);crop.add(stalk);
-   const head=new THREE.Mesh(new THREE.SphereGeometry(.07,5,4),cropMats[2]);head.position.set(side*.18,.49,0);head.scale.set(.7,1.4,.7);crop.add(head);
-  }
-  crop.position.set(11.35+i*.23,.04,-7+j*.58);
- }
-}
-const fenceMat=mat('#765133');
-for(let z=-8;z<=0;z+=.8){box(scene,.12,.9,.12,fenceMat,10,.45,z);box(scene,.12,.9,.12,fenceMat,15.8,.45,z)}
-for(const y of [.35,.68]){box(scene,.12,.1,6.0,fenceMat,10.0,y,-4);box(scene,.12,.1,6.0,fenceMat,15.8,y,-4)}
+// The old scattered houses and farm rows are removed. The city district below owns these plots now.
 // A single well and market are built in the city district below; remove older duplicate props.
-// Settlement expansion: a timber watchtower, windmill, cart, crates and a campfire.
-const villageWood=mat('#68472c'),villageWoodLight=mat('#987044'),flameMat=new THREE.MeshStandardMaterial({color:'#ff9b35',emissive:'#e85b12',emissiveIntensity:1.6});
-const watch=new THREE.Group();scene.add(watch);
-const watchLegs=[[-.8,-.65],[.8,-.65],[-.8,.65],[.8,.65]];
-for(const [x,z] of watchLegs){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.12,.17,3.1,6),villageWood);leg.position.set(x,1.55,z);leg.rotation.z=x*.08;leg.castShadow=true;watch.add(leg)}
-for(const y of [.65,1.8,3.05]){for(const z of [-.65,.65]){const beam=new THREE.Mesh(new THREE.BoxGeometry(1.8,.13,.13),villageWoodLight);beam.position.set(0,y,z);watch.add(beam)}for(const x of [-.8,.8]){const beam=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,1.3),villageWoodLight);beam.position.set(x,y,0);watch.add(beam)}}
-const platform=new THREE.Mesh(new THREE.BoxGeometry(2.05,.2,1.8),villageWood);platform.position.y=3.0;platform.castShadow=true;watch.add(platform);
-for(let x=-.75;x<=.76;x+=.5){const merlon=new THREE.Mesh(new THREE.BoxGeometry(.22,.38,.2),villageWoodLight);merlon.position.set(x,3.28,.78);watch.add(merlon)}
-const watchRoof=new THREE.Mesh(new THREE.ConeGeometry(1.35,.85,4),roof);watchRoof.position.y=4.1;watchRoof.rotation.y=Math.PI/4;watch.add(watchRoof);watch.position.set(18,0,4);
+// Keep the watchtower only in the organized city district below; remove the older duplicate tower.
 
 // A small windmill with timber sails beside the farm.
 const mill=new THREE.Group();scene.add(mill);
@@ -722,7 +698,20 @@ townTemplateLoader.load('https://cdn.3dassets.dev/assets/28840/v1/model.glb',(gl
   for(const wx of [-w*.25,w*.25])cityBox(parent,.32,.42,.07,cityMats.timber,x+wx,h*.57,z+d/2+.05);
   cityBox(parent,w*.78,.12,.12,cityMats.timber,x,h*.52,z+d/2+.08);
  }
- // A proper stable with open stalls, hay loft, stall dividers, feeding trough and fenced paddock.
+ // Organized Clash-of-Kings-inspired settlement layout: clear plots and connected stone lanes.
+ // This uses original CC0-style fantasy assets/layout rather than copying proprietary Clash of Kings art.
+ const roadMat=new THREE.MeshStandardMaterial({color:'#827d70',roughness:1});
+ const roadEdgeMat=new THREE.MeshStandardMaterial({color:'#aaa18d',roughness:1});
+ function cityRoad(w,d,x,z){const road=new THREE.Mesh(new THREE.BoxGeometry(w,.075,d),roadMat);road.position.set(x,.012,z);road.receiveShadow=true;cityExpansion.add(road);for(let i=0;i<Math.floor(w/1.15);i++){const stoneTile=new THREE.Mesh(new THREE.BoxGeometry(.82,.018,d*.72),roadEdgeMat);stoneTile.position.set(x-w/2+.58+i*1.15,.058,z);cityExpansion.add(stoneTile)}}
+ // Main avenue runs past the castle and connects the residential, military and production districts.
+ cityRoad(3.2,36,0,1);
+ cityRoad(27,2.8,0,4);
+ cityRoad(24,2.5,-1,-10.2);
+ cityRoad(25,2.5,-.5,12.1);
+ // Separate stone pads visually mark each building's own lot.
+ function cityPlot(x,z,w,d){const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.09,d),new THREE.MeshStandardMaterial({color:'#77776c',roughness:1}));pad.position.set(x,.035,z);pad.receiveShadow=true;cityExpansion.add(pad);const borderMat=new THREE.MeshStandardMaterial({color:'#c1b69e',roughness:1});for(const xx of [-w/2,w/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,d),borderMat);edge.position.set(x,.11,z+0);cityExpansion.add(edge)}for(const zz of [-d/2,d/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(w,.13,.13),borderMat);edge.position.set(x,.11,z+zz);cityExpansion.add(edge)}}
+ cityPlot(-12,-13,6.6,5.8);cityPlot(3,-15,8.8,9.8);cityPlot(12,9,8.2,6.7);cityPlot(10,15,7.8,5.2);cityPlot(-13,9,5.2,4.6);
+// A proper stable with open stalls, hay loft, stall dividers, feeding trough and fenced paddock.
  const stableX=12,stableZ=9;
  cityBox(cityExpansion,6.2,.18,4.5,cityMats.stone,stableX,.04,stableZ);
  cityBox(cityExpansion,5.7,2.5,3.8,cityMats.timber,stableX,0,stableZ);
