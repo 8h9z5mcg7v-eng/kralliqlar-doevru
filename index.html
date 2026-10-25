@@ -82,7 +82,41 @@
 <g><use href="#tree" transform="translate(48 530) scale(0.85)"/><use href="#tree" transform="translate(120 475) scale(1)"/><use href="#tree" transform="translate(205 530) scale(1.15)"/><use href="#tree" transform="translate(300 550) scale(0.8)"/><use href="#tree" transform="translate(365 495) scale(0.95)"/><use href="#tree" transform="translate(405 740) scale(1.2)"/><use href="#tree" transform="translate(1070 520) scale(0.9)"/><use href="#tree" transform="translate(1130 480) scale(1.05)"/><use href="#tree" transform="translate(1210 535) scale(0.85)"/><use href="#tree" transform="translate(1320 500) scale(1.1)"/><use href="#tree" transform="translate(1380 570) scale(0.9)"/><use href="#tree" transform="translate(75 690) scale(1.3)"/><use href="#tree" transform="translate(190 635) scale(0.95)"/><use href="#tree" transform="translate(280 835) scale(1.1)"/><use href="#tree" transform="translate(1110 750) scale(0.85)"/><use href="#tree" transform="translate(1240 675) scale(1.1)"/><use href="#tree" transform="translate(1350 790) scale(0.9)"/><use href="#tree" transform="translate(340 830) scale(1.2)"/><use href="#tree" transform="translate(1010 720) scale(0.8)"/><use href="#tree" transform="translate(1170 830) scale(1.15)"/><use href="#tree" transform="translate(60 860) scale(0.9)"/><use href="#tree" transform="translate(1300 900) scale(1.1)"/><use href="#tree" transform="translate(230 920) scale(0.9)"/><use href="#tree" transform="translate(1090 930) scale(1.15)"/><use href="#tree" transform="translate(1280 940) scale(0.8)"/><use href="#tree" transform="translate(370 930) scale(1.1)"/><use href="#tree" transform="translate(980 890) scale(0.95)"/><use href="#tree" transform="translate(1190 920) scale(1.2)"/><use href="#tree" transform="translate(90 950) scale(0.8)"/><use href="#tree" transform="translate(1320 960) scale(1.05)"/><use href="#tree" transform="translate(210 780) scale(1.15)"/></g>
 <!-- bridge across river -->
 <path d="M570 705 715 731 772 716 630 687Z" fill="#4a4635" stroke="#d0b783" stroke-width="5"/><path d="M582 704 719 728M595 697 733 722M610 692 747 718" stroke="#a58a5a" stroke-width="5"/>
-<!-- foreground lighting -->
+
+<!-- richer medieval details: battlements, roof tiles, lit windows, banners, crop rows -->
+<g opacity=".7" stroke="#5c4b37" stroke-width="2" fill="none">
+<path d="M603 368H839M605 380H837M607 392H835M609 404H833M611 416H831M613 428H829M615 440H827M617 452H825" opacity=".6"/>
+<path d="M615 369l12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10" opacity=".4"/>
+</g>
+<g stroke="#59372c" stroke-width="2" opacity=".82">
+<path d="M-3-1" fill="none"/>
+<path d="M288 582l37-31 37 31M402 644l38-32 38 32M881 589l37-31 37 31M1000 649l34-29 34 29M550 646l25-22 25 22" fill="none" stroke="#e1bd83" stroke-width="4"/>
+<path d="M289 582 325 553 361 582M403 644 440 612 477 644M882 589 918 558 954 589M1000 649 1034 620 1068 649" fill="none" stroke="#5d372d" stroke-width="2"/>
+</g>
+<!-- small flags above the keep -->
+<g stroke="#6b392b" stroke-width="3">
+<path d="M659 255V224M766 255V225" stroke="#574631" stroke-width="3"/>
+<path d="M659 225 690 233 659 242Z" fill="#a94735" stroke="#6d3428"/>
+<path d="M766 226 795 234 766 243Z" fill="#c6a74e" stroke="#715b2f"/>
+</g>
+<!-- warm windows and torch points -->
+<g fill="#f6c86b" stroke="#76563a" stroke-width="2">
+<rect x="640" y="376" width="12" height="19" rx="2"/><rect x="774" y="376" width="12" height="19" rx="2"/>
+<rect x="701" y="359" width="15" height="20" rx="2"/>
+<rect x="488" y="432" width="8" height="12" rx="2"/><rect x="945" y="430" width="8" height="12" rx="2"/>
+</g>
+<g fill="#ffe6a0" opacity=".55"><circle cx="646" cy="384" r="11"/><circle cx="780" cy="384" r="11"/><circle cx="708" cy="368" r="13"/></g>
+<!-- farmlands outside the walls -->
+<g transform="translate(1120 760) rotate(-14)" opacity=".82">
+<path d="M-95 0 20-40 98 14-20 55Z" fill="#9a9953" stroke="#4f6339" stroke-width="4"/>
+<path d="M-79 5 35-34M-60 16 54-24M-40 27 74-13M-20 37 92 0" stroke="#d6c77c" stroke-width="7" opacity=".75"/>
+<path d="M-89 1 27-38M-70 11 45-28M-50 22 65-17M-30 32 84-7" stroke="#637b3d" stroke-width="3"/>
+</g>
+<!-- flock of birds in the distance -->
+<g fill="none" stroke="#354a43" stroke-width="3" stroke-linecap="round" opacity=".75">
+<path d="M310 195q12-13 23 0q11-13 23 0M375 226q9-10 18 0q9-10 18 0M1015 245q10-12 20 0q10-12 20 0M1080 205q7-8 15 0q8-8 15 0"/>
+</g>
+\n<!-- foreground lighting -->
 <rect width="1400" height="1000" fill="url(#shadow)"/>
 <!-- tappable areas, invisible -->
 <g id="hotspots" fill="#fff" fill-opacity="0" stroke="#fff0a0" stroke-opacity="0" stroke-width="4" style="cursor:pointer">
