@@ -696,14 +696,14 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  // This uses original CC0-style fantasy assets/layout rather than copying proprietary Clash of Kings art.
  const roadMat=new THREE.MeshStandardMaterial({color:'#827d70',roughness:1});
  const roadEdgeMat=new THREE.MeshStandardMaterial({color:'#aaa18d',roughness:1});
- function cityRoad(w,d,x,z){const road=new THREE.Mesh(new THREE.BoxGeometry(w,.075,d),roadMat);road.position.set(x,.012,z);road.receiveShadow=true;cityExpansion.add(road);for(let i=0;i<Math.floor(w/1.15);i++){const stoneTile=new THREE.Mesh(new THREE.BoxGeometry(.82,.018,d*.72),roadEdgeMat);stoneTile.position.set(x-w/2+.58+i*1.15,.058,z);cityExpansion.add(stoneTile)}}
+ function cityRoad(w,d,x,z){const road=new THREE.Mesh(new THREE.BoxGeometry(w,.075,d),roadMat);road.position.set(x,.012,z);road.receiveShadow=true;cityExpansion.add(road);if(d>w){for(let i=0;i<Math.floor(d/1.15);i++){const stoneTile=new THREE.Mesh(new THREE.BoxGeometry(w*.72,.018,.82),roadEdgeMat);stoneTile.position.set(x,.058,z-d/2+.58+i*1.15);cityExpansion.add(stoneTile)}}else{for(let i=0;i<Math.floor(w/1.15);i++){const stoneTile=new THREE.Mesh(new THREE.BoxGeometry(.82,.018,d*.72),roadEdgeMat);stoneTile.position.set(x-w/2+.58+i*1.15,.058,z);cityExpansion.add(stoneTile)}}}
  // Main avenue runs past the castle and connects the residential, military and production districts.
  cityRoad(3.2,36,0,1);
  cityRoad(27,2.8,0,4);
  cityRoad(24,2.5,-1,-10.2);
  cityRoad(25,2.5,-.5,12.1);
  // Separate stone pads visually mark each building's own lot.
- function cityPlot(x,z,w,d){const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.09,d),new THREE.MeshStandardMaterial({color:'#77776c',roughness:1}));pad.position.set(x,.035,z);pad.receiveShadow=true;cityExpansion.add(pad);const borderMat=new THREE.MeshStandardMaterial({color:'#c1b69e',roughness:1});for(const xx of [-w/2,w/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,d),borderMat);edge.position.set(x,.11,z+0);cityExpansion.add(edge)}for(const zz of [-d/2,d/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(w,.13,.13),borderMat);edge.position.set(x,.11,z+zz);cityExpansion.add(edge)}}
+ function cityPlot(x,z,w,d){const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.09,d),new THREE.MeshStandardMaterial({color:'#77776c',roughness:1}));pad.position.set(x,.035,z);pad.receiveShadow=true;cityExpansion.add(pad);const borderMat=new THREE.MeshStandardMaterial({color:'#c1b69e',roughness:1});for(const xx of [-w/2,w/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,d),borderMat);edge.position.set(x+xx,.11,z);cityExpansion.add(edge)}for(const zz of [-d/2,d/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(w,.13,.13),borderMat);edge.position.set(x,.11,z+zz);cityExpansion.add(edge)}}
  cityPlot(-12,-13,6.6,5.8);cityPlot(3,-15,8.8,9.8);cityPlot(12,9,8.2,6.7);cityPlot(10,15,7.8,5.2);cityPlot(-13,9,5.2,4.6);
 // A proper stable with open stalls, hay loft, stall dividers, feeding trough and fenced paddock.
  const stableX=12,stableZ=9;
