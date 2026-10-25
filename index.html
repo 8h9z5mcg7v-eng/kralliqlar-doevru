@@ -805,8 +805,34 @@ townTemplateLoader.load('https://cdn.3dassets.dev/assets/28840/v1/model.glb',(gl
  // Only hide the old scenery after the new scene has loaded; preserve lights and active game overlays.
  for(const old of originalEnvironment){if(!old.isLight)old.visible=false;}
  scene.add(town);
- target.set(0,1.8,0);pitch=.78;dist=39;placeCamera();
- console.info('Şəhər şablonu uğurla yükləndi.');
+
+ // Expand the settlement with separate ready-made, mutually compatible CC0 kits.
+ // Castle courtyard / keep: add as the fortified royal district rather than relying on a single isolated keep.
+ const castleDistrictLoader=new GLTFLoader();
+ castleDistrictLoader.load('https://cdn.3dassets.dev/assets/23508/v1/model.glb',(castleGltf)=>{
+  const royalDistrict=castleGltf.scene;
+  const b=new THREE.Box3().setFromObject(royalDistrict),sz=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());
+  const maxDim=Math.max(sz.x,sz.y,sz.z),k=17/maxDim;
+  royalDistrict.scale.setScalar(k);
+  royalDistrict.position.set(-c.x*k,-b.min.y*k,-c.z*k-5);
+  royalDistrict.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});
+  scene.add(royalDistrict);
+ },undefined,e=>console.warn('Qala rayonu yüklənmədi.',e));
+
+ // Horse stables, paddock fencing and horses as a complete ready-made equestrian-yard template.
+ const stableDistrictLoader=new GLTFLoader();
+ stableDistrictLoader.load('https://cdn.3dassets.dev/assets/23846/v1/model.glb',(stableGltf)=>{
+  const stableDistrict=stableGltf.scene;
+  const b=new THREE.Box3().setFromObject(stableDistrict),sz=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());
+  const maxDim=Math.max(sz.x,sz.y,sz.z),k=12/maxDim;
+  stableDistrict.scale.setScalar(k);
+  stableDistrict.position.set(14-c.x*k,-b.min.y*k,9-c.z*k);
+  stableDistrict.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});
+  scene.add(stableDistrict);
+ },undefined,e=>console.warn('Ahır və at meydançası yüklənmədi.',e));
+
+ target.set(0,1.8,0);pitch=.78;dist=43;placeCamera();
+ console.info('Şəhər, qala rayonu və at meydançası şablonları yüklənir.');
 },undefined,(error)=>{console.warn('Şəhər şablonu yüklənmədi; mövcud şəhər saxlanıldı.',error);});
 
 function animate(){requestAnimationFrame(animate);
