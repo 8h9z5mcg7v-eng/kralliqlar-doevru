@@ -86,6 +86,39 @@ function makeFallbackCastle(parent){
  return castle;
 }
 const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
+let levelDecor=new THREE.Group();castle.add(levelDecor);
+function updateCastleAppearance(){
+ castle.remove(levelDecor);levelDecor=new THREE.Group();castle.add(levelDecor);
+ if(level>=2){
+  for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]]){
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(1.02,.07,6,12),goldmat);ring.rotation.x=Math.PI/2;ring.position.set(x,4.12,z);levelDecor.add(ring);
+  }
+  for(const [x,z] of [[-2.8,-1.2],[2.8,-1.2],[-2.8,1.5],[2.8,1.5]]){
+   box(levelDecor,.16,1.5,.16,wood,x,.8,z);cone(levelDecor,.75,.8,roof,x,1.95,z,4);
+  }
+ }
+ if(level>=3){
+  for(const [x,z] of [[-7,-5],[7,-5],[-7,5],[7,5]]){
+   const tower=new THREE.Mesh(new THREE.CylinderGeometry(.52,.65,2.6,8),stone);tower.position.set(x,1.3,z);tower.castShadow=true;tower.receiveShadow=true;levelDecor.add(tower);
+   cone(levelDecor,.78,1.25,roof,x,3.2,z,8);
+   for(let a=0;a<8;a++){const an=a*Math.PI/4;box(levelDecor,.15,.22,.15,stone,x+Math.cos(an)*.5,2.6,z+Math.sin(an)*.5)}
+  }
+  box(levelDecor,14,.24,.55,stoneDark,0,2.2,5.2);box(levelDecor,14,.24,.55,stoneDark,0,2.2,-5.2);
+ }
+ if(level>=4){
+  for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]]){
+   const pole=box(levelDecor,.055,1.7,.055,goldmat,x,5.1,z);
+   const flag=new THREE.Mesh(new THREE.PlaneGeometry(.85,.52),new THREE.MeshStandardMaterial({color:'#c13d32',side:THREE.DoubleSide,roughness:.75}));flag.position.set(x+.42,5.48,z);levelDecor.add(flag);
+  }
+  for(let x=-1.5;x<=1.51;x+=.75)box(levelDecor,.22,.65,.22,goldmat,x,5.35,-2.05);
+ }
+ if(level>=5){
+  cone(levelDecor,1.55,1.0,goldmat,0,7.55,-.3,4);
+  for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]])cone(levelDecor,.9,.7,goldmat,x,6.15,z,8);
+  const crest=new THREE.Mesh(new THREE.TorusGeometry(.42,.11,8,16),goldmat);crest.position.set(0,6.65,1.55);levelDecor.add(crest);
+ }
+}
+
 // Small stylized troops make the kingdom feel alive; their number is illustrative, not the full army count.
 const troopActors=[];
 const armorMat=mat('#344b58'),leatherMat=mat('#6b4930'),enemyMat=mat('#8f3935'),skinMat=mat('#d4a77d');
@@ -138,7 +171,7 @@ let troops={infantry:60,archers:40,cavalry:20},enemy={infantry:50,archers:35,cav
 const costs={2:[500,100,200,120],3:[1200,300,500,600],4:[2500,700,1000,1800],5:[5000,1500,2000,7200]};
 function updateHud(){armyCount=troops.infantry+troops.archers+troops.cavalry;document.querySelector('#wood').textContent=Math.floor(woodCount);document.querySelector('#stone').textContent=Math.floor(stoneCount);document.querySelector('#gold').textContent=Math.floor(goldCount);document.querySelector('#army').textContent=armyCount;document.querySelector('#level').textContent=level;document.querySelector('#progress').style.width=(level/5*100)+'%';const c=costs[level+1];document.querySelector('#cost').textContent=c?'Növbəti səviyyə: '+c[0]+' 🪵 · '+c[1]+' 🪨 · '+c[2]+' 🥇':'Maksimum səviyyəyə çatmısan!';document.querySelector('#upgrade').disabled=!c}
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2300)}
-document.querySelector('#upgrade').addEventListener('click',()=>{const c=costs[level+1];if(!c)return;if(woodCount<c[0]||stoneCount<c[1]||goldCount<c[2])return toast('Resurslar kifayət etmir!');woodCount-=c[0];stoneCount-=c[1];goldCount-=c[2];level++;castle.scale.setScalar(1+(level-1)*.12);if(level>=3){box(castle,4.2,.35,4.2,goldmat,0,5.0,-.3)}if(level>=4){for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]])cone(castle,1.35,2.1,goldmat,x,5.2,z,8)}updateHud();saveGame();toast('Qala '+level+'-ci səviyyəyə yüksəldi!')});
+document.querySelector('#upgrade').addEventListener('click',()=>{const c=costs[level+1];if(!c)return;if(woodCount<c[0]||stoneCount<c[1]||goldCount<c[2])return toast('Resurslar kifayət etmir!');woodCount-=c[0];stoneCount-=c[1];goldCount-=c[2];level++;castle.scale.setScalar(1+(level-1)*.12);updateCastleAppearance();updateHud();saveGame();toast('Qala '+level+'-ci səviyyəyə yüksəldi!')});
 const places={barracks:[-9,-7],archery:[-10,-10],stable:[10,-7],farm:[12,-4]};
 function placeBuilding(type){if(type==='train'||type==='train_archer'||type==='train_cavalry'){
  if(armyCount>=1000)return toast('Ordu limiti dolub.');
@@ -170,7 +203,7 @@ function attackCamp(){
  updateHud();saveGame();
 }
 function saveGame(){try{localStorage.setItem('kd-save-v1',JSON.stringify({level,woodCount,stoneCount,goldCount,troops,built,battleCount}));}catch(e){}}
-function loadGame(){try{const d=JSON.parse(localStorage.getItem('kd-save-v1')||'null');if(d){level=Math.max(1,Math.min(5,d.level||1));woodCount=d.woodCount??woodCount;stoneCount=d.stoneCount??stoneCount;goldCount=d.goldCount??goldCount;if(d.troops)troops={...troops,...d.troops};if(d.built)built={...built,...d.built};battleCount=d.battleCount||0;castle.scale.setScalar(1+(level-1)*.12);
+function loadGame(){try{const d=JSON.parse(localStorage.getItem('kd-save-v1')||'null');if(d){level=Math.max(1,Math.min(5,d.level||1));woodCount=d.woodCount??woodCount;stoneCount=d.stoneCount??stoneCount;goldCount=d.goldCount??goldCount;if(d.troops)troops={...troops,...d.troops};if(d.built)built={...built,...d.built};battleCount=d.battleCount||0;castle.scale.setScalar(1+(level-1)*.12);updateCastleAppearance();
  for(const type of Object.keys(built)){if(!built[type])continue;const [x,z]=({barracks:[-9,-7],archery:[-10,-10],stable:[10,-7],farm:[12,-4]})[type];if(type==='farm'){const g=new THREE.Group();scene.add(g);for(let i=0;i<4;i++)box(g,2.4,.06,.7,mat(i%2?'#b0a05a':'#758b3e'),0,.05,i*1.0);g.position.set(x,0,z)}else{const g=buildHouse(x,z);if(type==='archery'){for(let i=0;i<3;i++)box(g,.08,1.8,.08,wood,-.4+i*.4,1.7,1.1)}if(type==='stable')box(g,1.2,.3,1.2,wood,0,1.1,1.2)}}}}catch(e){console.warn('Save load failed',e)}}
 loadGame();
 setInterval(()=>{woodCount+=3+level;stoneCount+=1+Math.floor(level/2);goldCount+=1;updateHud();saveGame()},10000);
