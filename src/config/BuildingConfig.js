@@ -9,7 +9,7 @@
 export const BUILDINGS = {
   farm: {
     id: 'farm',
-    name: 'Farm',
+    name: 'Ferma',
     icon: 'farm',
     cost: { wood: 20, gold: 5 },
     buildTime: 20,                    // seconds
@@ -21,7 +21,7 @@ export const BUILDINGS = {
   },
   lumber_mill: {
     id: 'lumber_mill',
-    name: 'Lumber Mill',
+    name: 'Taxta emalı',
     icon: 'lumber_mill',
     cost: { wood: 15, stone: 5 },
     buildTime: 25,
@@ -33,7 +33,7 @@ export const BUILDINGS = {
   },
   mine: {
     id: 'mine',
-    name: 'Mine',
+    name: 'Mədən',
     icon: 'mine',
     cost: { wood: 25, stone: 10 },
     buildTime: 30,
@@ -45,7 +45,7 @@ export const BUILDINGS = {
   },
   market: {
     id: 'market',
-    name: 'Market',
+    name: 'Bazar',
     icon: 'market',
     cost: { wood: 30, gold: 15 },
     buildTime: 35,
@@ -58,7 +58,7 @@ export const BUILDINGS = {
   },
   watchtower: {
     id: 'watchtower',
-    name: 'Watchtower',
+    name: 'Müşahidə qülləsi',
     icon: 'watchtower',
     cost: { wood: 20, stone: 15 },
     buildTime: 30,
@@ -73,7 +73,7 @@ export const BUILDINGS = {
   },
   storage: {
     id: 'storage',
-    name: 'Storage',
+    name: 'Anbar',
     icon: 'storage',
     cost: { wood: 25, stone: 20 },
     buildTime: 25,
@@ -87,7 +87,7 @@ export const BUILDINGS = {
   // -------- military & trade expansion --------
   trade_post: {
     id: 'trade_post',
-    name: 'Trade Post',
+    name: 'Ticarət məntəqəsi',
     icon: 'trade_post',
     cost: { wood: 10, gold: 8 },
     buildTime: 12,
@@ -100,7 +100,7 @@ export const BUILDINGS = {
   },
   caravan: {
     id: 'caravan',
-    name: 'Caravan',
+    name: 'Karvan',
     icon: 'caravan',
     cost: { wood: 20, gold: 20 },
     buildTime: 20,
@@ -113,7 +113,7 @@ export const BUILDINGS = {
   },
   banner: {
     id: 'banner',
-    name: 'Banner',
+    name: 'Bayraq',
     icon: 'flag',
     cost: { wood: 8, gold: 5 },
     buildTime: 8,
@@ -126,7 +126,7 @@ export const BUILDINGS = {
   },
   garrison: {
     id: 'garrison',
-    name: 'Garrison',
+    name: 'Qarnizon',
     icon: 'garrison',
     cost: { food: 15, gold: 12 },
     buildTime: 15,
@@ -140,7 +140,7 @@ export const BUILDINGS = {
   },
   archer_tower: {
     id: 'archer_tower',
-    name: 'Archer Tower',
+    name: 'Oxatan qülləsi',
     icon: 'archer_tower',
     cost: { wood: 25, stone: 25 },
     buildTime: 35,
@@ -155,7 +155,7 @@ export const BUILDINGS = {
   },
   ballista_tower: {
     id: 'ballista_tower',
-    name: 'Ballista Tower',
+    name: 'Ballista qülləsi',
     icon: 'ballista_tower',
     cost: { wood: 30, stone: 35, gold: 10 },
     buildTime: 45,
@@ -169,7 +169,7 @@ export const BUILDINGS = {
   },
   gate: {
     id: 'gate',
-    name: 'Gate',
+    name: 'Darvaza',
     icon: 'gate',
     cost: { wood: 20, stone: 40 },
     buildTime: 40,
@@ -197,7 +197,7 @@ export const BUILDINGS = {
   },
   siege_camp: {
     id: 'siege_camp',
-    name: 'Siege Camp',
+    name: 'Mühasirə düşərgəsi',
     icon: 'siege_camp',
     cost: { wood: 35, stone: 15, gold: 15 },
     buildTime: 45,
@@ -212,7 +212,7 @@ export const BUILDINGS = {
   // -------- economy & city expansion --------
   apiary: {
     id: 'apiary',
-    name: 'Apiary',
+    name: 'Arıxana',
     icon: 'apiary',
     cost: { wood: 12, gold: 5 },
     buildTime: 15,
@@ -224,7 +224,7 @@ export const BUILDINGS = {
   },
   fishing_pier: {
     id: 'fishing_pier',
-    name: 'Fishing Pier',
+    name: 'Balıqçı körpüsü',
     icon: 'fishing_pier',
     cost: { wood: 18 },
     buildTime: 18,
@@ -236,7 +236,7 @@ export const BUILDINGS = {
   },
   bakery: {
     id: 'bakery',
-    name: 'Bakery',
+    name: 'Çörəkxana',
     icon: 'bakery',
     cost: { wood: 15, stone: 10, gold: 10 },
     buildTime: 22,
@@ -248,7 +248,7 @@ export const BUILDINGS = {
   },
   sawmill: {
     id: 'sawmill',
-    name: 'Sawmill',
+    name: 'Taxta zavodu',
     icon: 'sawmill',
     cost: { wood: 20, stone: 15 },
     buildTime: 30,
@@ -260,7 +260,7 @@ export const BUILDINGS = {
   },
   forge: {
     id: 'forge',
-    name: 'Forge',
+    name: 'Dəmirçi',
     icon: 'forge',
     cost: { wood: 15, stone: 25, gold: 10 },
     buildTime: 30,
@@ -272,7 +272,7 @@ export const BUILDINGS = {
   },
   stable: {
     id: 'stable',
-    name: 'Stable',
+    name: 'Tövlə',
     icon: 'stable',
     cost: { wood: 20, food: 10 },
     buildTime: 25,
@@ -284,7 +284,7 @@ export const BUILDINGS = {
   },
   barracks: {
     id: 'barracks',
-    name: 'Barracks',
+    name: 'Kazarma',
     icon: 'barracks',
     cost: { wood: 25, stone: 25, food: 15 },
     buildTime: 40,
@@ -297,7 +297,7 @@ export const BUILDINGS = {
   },
   temple: {
     id: 'temple',
-    name: 'Temple',
+    name: 'Məbəd',
     icon: 'temple',
     cost: { stone: 30, gold: 20 },
     buildTime: 45,
@@ -311,7 +311,7 @@ export const BUILDINGS = {
   },
   port: {
     id: 'port',
-    name: 'Port',
+    name: 'Liman',
     icon: 'port',
     cost: { wood: 30, stone: 15, gold: 15 },
     buildTime: 35,
@@ -324,7 +324,7 @@ export const BUILDINGS = {
   },
   university: {
     id: 'university',
-    name: 'University',
+    name: 'Universitet',
     icon: 'university',
     cost: { wood: 30, stone: 30, gold: 30 },
     buildTime: 55,
@@ -338,7 +338,7 @@ export const BUILDINGS = {
   },
   observatory: {
     id: 'observatory',
-    name: 'Observatory',
+    name: 'Rəsədxana',
     icon: 'observatory',
     cost: { stone: 25, gold: 20 },
     buildTime: 40,
@@ -350,7 +350,7 @@ export const BUILDINGS = {
   },
   library: {
     id: 'library',
-    name: 'Library',
+    name: 'Kitabxana',
     icon: 'library',
     cost: { wood: 20, gold: 15 },
     buildTime: 30,
@@ -364,7 +364,7 @@ export const BUILDINGS = {
   },
   road: {
     id: 'road',
-    name: 'Road',
+    name: 'Yol',
     icon: 'road',
     cost: { wood: 8 },
     buildTime: 8,
@@ -380,7 +380,7 @@ export const MAX_BUILDINGS_PER_TILE = 2;
 
 // -------- manual village upgrade (replaces the old auto-town) --------
 export const VILLAGE_UPGRADE = {
-  name: 'Upgrade Village',
+  name: 'Kəndi yüksəlt',
   icon: 'upgrade',
   cost: { wood: 40, stone: 20, food: 25, gold: 15 },
   buildTime: 40,          // seconds of construction
