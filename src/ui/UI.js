@@ -14,11 +14,11 @@ const SHOP_ORDER = [
 ];
 
 const TILE_CATEGORIES = {
-  all:   { label: 'All',   types: SHOP_ORDER },
-  land:  { label: 'Land',  types: ['forest', 'field', 'meadow', 'hills'] },
-  water: { label: 'Water', types: ['river', 'lake', 'swamp'] },
-  rock:  { label: 'Rock',  types: ['mountain', 'quarry', 'ruins'] },
-  town:  { label: 'Town',  types: ['village'] },
+  all:   { label: 'Hamısı',   types: SHOP_ORDER },
+  land:  { label: 'Quru',  types: ['forest', 'field', 'meadow', 'hills'] },
+  water: { label: 'Su', types: ['river', 'lake', 'swamp'] },
+  rock:  { label: 'Dağlıq',  types: ['mountain', 'quarry', 'ruins'] },
+  town:  { label: 'Yaşayış',  types: ['village'] },
 };
 
 const EDGE_COLORS = {
@@ -249,7 +249,7 @@ export class UI {
 
     if (this.el.tileProd) {
       const prod = fmtProduction(tile.type);
-      this.el.tileProd.innerHTML = prod ? `Yields ${prod}` : '';
+      this.el.tileProd.innerHTML = prod ? `İstehsal: ${prod}` : '';
     }
 
     const actionsOk = !atCap && tile;
@@ -282,9 +282,9 @@ export class UI {
   setTileCap(placed, max) {
     if (!this.el.tileCap) return;
     if (placed >= max) {
-      this.el.tileCap.textContent = `${placed} / ${max} tiles — upgrade to expand`;
+      this.el.tileCap.textContent = `${placed} / ${max} sahə — genişlənmək üçün krallığı yüksəlt`;
     } else {
-      this.el.tileCap.textContent = `${placed} / ${max} tiles`;
+      this.el.tileCap.textContent = `${placed} / ${max} sahə`;
     }
     this.el.tileCap.classList.toggle('at-cap', placed >= max);
   }
