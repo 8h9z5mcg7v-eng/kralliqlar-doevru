@@ -403,7 +403,7 @@ castleAssetLoader.load('https://cdn.3dassets.dev/assets/23508/v1/model.glb',(glt
     const color=material.color;
     const max=Math.max(color.r,color.g,color.b),min=Math.min(color.r,color.g,color.b);
     // Only pale, nearly neutral materials are treated as masonry; preserve red roofs, wood and banners.
-    if(max>.38&&max-min<.16){material.map=stoneTexture;material.color.set('#ffffff');}
+    if(max>.38&&max-min<.16&&!material.map&&!material.vertexColors){material.map=stoneTexture;material.color.set('#ffffff');}
    }
    material.needsUpdate=true;
    return material;
