@@ -49,7 +49,7 @@ function boot() {
         const center = bounds.getCenter(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
         castle.scale.setScalar(5.5 / maxDim);
-        castle.position.set(-center.x * castle.scale.x, -bounds.min.y * castle.scale.y + 0.05, -center.z * castle.scale.z);
+        castle.position.set(-center.x * castle.scale.x, 0.28 - bounds.min.y * castle.scale.y, -center.z * castle.scale.z);
         castle.traverse((object) => {
           if (object.isMesh) {
             object.castShadow = true;
