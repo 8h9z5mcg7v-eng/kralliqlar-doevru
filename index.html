@@ -83,6 +83,9 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),grass);ground.rotat
 for(let i=0;i<36;i++){const x=((i*17)%51)-25,z=((i*29)%55)-27;const p=new THREE.Mesh(new THREE.CircleGeometry(1.7+(i%4)*.45,12),i%3?grass2:grass);p.rotation.x=-Math.PI/2;p.position.set(x,-.12,z);scene.add(p)}
 const river=new THREE.Mesh(new THREE.PlaneGeometry(4,65),water);river.rotation.x=-Math.PI/2;river.rotation.z=-.34;river.position.set(-13,-.08,-7);scene.add(river);
 const roadmat=mat('#b4a27d');const road=new THREE.Mesh(new THREE.PlaneGeometry(5,45),roadmat);road.rotation.x=-Math.PI/2;road.rotation.z=.25;road.position.set(0,-.07,14);scene.add(road);
+
+// Outer defensive walls and gate towers
+const world=new THREE.Group();scene.add(world);
  // Forest groves and rocky terrain details
  const bark=mat('#59402b'),leafDark=mat('#31573a'),leafMid=mat('#477342'),leafLight=mat('#688d4b'),rockMat=mat('#858b85'),bushMat=mat('#3c653b');
  function makeTree(x,z,s=1){
@@ -120,8 +123,6 @@ const roadmat=mat('#b4a27d');const road=new THREE.Mesh(new THREE.PlaneGeometry(5
   makeBush(x,z,.28+(i%3)*.09);
  }
 
-// Outer defensive walls and gate towers
-const world=new THREE.Group();scene.add(world);
 function makeFallbackCastle(parent){
  const castle=new THREE.Group();parent.add(castle);
  box(castle,9,.65,8,stone,0,.34,0);
