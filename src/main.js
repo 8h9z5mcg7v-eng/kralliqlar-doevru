@@ -3,6 +3,7 @@
 // ============================================================
 import { Game } from './core/Game.js';
 import { initTooltip } from './ui/Tooltip.js';
+import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 function boot() {
@@ -41,8 +42,14 @@ function boot() {
       (gltf) => {
         const castle = gltf.scene;
         castle.name = 'KralliqlarDovru_CC0_CastleCourtyard';
-        castle.scale.setScalar(0.24);
-        castle.position.set(0, 0.28, 0);
+        // Normalize the downloaded scene so it fits the game's visible starting area.
+        castle.updateMatrixWorld(true);
+        const bounds = new THREE.Box3().setFromObject(castle);
+        const size = bounds.getSize(new THREE.Vector3());
+        const center = bounds.getCenter(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        castle.scale.setScalar(5.5 / maxDim);
+        castle.position.set(-center.x * castle.scale.x, -bounds.min.y * castle.scale.y + 0.05, -center.z * castle.scale.z);
         castle.traverse((object) => {
           if (object.isMesh) {
             object.castShadow = true;
@@ -54,7 +61,10 @@ function boot() {
         game.ui.toast('Orta əsr qalası yükləndi!');
       },
       undefined,
-      (error) => console.warn('[Krallıqlar Dövrü] Qala modeli yüklənmədi:', error)
+      (error) => {
+        console.warn('[Krallıqlar Dövrü] Qala modeli yüklənmədi:', error);
+        game.ui.toast('Qala modeli yüklənmədi. Səhifəni yenilə.');
+      }
     );
 
     setTimeout(() => game.ui.hideLoading(), 350);
