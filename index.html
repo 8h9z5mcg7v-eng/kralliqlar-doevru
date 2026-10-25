@@ -98,7 +98,7 @@ function attackCamp(){
  const ours=troops.infantry*100*advantage('infantry',enemy.cavalry)+troops.archers*120*advantage('archers',enemy.infantry)+troops.cavalry*110*advantage('cavalry',enemy.archers);
  const theirs=enemy.infantry*100*advantage('infantry',troops.cavalry)+enemy.archers*120*advantage('archers',troops.infantry)+enemy.cavalry*110*advantage('cavalry',troops.archers);
  const win=ours>theirs*(.72+Math.random()*.45);
- const loss=Math.min(.55,win?.12+Math.random()*.12:.25+Math.random()*.2);
+ const loss=Math.min(.55, win ? (.12+Math.random()*.12) : (.25+Math.random()*.2));
  for(const k of Object.keys(troops))troops[k]=Math.max(0,Math.floor(troops[k]*(1-loss)));
  if(win){woodCount+=500+Math.floor(Math.random()*350);stoneCount+=300;goldCount+=150;battleCount++;enemyCamp.scale.setScalar(Math.max(.82,enemyCamp.scale.x-.04));toast('Qələbə! Düşərgə talan edildi: resurslar qazandın.');}
  else{toast('Hücum uğursuz oldu. Ordunu yenidən hazırla.');}
@@ -106,7 +106,8 @@ function attackCamp(){
  updateHud();saveGame();
 }
 function saveGame(){try{localStorage.setItem('kd-save-v1',JSON.stringify({level,woodCount,stoneCount,goldCount,troops,built,battleCount}));}catch(e){}}
-function loadGame(){try{const d=JSON.parse(localStorage.getItem('kd-save-v1')||'null');if(d){level=Math.max(1,Math.min(5,d.level||1));woodCount=d.woodCount??woodCount;stoneCount=d.stoneCount??stoneCount;goldCount=d.goldCount??goldCount;if(d.troops)troops={...troops,...d.troops};if(d.built)built={...built,...d.built};battleCount=d.battleCount||0;castle.scale.setScalar(1+(level-1)*.12);}}catch(e){console.warn('Save load failed',e)}}
+function loadGame(){try{const d=JSON.parse(localStorage.getItem('kd-save-v1')||'null');if(d){level=Math.max(1,Math.min(5,d.level||1));woodCount=d.woodCount??woodCount;stoneCount=d.stoneCount??stoneCount;goldCount=d.goldCount??goldCount;if(d.troops)troops={...troops,...d.troops};if(d.built)built={...built,...d.built};battleCount=d.battleCount||0;castle.scale.setScalar(1+(level-1)*.12);
+ for(const type of Object.keys(built)){if(!built[type])continue;const [x,z]=({barracks:[-9,-7],archery:[-10,-10],stable:[10,-7],farm:[12,-4]})[type];if(type==='farm'){const g=new THREE.Group();scene.add(g);for(let i=0;i<4;i++)box(g,2.4,.06,.7,mat(i%2?'#b0a05a':'#758b3e'),0,.05,i*1.0);g.position.set(x,0,z)}else{const g=buildHouse(x,z);if(type==='archery'){for(let i=0;i<3;i++)box(g,.08,1.8,.08,wood,-.4+i*.4,1.7,1.1)}if(type==='stable')box(g,1.2,.3,1.2,wood,0,1.1,1.2)}}}}catch(e){console.warn('Save load failed',e)}}
 loadGame();
 setInterval(()=>{woodCount+=3+level;stoneCount+=1+Math.floor(level/2);goldCount+=1;updateHud();saveGame()},10000);
 // Drag to pan, pinch/wheel to zoom
