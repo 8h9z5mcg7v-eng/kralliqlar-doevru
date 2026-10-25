@@ -470,6 +470,7 @@ function buildHouse(x,z){
 // Shared timber materials used by the windmill and cart outside the city-builder scope.
 const villageWood=new THREE.MeshStandardMaterial({color:'#68472c',roughness:.9});
 const villageWoodLight=new THREE.MeshStandardMaterial({color:'#987044',roughness:.9});
+const villageFlameMat=new THREE.MeshStandardMaterial({color:'#ffb13b',emissive:'#ff6a12',emissiveIntensity:1.25,roughness:.4});
 // A small windmill with timber sails beside the farm.
 const mill=new THREE.Group();scene.add(mill);
 const millBase=new THREE.Mesh(new THREE.CylinderGeometry(.65,.95,3.2,8),mat('#c5b99c'));millBase.position.y=1.6;millBase.castShadow=true;mill.add(millBase);
@@ -497,7 +498,7 @@ for(const [x,z] of [[-8.8,8.4],[-8.35,8.4]]){const crate=new THREE.Group();scene
 const firepit=new THREE.Group();scene.add(firepit);
 for(let i=0;i<9;i++){const a=i*Math.PI*2/9;const stoneRing=new THREE.Mesh(new THREE.DodecahedronGeometry(.22,0),rockMat);stoneRing.position.set(Math.cos(a)*.62,.14,Math.sin(a)*.62);stoneRing.scale.set(1,.65,.9);firepit.add(stoneRing)}
 for(const a of [-.5,.5]){const log=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,.95,7),villageWood);log.rotation.z=Math.PI/2;log.rotation.y=a;log.position.y=.19;firepit.add(log)}
-const flame=new THREE.Mesh(new THREE.ConeGeometry(.28,.85,7),flameMat);flame.position.y=.68;firepit.add(flame);
+const flame=new THREE.Mesh(new THREE.ConeGeometry(.28,.85,7),villageFlameMat);flame.position.y=.68;firepit.add(flame);
 const fireLight=new THREE.PointLight(0xff8a32,1.25,7);fireLight.position.y=1;firepit.add(fireLight);firepit.position.set(-2,0,9.5);
 
 // Natural world dressing: varied boulders, mossy shrubs, flowers and roadside stones.
