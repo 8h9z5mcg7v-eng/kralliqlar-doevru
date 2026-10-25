@@ -121,6 +121,57 @@ button:active{transform:translateY(1px)}
 .actions button[data-category]{display:none}
 .actions button[data-category].shown{display:block}
 .actions button[data-category].shown.wide{grid-column:1/-1}
+
+/* City map v2: layered settlement, roads and individually placed buildings */
+.city-scene{min-height:690px;padding:28px 14px 34px;background:
+ radial-gradient(ellipse at 50% 45%,#a4b87a 0%,transparent 43%),
+ linear-gradient(160deg,transparent 0 36%,#d2bd7b 36.3% 39%,#8c9a63 39.4% 42%,transparent 42.4%),
+ linear-gradient(25deg,transparent 0 46%,#d2bd7b 46.3% 49%,#8c9a63 49.4% 52%,transparent 52.4%),
+ repeating-linear-gradient(115deg,#496d45 0 34px,#52794b 35px 68px,#466b43 69px 102px);
+}
+.city-scene:before{background:
+ radial-gradient(ellipse at 50% 35%,#d7d4a344 0,transparent 38%),
+ radial-gradient(ellipse at 10% 18%,#173e2b77 0 7%,transparent 8%),
+ radial-gradient(ellipse at 88% 24%,#173e2b77 0 8%,transparent 9%),
+ radial-gradient(ellipse at 14% 75%,#173e2b66 0 8%,transparent 9%),
+ radial-gradient(ellipse at 86% 76%,#173e2b66 0 8%,transparent 9%);
+}
+.city-scene:after{height:14%;background:linear-gradient(180deg,#34758a,#19475c);border-top:4px solid #8ab6a2;transform:skewY(-2deg)}
+.city-label{position:relative;z-index:2;padding:7px 10px;margin:0 auto 12px;width:max-content;max-width:100%;border:1px solid #d2b16a;border-radius:5px;background:#15241cdd;letter-spacing:2px}
+.map{grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:minmax(122px,auto);gap:12px 8px;padding:8px 4px 18px;align-items:center}
+.tile{min-height:124px;position:relative;z-index:1;clip-path:none;border-radius:8px 8px 13px 13px;border:2px solid #c5bd8c;background:linear-gradient(180deg,#b1c38a 0 12%,#8d9f69 13% 23%,#766c4b 24% 100%);box-shadow:0 7px 0 #1b3528,0 10px 9px #07120e99,inset 0 2px 0 #ffffff66;padding:7px 3px 8px}
+.tile:before{inset:4px;border:1px solid #ffffff27;border-radius:5px;background:linear-gradient(135deg,#ffffff1c,transparent 40%,#0005)}
+.tile:after{bottom:31px;left:18%;right:18%;height:10px;filter:blur(5px);background:#0b170eaa}
+.tile .building-art{height:78px;position:relative;z-index:1;filter:drop-shadow(0 5px 2px #10180f99)}
+.tile .building-art svg{max-width:110px;max-height:80px}
+.tile span:not(.emoji){position:relative;z-index:1;background:#132119d9;border:1px solid #c1a665;border-radius:4px;padding:3px 4px}
+.tile small{position:relative;z-index:1}
+.tile:nth-child(5n+1){transform:translateY(8px)}
+.tile:nth-child(5n+2){transform:translateY(-3px)}
+.tile:nth-child(5n+3){transform:translateY(5px)}
+.tile:nth-child(5n+4){transform:translateY(-7px)}
+.tile:nth-child(5n){transform:translateY(3px)}
+.tile.building-castle{background:linear-gradient(180deg,#d1d0a8 0 13%,#9a9c7d 14% 25%,#736c55 26% 100%);border-color:#ffe29a;box-shadow:0 8px 0 #4d432f,0 12px 15px #07120ecc,0 0 20px #ffdf7866}
+.tile.building-farm{background:repeating-linear-gradient(90deg,#c9c76e 0 9px,#9caa50 10px 16px,#c5bd63 17px 24px);border-color:#eadb88}
+.tile.building-forest{background:radial-gradient(circle at 20% 25%,#7fac69 0 10%,transparent 11%),radial-gradient(circle at 70% 20%,#5b8e56 0 13%,transparent 14%),linear-gradient(180deg,#588354,#244c32)}
+.tile.building-mine,.tile.building-mountain{background:linear-gradient(145deg,#b9c5bb,#798985 48%,#414f50)}
+.tile.building-port{background:linear-gradient(180deg,#a5d5d9,#5e9ea7 45%,#2d6171)}
+.tile.building-village{background:linear-gradient(180deg,#d7c18a,#a88e5b 55%,#695039)}
+.tile.selected{outline:3px solid #fff0a5;outline-offset:2px;transform:translateY(-5px) scale(1.035);z-index:5;filter:brightness(1.12)}
+.tile:hover{z-index:4;transform:translateY(-5px) scale(1.035);filter:brightness(1.1)}
+.city-wall{z-index:0;left:2%;right:2%;border-color:#e1d5b0;background:repeating-linear-gradient(90deg,#c9c4a5 0 15px,#7d8575 15px 19px);box-shadow:0 4px 5px #10180f99}
+@media(max-width:700px){
+ .city-scene{min-height:570px;padding:17px 4px 24px}
+ .map{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(100px,auto);gap:10px 4px;padding:5px 1px 15px}
+ .tile{min-height:98px;padding:5px 2px;border-width:1px}
+ .tile .building-art{height:54px}
+ .tile .building-art svg{max-height:55px}
+ .tile span:not(.emoji){font-size:9px;padding:2px}
+ .tile small{font-size:7px}
+ .tile:nth-child(5n+1),.tile:nth-child(5n+2),.tile:nth-child(5n+3),.tile:nth-child(5n+4),.tile:nth-child(5n){transform:none}
+ .tile.selected,.tile:hover{transform:translateY(-3px) scale(1.02)}
+}
+
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
