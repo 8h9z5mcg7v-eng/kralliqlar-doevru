@@ -802,13 +802,9 @@ townTemplateLoader.load('https://cdn.3dassets.dev/assets/28840/v1/model.glb',(gl
  town.scale.setScalar(scale);
  town.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
  town.traverse((node)=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true;const materials=Array.isArray(node.material)?node.material:[node.material];for(const material of materials){if(material&&'roughness' in material)material.roughness=Math.max(.72,material.roughness||0);}}});
- // Remove the previous procedural town completely once the ready-made city template has loaded.
- // Keep lighting, sun and the live army display; the new town becomes the only scenery backdrop.
- for(const old of originalEnvironment){
-  if(old.isLight||old===sun||old===enemyDisplay||old===troopDisplay)continue;
-  scene.remove(old);
- }
- scene.add(town);
+ // Keep the original playable settlement as the single base scene.
+ // Do not add the separate imported town template: it overlaps the original buildings.
+ // The city expansion below adds only the extra district to this same settlement.
 
  // Extra playable city district: detailed stable, market, granary, watchtowers, windmill and crop fields.
  // These pieces remain visible alongside the imported town template and use the same Three.js scene.
@@ -934,24 +930,10 @@ townTemplateLoader.load('https://cdn.3dassets.dev/assets/28840/v1/model.glb',(gl
  scene.add(edgeForest);selectableCityRoots.push(edgeForest);
  scene.add(cityExpansion);
  
- // Expand the settlement with separate ready-made, mutually compatible CC0 kits.
- // Castle courtyard / keep: add as the fortified royal district rather than relying on a single isolated keep.
- const castleDistrictLoader=new GLTFLoader();
- castleDistrictLoader.load('https://cdn.3dassets.dev/assets/23508/v1/model.glb',(castleGltf)=>{
-  const royalDistrict=castleGltf.scene;selectableCityRoots.push(royalDistrict);
-  const b=new THREE.Box3().setFromObject(royalDistrict),sz=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());
-  const maxDim=Math.max(sz.x,sz.y,sz.z),k=17/maxDim;
-  royalDistrict.scale.setScalar(k);
-  royalDistrict.position.set(-c.x*k,-b.min.y*k,-c.z*k-5);
-  royalDistrict.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;const mats=Array.isArray(n.material)?n.material:[n.material];for(const m of mats){if(m&&m.color){const mx=Math.max(m.color.r,m.color.g,m.color.b),mn=Math.min(m.color.r,m.color.g,m.color.b);if(mx>.55&&mx-mn<.18)m.color.multiplyScalar(.78);m.needsUpdate=true;}}}});
-  scene.add(royalDistrict);
- },undefined,e=>console.warn('Qala rayonu yüklənmədi.',e));
-
- // Horse stables, paddock fencing and horses as a complete ready-made equestrian-yard template.
- // The procedural stable is the single stable location; disable a second overlapping stable model.
+ // Keep the primary castle in the main settlement; do not load a second castle model over it.
 
  target.set(0,1.8,0);pitch=.78;dist=43;placeCamera();
- console.info('Şəhər, qala rayonu və at meydançası şablonları yüklənir.');
+ console.info('Əsas şəhər səhnəsi və əlavə rayon hazırdır.');
 },undefined,(error)=>{console.warn('Şəhər şablonu yüklənmədi; mövcud şəhər saxlanıldı.',error);});
 
 function animate(){requestAnimationFrame(animate);
