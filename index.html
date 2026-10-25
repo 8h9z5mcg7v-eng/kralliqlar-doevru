@@ -179,15 +179,36 @@ function updateCastleAppearance(){
 
 // Small stylized troops make the kingdom feel alive; their number is illustrative, not the full army count.
 const troopActors=[];
-const armorMat=mat('#344b58'),leatherMat=mat('#6b4930'),enemyMat=mat('#8f3935'),skinMat=mat('#d4a77d');
+const armorMat=mat('#344b58'),leatherMat=mat('#6b4930'),enemyMat=mat('#8f3935'),skinMat=mat('#d4a77d'),metalMat=mat('#aeb8bd',.48),shieldBlue=mat('#416b82'),enemyShield=mat('#9d4238'),bootMat=mat('#302a24');
 function makeTroop(isEnemy=false,isCavalry=false,isArcher=false){
- const g=new THREE.Group();const tunic=isEnemy?enemyMat:armorMat;
- const body=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.42,3,6),tunic);body.position.y=.65;body.castShadow=true;g.add(body);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),skinMat);head.position.y=1.02;head.castShadow=true;g.add(head);
- cone(g,.19,.22,goldmat,0,1.17,0,5);
- const shield=new THREE.Mesh(new THREE.BoxGeometry(.25,.34,.08),isEnemy?enemyMat:goldmat);shield.position.set(-.23,.63,.08);shield.castShadow=true;g.add(shield);
- const sword=new THREE.Mesh(new THREE.BoxGeometry(.045,.48,.045),stone);sword.position.set(.23,.72,.02);sword.rotation.z=-.35;g.add(sword);if(isArcher){sword.visible=false;const bow=new THREE.Mesh(new THREE.TorusGeometry(.19,.035,5,10,Math.PI),wood);bow.position.set(.27,.72,.04);bow.rotation.z=Math.PI/2;g.add(bow);const arrow=new THREE.Mesh(new THREE.BoxGeometry(.035,.48,.035),goldmat);arrow.position.set(.28,.72,.04);arrow.rotation.z=-.2;g.add(arrow)}
- if(isCavalry){const horse=new THREE.Mesh(new THREE.BoxGeometry(.34,.34,.62),leatherMat);horse.position.set(0,.35,-.28);horse.castShadow=true;g.add(horse);const neck=new THREE.Mesh(new THREE.BoxGeometry(.18,.4,.2),leatherMat);neck.position.set(0,.55,.03);neck.rotation.x=-.25;g.add(neck)}
+ const g=new THREE.Group(),tunic=isEnemy?enemyMat:armorMat,y=isCavalry?.85:0;
+ // Horse and rider silhouette for cavalry.
+ if(isCavalry){
+  const horse=new THREE.Mesh(new THREE.BoxGeometry(.48,.42,.9),leatherMat);horse.position.set(0,.47,-.28);horse.castShadow=true;horse.receiveShadow=true;g.add(horse);
+  const rump=new THREE.Mesh(new THREE.SphereGeometry(.27,8,6),leatherMat);rump.scale.set(1,.82,1.15);rump.position.set(0,.51,-.58);g.add(rump);
+  const neck=new THREE.Mesh(new THREE.BoxGeometry(.23,.5,.27),leatherMat);neck.position.set(0,.73,.16);neck.rotation.x=-.25;neck.castShadow=true;g.add(neck);
+  const horseHead=new THREE.Mesh(new THREE.SphereGeometry(.16,8,6),leatherMat);horseHead.position.set(0,.94,.27);horseHead.scale.set(.8,.8,1.15);g.add(horseHead);
+  for(const x of [-.16,.16])for(const z of [-.55,.02]){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.05,.065,.42,6),leatherMat);leg.position.set(x,.23,z);leg.castShadow=true;g.add(leg)}
+ }
+ const body=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.42,4,8),tunic);body.position.y=y+.65;body.castShadow=true;body.receiveShadow=true;g.add(body);
+ const belt=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,.075,8),goldmat);belt.position.y=y+.55;g.add(belt);
+ for(const side of [-1,1]){const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.13,7,5),isEnemy?enemyShield:metalMat);shoulder.position.set(side*.19,y+.81,0);shoulder.scale.set(1,.75,.9);shoulder.castShadow=true;g.add(shoulder)}
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.14,10,8),skinMat);head.position.y=y+1.02;head.castShadow=true;g.add(head);
+ const helmet=new THREE.Mesh(new THREE.SphereGeometry(.16,10,6,0,Math.PI*2,0,Math.PI*.55),isEnemy?enemyMat:metalMat);helmet.position.y=y+1.11;helmet.castShadow=true;g.add(helmet);
+ const crest=cone(g,.055,.18,goldmat,0,y+1.25,-.015,4);
+ const shield=new THREE.Mesh(new THREE.BoxGeometry(.29,.38,.09),isEnemy?enemyShield:shieldBlue);shield.position.set(-.24,y+.64,.08);shield.castShadow=true;g.add(shield);
+ const emblem=new THREE.Mesh(new THREE.CircleGeometry(.075,8),goldmat);emblem.position.set(-.24,y+.65,.13);g.add(emblem);
+ if(isArcher){
+  const bow=new THREE.Mesh(new THREE.TorusGeometry(.19,.025,6,12,Math.PI),wood);bow.position.set(.27,y+.72,.04);bow.rotation.z=Math.PI/2;g.add(bow);
+  const string=new THREE.Mesh(new THREE.BoxGeometry(.018,.34,.018),clothLight);string.position.set(.27,y+.72,.05);g.add(string);
+  const quiver=new THREE.Mesh(new THREE.BoxGeometry(.13,.28,.12),wood);quiver.position.set(.12,y+.8,-.14);quiver.rotation.x=-.25;g.add(quiver);
+  for(let i=0;i<3;i++){const arrow=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.34,4),metalMat);arrow.position.set(.12+i*.035,y+1,-.13);arrow.rotation.x=.15;g.add(arrow)}
+ }else{
+  const grip=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.16,6),wood);grip.position.set(.25,y+.62,.05);grip.rotation.z=-.35;g.add(grip);
+  const blade=new THREE.Mesh(new THREE.BoxGeometry(.045,.45,.055),metalMat);blade.position.set(.25,y+.87,.05);blade.rotation.z=-.35;blade.castShadow=true;g.add(blade);
+  const guard=new THREE.Mesh(new THREE.BoxGeometry(.2,.045,.07),goldmat);guard.position.set(.25,y+.68,.05);guard.rotation.z=-.35;g.add(guard);
+ }
+ for(const side of [-1,1]){const boot=new THREE.Mesh(new THREE.BoxGeometry(.12,.18,.16),bootMat);boot.position.set(side*.1,y+.12,.04);g.add(boot)}
  return g;
 }
 const enemyDisplay=new THREE.Group();scene.add(enemyDisplay);const enemyUnits=[];
