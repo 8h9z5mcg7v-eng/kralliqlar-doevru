@@ -85,6 +85,22 @@ function makeFallbackCastle(parent){
  return castle;
 }
 const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
+// Small stylized troops make the kingdom feel alive; their number is illustrative, not the full army count.
+const troopActors=[];
+const armorMat=mat('#344b58'),leatherMat=mat('#6b4930'),enemyMat=mat('#8f3935'),skinMat=mat('#d4a77d');
+function makeTroop(isEnemy=false,isCavalry=false){
+ const g=new THREE.Group();const tunic=isEnemy?enemyMat:armorMat;
+ const body=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.42,3,6),tunic);body.position.y=.65;body.castShadow=true;g.add(body);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),skinMat);head.position.y=1.02;head.castShadow=true;g.add(head);
+ cone(g,.19,.22,goldmat,0,1.17,0,5);
+ const shield=new THREE.Mesh(new THREE.BoxGeometry(.25,.34,.08),isEnemy?enemyMat:goldmat);shield.position.set(-.23,.63,.08);shield.castShadow=true;g.add(shield);
+ const sword=new THREE.Mesh(new THREE.BoxGeometry(.045,.48,.045),stone);sword.position.set(.23,.72,.02);sword.rotation.z=-.35;g.add(sword);
+ if(isCavalry){const horse=new THREE.Mesh(new THREE.BoxGeometry(.34,.34,.62),leatherMat);horse.position.set(0,.35,-.28);horse.castShadow=true;g.add(horse);const neck=new THREE.Mesh(new THREE.BoxGeometry(.18,.4,.2),leatherMat);neck.position.set(0,.55,.03);neck.rotation.x=-.25;g.add(neck)}
+ return g;
+}
+const troopDisplay=new THREE.Group();scene.add(troopDisplay);
+for(let i=0;i<12;i++){const cavalry=i>=9;const unit=makeTroop(false,cavalry);unit.position.set((i%4-1.5)*.8,.02,6+Math.floor(i/4)*.8);troopDisplay.add(unit);troopActors.push({unit,home:unit.position.clone(),phase:i*.7})}
+
 // Architectural detail pass: stone courses, narrow arrow slits, warm windows and battlements.
 const mortar=mat('#8e9692'),shadowStone=mat('#343d3d'),windowGlow=new THREE.MeshStandardMaterial({color:'#ffc96b',emissive:'#9b4d13',emissiveIntensity:1.1,roughness:.35});
 function detailBox(parent,w,h,d,m,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
@@ -126,9 +142,12 @@ if(type==='attack'){attackCamp();return}
 if(type==='select'){document.querySelector('#selectedTitle').textContent='Baş Qala';document.querySelector('#description').textContent='Krallığının ürəyi. Qalanı inkişaf etdir, ordunu gücləndir və yeni tikililər aç.';document.querySelector('#upgrade').style.display='block';return}
 const cost=type==='farm'?[180,40,20]:[300,100,60];if(built[type])return toast('Bu tikili artıq qurulub.');if(woodCount<cost[0]||stoneCount<cost[1]||goldCount<cost[2])return toast('Tikinti üçün resurs çatmır.');woodCount-=cost[0];stoneCount-=cost[1];goldCount-=cost[2];built[type]++;const [x,z]=places[type];let g;if(type==='farm'){g=new THREE.Group();scene.add(g);for(let i=0;i<4;i++)box(g,2.4,.06,.7,mat(i%2?'#b0a05a':'#758b3e'),0,.05,i*1.0);g.position.set(x,0,z)}else{g=buildHouse(x,z);if(type==='archery'){for(let i=0;i<3;i++)box(g,.08,1.8,.08,wood,-.4+i*.4,1.7,1.1)}if(type==='stable')box(g,1.2,.3,1.2,wood,0,1.1,1.2)}document.querySelector('#selectedTitle').textContent=({barracks:'Kazarma',archery:'Oxçuluq meydanı',stable:'Tövlə',farm:'Ferma'})[type];document.querySelector('#description').textContent='Tikili hazırdır. Resurs və ordu inkişafı üçün istifadə et.';document.querySelector('#upgrade').style.display='none';updateHud();saveGame();toast('Tikili uğurla quruldu!')}
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));if(mode==='select')placeBuilding('select');else if(mode==='train'||mode==='attack')placeBuilding(mode);else placeBuilding(mode)}));
+let battleStartedAt=0,battleDuration=0;
 function attackCamp(){
  const total=troops.infantry+troops.archers+troops.cavalry;
  if(total<10)return toast('Hücum üçün ən azı 10 əsgər lazımdır.');
+ if(battleStartedAt&&performance.now()-battleStartedAt<battleDuration)return toast('Döyüş artıq gedir!');
+ battleStartedAt=performance.now();battleDuration=1800;
  const advantage=(a,b)=>a===b?1:(a==='infantry'&&b==='cavalry')||(a==='cavalry'&&b==='archers')||(a==='archers'&&b==='infantry')?1.25:.8;
  const ours=troops.infantry*100*advantage('infantry',enemy.cavalry)+troops.archers*120*advantage('archers',enemy.infantry)+troops.cavalry*110*advantage('cavalry',enemy.archers);
  const theirs=enemy.infantry*100*advantage('infantry',troops.cavalry)+enemy.archers*120*advantage('archers',troops.infantry)+enemy.cavalry*110*advantage('cavalry',troops.archers);
@@ -148,7 +167,10 @@ setInterval(()=>{woodCount+=3+level;stoneCount+=1+Math.floor(level/2);goldCount+
 // Drag to pan, pinch/wheel to zoom
 let drag=false,lastX=0,lastY=0;canvas.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;yaw-=dx*.005;pitch=THREE.MathUtils.clamp(pitch+dy*.003,.35,1.15);placeCamera()});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointercancel',()=>drag=false);canvas.addEventListener('wheel',e=>{dist=THREE.MathUtils.clamp(dist+e.deltaY*.018,10,42);placeCamera()},{passive:true});
 let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(pinch)dist=THREE.MathUtils.clamp(dist*(pinch/d),10,42);pinch=d;placeCamera()}},{passive:true});canvas.addEventListener('touchend',()=>pinch=0,{passive:true});
-function animate(){requestAnimationFrame(animate);renderer.render(scene,camera)}animate();updateHud();addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});setTimeout(()=>document.querySelector('#loading').classList.add('hide'),500);
+function animate(){requestAnimationFrame(animate);
+ if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);for(const a of troopActors){const forward=t<.5?t*2:(1-t)*2;a.unit.position.x=a.home.x+(enemyCamp.position.x*.58+a.home.x*.1-a.home.x)*forward;a.unit.position.z=a.home.z+(-10-a.home.z)*forward;a.unit.rotation.y=Math.sin(performance.now()*.008+a.phase)*.12}if(t>=1)battleStartedAt=0}
+ else{for(const a of troopActors){a.unit.position.y=.02+Math.abs(Math.sin(performance.now()*.002+a.phase))*.035;a.unit.rotation.y=Math.sin(performance.now()*.001+a.phase)*.04}}
+ renderer.render(scene,camera)}animate();updateHud();addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});setTimeout(()=>document.querySelector('#loading').classList.add('hide'),500);
 </script>
 </body>
 </html>
