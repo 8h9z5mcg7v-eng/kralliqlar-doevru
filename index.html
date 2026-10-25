@@ -334,6 +334,27 @@ button:active{transform:translateY(1px)}
 .city-label,.city-river,.city-wall{z-index:4}
 @media(prefers-reduced-motion:reduce){.tile.battle-win .building-art,.tile.battle-loss .building-art{animation:none!important}}
 
+/* Kingdom visual rebuild v2 */
+.city-scene{min-height:580px;padding:24px 8px;background:radial-gradient(ellipse at 50% 18%,#c4ce91 0,transparent 32%),linear-gradient(180deg,#82996a,#54794b 34%,#345d40 60%,#28515b);border:3px solid #d5b66c;box-shadow:inset 0 0 70px #102117aa,0 12px 35px #0008}
+.city-scene:before{background:linear-gradient(158deg,transparent 0 22%,#263f2c99 23% 34%,transparent 35%),linear-gradient(22deg,transparent 0 43%,#c8c58b35 44% 47%,transparent 48%),repeating-linear-gradient(165deg,transparent 0 38px,#ffffff08 39px 40px)}
+.city-scene:after{height:17%;background:repeating-linear-gradient(0deg,#2c7181,#2c7181 7px,#398395 8px,#398395 10px);border-top:4px solid #b4d1ad}
+.city-hills{height:42%;background:linear-gradient(160deg,transparent 0 18%,#243f2d 19% 30%,transparent 31%),linear-gradient(25deg,transparent 0 39%,#a7b98170 40% 49%,transparent 50%),linear-gradient(155deg,transparent 0 55%,#345a3c88 56% 67%,transparent 68%)}
+.city-label{font-size:13px;letter-spacing:4px;color:#fff0bd}
+.map{gap:5px 6px;padding:8px 3px;align-items:stretch}
+.tile{min-height:132px;padding:4px 2px 7px;clip-path:none;border-radius:9px;background:linear-gradient(155deg,#a7bb7a,#668653 38%,#34573b);border:1px solid #d6c58a;box-shadow:inset 0 1px 0 #ffffff55,0 5px 10px #10211799;transition:transform .18s,filter .18s}
+.tile:before{inset:0;background:linear-gradient(135deg,#ffffff20,transparent 48%,#07140b40);border:0}
+.tile:hover{transform:translateY(-3px) scale(1.015);filter:brightness(1.1)}
+.tile .building-art{display:block;width:100%;height:93px;position:relative;z-index:1}
+.building-art svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 5px 3px #10201677)}
+.tile span:not(.building-art){position:relative;z-index:2;font-size:11px;font-weight:800;text-shadow:0 2px 4px #000;line-height:1.1}
+.tile small{position:relative;z-index:2;font-size:9px;padding:2px 3px;background:#111b13e8;border:1px solid #c6a65e;border-radius:4px;color:#fff0c4}
+.tile.mine{background:linear-gradient(155deg,#c5ae69,#8d6b36 50%,#493a25);border-color:#f5d783}
+.tile.enemy{background:linear-gradient(155deg,#b77d68,#854a40 55%,#482a2c);border-color:#edaa8b}
+.tile.neutral{background:linear-gradient(155deg,#9caa8a,#627b64 50%,#344b48)}
+.tile.selected{outline:3px solid #ffe08a;outline-offset:1px;box-shadow:0 0 0 3px #6e4d1e,0 0 22px #ffd778aa;transform:translateY(-3px);z-index:4}
+.building-detail{background:linear-gradient(120deg,#202c29,#111b20);border:1px solid #9b8048;border-radius:9px;padding:13px;margin-top:12px}
+@media(max-width:700px){.city-scene{min-height:510px;padding:18px 5px}.map{gap:5px 3px;padding:5px 0}.tile{min-height:112px;padding:3px 1px 5px}.tile .building-art{height:76px}.tile span:not(.building-art){font-size:10px}.tile small{font-size:8px}.city-label{font-size:11px;letter-spacing:2px}}
+
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
