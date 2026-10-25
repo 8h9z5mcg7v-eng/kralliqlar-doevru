@@ -365,16 +365,50 @@ castleAssetLoader.load('https://cdn.3dassets.dev/assets/23508/v1/model.glb',(glt
  const fittedScale=16/largest;
  importedCastle.scale.setScalar(fittedScale);
  importedCastle.position.set(-rawCenter.x*fittedScale,-rawBounds.min.y*fittedScale,-rawCenter.z*fittedScale);
+ // Procedural stone masonry texture: adds irregular block courses and subtle surface grain to pale stone meshes.
+ const stoneCanvas=document.createElement('canvas');stoneCanvas.width=512;stoneCanvas.height=512;
+ const stoneCtx=stoneCanvas.getContext('2d');
+ stoneCtx.fillStyle='#b9b6aa';stoneCtx.fillRect(0,0,512,512);
+ let stoneSeed=8217;
+ const stoneRand=()=>{stoneSeed=(stoneSeed*1664525+1013904223)>>>0;return stoneSeed/4294967296};
+ for(let row=0,y=0;y<512;row++,y+=32){
+  let x=row%2?-38:0;
+  while(x<512){
+   const w=48+stoneRand()*36,h=27+stoneRand()*4;
+   const shade=145+Math.floor(stoneRand()*48);
+   stoneCtx.fillStyle='rgb('+shade+','+(shade-2)+','+(shade-8)+')';
+   stoneCtx.fillRect(x+1,y+1,w-2,h-2);
+   stoneCtx.fillStyle='rgba(255,255,255,.14)';stoneCtx.fillRect(x+3,y+2,w-7,2);
+   stoneCtx.fillStyle='rgba(40,35,28,.24)';stoneCtx.fillRect(x,y+h-2,w,2);
+   x+=w;
+  }
+ }
+ for(let n=0;n<1800;n++){
+  const shade=stoneRand()>.5?'rgba(255,255,255,.07)':'rgba(35,30,24,.06)';
+  stoneCtx.fillStyle=shade;stoneCtx.fillRect(stoneRand()*512,stoneRand()*512,1+stoneRand()*3,1+stoneRand()*2);
+ }
+ const stoneTexture=new THREE.CanvasTexture(stoneCanvas);
+ stoneTexture.wrapS=stoneTexture.wrapT=THREE.RepeatWrapping;
+ stoneTexture.repeat.set(2,2);stoneTexture.colorSpace=THREE.SRGBColorSpace;
  importedCastle.traverse((node)=>{
   if(!node.isMesh)return;
   node.castShadow=true;node.receiveShadow=true;
   const materials=Array.isArray(node.material)?node.material:[node.material];
-  for(const material of materials){
-   if(!material)continue;
+  node.material=materials.map((original)=>{
+   if(!original)return original;
+   const material=original.clone();
+   if('roughness' in material)material.roughness=Math.max(.78,material.roughness||0);
+   if('metalness' in material)material.metalness=Math.min(.08,material.metalness||0);
+   if(material.color){
+    const color=material.color;
+    const max=Math.max(color.r,color.g,color.b),min=Math.min(color.r,color.g,color.b);
+    // Only pale, nearly neutral materials are treated as masonry; preserve red roofs, wood and banners.
+    if(max>.38&&max-min<.16){material.map=stoneTexture;material.color.set('#ffffff');}
+   }
    material.needsUpdate=true;
-   if('roughness' in material)material.roughness=Math.max(.68,material.roughness||0);
-   if('metalness' in material)material.metalness=Math.min(.12,material.metalness||0);
-  }
+   return material;
+  });
+  if(node.material.length===1)node.material=node.material[0];
  });
  castle.clear();
  castle.add(importedCastle);
