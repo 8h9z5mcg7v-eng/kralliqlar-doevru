@@ -802,8 +802,12 @@ townTemplateLoader.load('https://cdn.3dassets.dev/assets/28840/v1/model.glb',(gl
  town.scale.setScalar(scale);
  town.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
  town.traverse((node)=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true;const materials=Array.isArray(node.material)?node.material:[node.material];for(const material of materials){if(material&&'roughness' in material)material.roughness=Math.max(.72,material.roughness||0);}}});
- // Only hide the old scenery after the new scene has loaded; preserve lights and active game overlays.
- for(const old of originalEnvironment){if(!old.isLight)old.visible=false;}
+ // Remove the previous procedural town completely once the ready-made city template has loaded.
+ // Keep lighting, sun and the live army display; the new town becomes the only scenery backdrop.
+ for(const old of originalEnvironment){
+  if(old.isLight||old===sun||old===enemyDisplay||old===troopDisplay)continue;
+  scene.remove(old);
+ }
  scene.add(town);
 
  // Extra playable city district: detailed stable, market, granary, watchtowers, windmill and crop fields.
