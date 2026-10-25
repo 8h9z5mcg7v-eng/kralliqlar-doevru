@@ -1,104 +1,69 @@
-<!doctype html>
-<html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#17231c"><title>Krallıqlar Dövrü</title>
-<style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8298a0;color:#f8e8bd;font-family:Georgia,serif}#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}.top{position:absolute;top:env(safe-area-inset-top,8px);left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.crest{width:49px;height:56px;display:grid;place-items:center;font-size:27px;background:linear-gradient(145deg,#5d7047,#1c2b20);border:2px solid #d8b96d;clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);filter:drop-shadow(0 3px 5px #0009)}.resources{display:flex;gap:5px}.res{background:#17251de8;border:1px solid #c8a85f;border-top:0;border-radius:0 0 8px 8px;padding:8px 9px;min-width:57px;text-align:center;box-shadow:0 3px 8px #0007;font:700 13px system-ui}.res b{font-size:16px;margin-right:3px}.tools{position:absolute;right:10px;top:43%;display:grid;gap:9px}.tool{width:44px;height:44px;border-radius:50%;border:2px solid #d7b66b;background:linear-gradient(135deg,#506443,#17271c);color:#ffe8a4;font-size:21px;box-shadow:0 3px 8px #0008}.bottom{position:absolute;bottom:0;left:0;right:0;padding:24px 12px max(12px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:10px;background:linear-gradient(0deg,#101a14f5,#101a14c9 58%,transparent)}.builds{display:flex;justify-content:center;gap:8px;flex:1}.build{width:57px;height:59px;border:1px solid #bda05e;border-radius:8px;background:linear-gradient(145deg,#40543a,#17241a);color:#f8e5ad;font-size:24px;box-shadow:0 3px 7px #0008}.build small{display:block;font:10px system-ui;margin-top:2px}.build.active{outline:2px solid #ffe4a0;transform:translateY(-4px)}.portrait{height:57px;width:48px;border:2px solid #d0ad5e;border-radius:7px;background:linear-gradient(135deg,#8a9b70,#34432c);font-size:27px}.toast{position:absolute;left:50%;top:18%;transform:translate(-50%,-8px);background:#17251eeF;border:1px solid #c8a85f;border-radius:8px;padding:10px 15px;color:#ffe8ae;font:13px system-ui;opacity:0;transition:.2s;pointer-events:none;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}.hint{position:absolute;left:50%;bottom:100px;transform:translateX(-50%);color:#fff4d3;background:#17251e9c;border-radius:20px;padding:6px 12px;font:11px system-ui;white-space:nowrap;pointer-events:none}@media(min-width:800px){.build{width:68px;height:65px}.res{padding:10px 15px}.hint{bottom:112px}}
-</style><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"}}</script></head><body><div id="game"></div>
-<div class="top"><div class="crest">♜</div><div class="resources"><div class="res"><b>🪙</b><span id="gold">1250</span></div><div class="res"><b>🪵</b><span id="wood">840</span></div><div class="res"><b>🪨</b><span id="stone">620</span></div><div class="res"><b>🌾</b><span id="food">930</span></div></div></div>
-<div class="tools"><button class="tool" data-action="view" aria-label="Mənzərə">⌖</button><button class="tool" data-action="army" aria-label="Ordu">⚔</button><button class="tool" data-action="map" aria-label="Xəritə">▦</button></div>
-<div class="hint">Mənzərəni barmaqla sürüşdür · yaxınlaşdırmaq üçün iki barmaq</div>
-<div class="bottom"><div class="portrait">🛡️</div><div class="builds"><button class="build" data-build="house">⌂<small>Ev</small></button><button class="build" data-build="tower">♜<small>Qüllə</small></button><button class="build" data-build="farm">♧<small>Ferma</small></button><button class="build" data-build="lumber">🪓<small>Meşəçi</small></button><button class="build" data-build="mine">⛏<small>Mədən</small></button></div><button class="build" id="next">⏩<small>İrəli</small></button></div><div class="toast" id="toast"></div>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js';
-const root=document.getElementById('game');
-const scene=new THREE.Scene();scene.background=new THREE.Color('#9ab0b5');scene.fog=new THREE.Fog('#9ab0b5',42,105);
-const camera=new THREE.PerspectiveCamera(39,innerWidth/innerHeight,.1,180);camera.position.set(26,29,35);
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;root.appendChild(renderer.domElement);
-const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,2,0);controls.enableDamping=true;controls.dampingFactor=.055;controls.minDistance=16;controls.maxDistance=65;controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.22;controls.enablePan=true;controls.panSpeed=.65;
-scene.add(new THREE.HemisphereLight(0xdde8e2,0x4c5037,2.05));const sun=new THREE.DirectionalLight(0xffe0b0,3.1);sun.position.set(-22,35,18);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;sun.shadow.bias=-.00035;scene.add(sun);
-const mat=(color,rough=.9,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
-const grass=mat('#62774a'),grass2=mat('#788653'),stone=mat('#8c8b7d'),stoneDark=mat('#62665f'),stoneLight=mat('#b0a995'),roof=mat('#55443b'),roofRed=mat('#714b3b'),wood=mat('#58412b'),woodLight=mat('#80603b'),water=mat('#527f88',.24,.08),field=mat('#b2a35d'),leafMats=['#405d38','#4d693d','#657744','#344d32'].map(c=>mat(c)),rockMat=mat('#77786d'),gold=mat('#c4a25d',.55,.25);
-function mesh(g,m,x,y,z,opts={}){let o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=opts.cast!==false;o.receiveShadow=true;if(opts.rot)o.rotation.set(...opts.rot);scene.add(o);return o}
-function box(x,y,z,sx,sy,sz,m,opts={}){return mesh(new THREE.BoxGeometry(sx,sy,sz),m,x,y,z,opts)}
-function cylinder(x,y,z,rt,rb,h,m,seg=12){return mesh(new THREE.CylinderGeometry(rt,rb,h,seg),m,x,y,z)}
-function cone(x,y,z,r,h,m,seg=12){return mesh(new THREE.ConeGeometry(r,h,seg),m,x,y,z)}
-// rolling terrain
-const terrainGeo=new THREE.PlaneGeometry(120,120,90,90);terrainGeo.rotateX(-Math.PI/2);const p=terrainGeo.attributes.position;for(let i=0;i<p.count;i++){let x=p.getX(i),z=p.getZ(i);p.setY(i,Math.sin(x*.22)*.22+Math.cos(z*.19)*.25+Math.sin((x+z)*.13)*.17)}terrainGeo.computeVertexNormals();const terrain=mesh(terrainGeo,grass,0,-.18,0,{cast:false});terrain.receiveShadow=true;
-// layered distant hills
-for(let i=0;i<14;i++){let x=-48+i*7.5,h=5+Math.sin(i*1.8)*3+Math.random()*2;let hill=mesh(new THREE.ConeGeometry(10,h,7),mat(i%2?'#657c79':'#728783'),x,h*.38,-40-Math.random()*9,{cast:false});hill.scale.z=1.35;}
-// winding river
-const riverPts=[new THREE.Vector3(-38,.02,18),new THREE.Vector3(-27,.04,12),new THREE.Vector3(-20,.04,6),new THREE.Vector3(-15,.04,-2),new THREE.Vector3(-8,.04,-10),new THREE.Vector3(0,.04,-17),new THREE.Vector3(12,.04,-26),new THREE.Vector3(26,.04,-34)];
-const riverCurve=new THREE.CatmullRomCurve3(riverPts);const river=mesh(new THREE.TubeGeometry(riverCurve,100,2.25,8,false),water,0,0,0,{cast:false});river.material.side=THREE.DoubleSide;
-// riverbank stones
-for(let i=0;i<75;i++){let t=i/75,pt=riverCurve.getPoint(t),side=i%2?1:-1;let s=.2+Math.random()*.42;mesh(new THREE.DodecahedronGeometry(s,0),rockMat,pt.x+side*(2+Math.random()),.1+s*.25,pt.z+side*(.4+Math.random()),{cast:false});}
-// road to castle
-const roadPts=[new THREE.Vector3(1,.03,28),new THREE.Vector3(1,.03,20),new THREE.Vector3(-3,.03,13),new THREE.Vector3(-2,.03,7),new THREE.Vector3(0,.03,1)];
-const road=mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(roadPts),60,1.4,7,false),mat('#a39370'),0,0,0,{cast:false});
-// castle platform
-cylinder(0,.32,0,13.8,14.5,.8,mat('#5a6547'),48);cylinder(0,.75,0,12.5,13,.35,mat('#91866c'),48);
-// outer wall four sides with crenellations
-function wall(x,z,len,rot=0){let w=box(x,2.25,z,len,3.0,.75,stone,{rot:[0,rot,0]});let n=Math.floor(len/1.35);for(let i=0;i<n;i++){let xx=x-Math.cos(rot)*len/2+(i+.5)*len/n,zz=z+Math.sin(rot)*(xx-x);box(xx,3.95,zz,.52,.55,.9,stoneLight,{cast:true})}for(let y=1.25;y<3.2;y+=.85)for(let i=0;i<n;i++)box(x-len/2+(i+.5)*len/n,y,z-.4,.8,.07,.06,stoneDark,{cast:false});return w}
-wall(0,-9.8,19.5);wall(0,9.8,19.5);wall(-9.8,0,19.5,Math.PI/2);wall(9.8,0,19.5,Math.PI/2);
-// round corner towers
-function tower(x,z,r=1.7,h=6){cylinder(x,h/2+.8,z,r,r,h,stone,16);cylinder(x,h+.8,z,r*1.12,r*1.12,.32,stoneDark,16);for(let i=0;i<10;i++){let a=i*Math.PI/5;box(x+Math.cos(a)*r*.83,h+1.1,z+Math.sin(a)*r*.83,.42,.5,.42,stoneLight)}cone(x,h+2.25,z,r*1.22,2.5,roofRed,12);cylinder(x,h+1.12,z,r*.86,r*.86,.18,wood,16);for(let yy=2;yy<h-1;yy+=1.35){let a=.4;box(x+Math.cos(a)*r*.93,yy,z+Math.sin(a)*r*.93,.23,.65,.12,woodLight,{rot:[0,-a,0]})}}
-tower(-9.8,-9.8,1.65,6.3);tower(9.8,-9.8,1.65,6.3);tower(-9.8,9.8,1.65,6.3);tower(9.8,9.8,1.65,6.3);
-// gatehouse and raised portcullis
-box(0,2.1,9.8,4.4,4.3,1.4,stone);box(0,4.4,9.8,4.9,.55,1.7,stoneLight);box(0,1.4,9.02,1.9,2.7,.25,wood);for(let i=-3;i<=3;i++)box(i*.24,1.3,8.85,.08,2.5,.08,gold);
-tower(-2.3,9.7,1.1,4.2);tower(2.3,9.7,1.1,4.2);
-// keep base, upper floors, roof
-box(0,2.4,-1.5,8,4.2,6.5,stone);box(0,4.55,-1.5,8.3,.35,6.8,stoneDark);box(0,5.65,-1.5,6.7,2.3,5.4,stoneLight);box(0,6.9,-1.5,7.1,.35,5.8,stone);box(0,7.8,-1.5,5.8,1.6,4.6,stone);
-box(-3.4,8.2,-1.5,.45,1.1,4.8,stoneLight);box(3.4,8.2,-1.5,.45,1.1,4.8,stoneLight);box(0,8.8,-3.7,6.9,.6,.5,stoneLight);box(0,8.8,.7,6.9,.6,.5,stoneLight);
-cone(-1.7,10,-1.5,2.15,2.7,roof,4);cone(1.7,10,-1.5,2.15,2.7,roof,4);
-for(let i=0;i<5;i++){let x=-2.6+i*1.3;box(x,5.5,1.82,.38,.75,.18,wood);box(x,5.7,1.7,.18,.4,.08,gold)}
-for(let x of [-2.6,2.6]){box(x,2.8,1.83,.55,1.2,.18,wood);box(x,3.1,1.72,.25,.6,.08,gold)}
-// roof ridge and banners
-box(0,9.2,-1.5,5.5,.18,.2,wood);cylinder(0,11.5,-1.5,.08,.08,2,gold,8);mesh(new THREE.PlaneGeometry(1.2,.8),mat('#9c3e32'),.55,11.05,-1.5,{rot:[0,0,-.08]});
-// inner barracks and armory
-function house(x,z,s=1,roofMat=roof){box(x,.75*s,z,2.7*s,1.5*s,2.4*s,mat('#b4a486'));let g=new THREE.ConeGeometry(1.9*s,1.5*s,4);g.rotateY(Math.PI/4);mesh(g,roofMat,x,1.95*s,z);box(x,.65*s,z+1.22*s,.45*s,.9*s,.1*s,wood);for(let xx of [x-.7*s,x+.7*s])box(xx,1*s,z+1.24*s,.22*s,.3*s,.08*s,mat('#e5b65e'))}
-house(-5,-4,.85,roofRed);house(5,-4,.9,roof);house(-5,4,.8,roof);house(5,4,.85,roofRed);
-// walkways
-for(let i=0;i<16;i++){let a=i/16*Math.PI*2;let x=Math.cos(a)*6.7,z=Math.sin(a)*6.7;mesh(new THREE.BoxGeometry(1.1,.09,.75),mat('#b0a487'),x,.98,z,{rot:[0,-a,0],cast:false})}
-// village outside walls
-const village=[[-17,13],[-21,8],[-17,3],[-20,-3],[-15,-15],[-9,-17],[1,-17],[15,-14],[18,-7],[18,5],[16,14],[8,17],[-3,18]];
-village.forEach((v,i)=>{house(v[0],v[1],.75+(i%3)*.12,i%2?roof:roofRed);});
-// timber fences around gardens
-for(let i=0;i<5;i++){let x=-22+i*2.2;box(x,.5,17,.12,.9,3.5,woodLight);box(x,.8,15.4,.12,.15,3.5,woodLight)}
-// crop fields with furrows
-for(let f=0;f<3;f++){let x=20+f*3.3,z=13-f*1.2;box(x,.04,z,3.0,.1,5.5,field,{cast:false});for(let j=0;j<7;j++)box(x-1.25+j*.4,.15,z,.055,.18,5.1,mat('#817344'),{cast:false});}
-// trees, layered foliage
-function tree(x,z,s=1){let h=1.8*s;cylinder(x,h/2,z,.18*s,.28*s,h,wood,7);for(let j=0;j<3;j++){let r=(1.15-j*.2)*s;mesh(new THREE.IcosahedronGeometry(r,1),leafMats[(Math.random()*leafMats.length)|0],x,.9*s+j*.75*s,z,{cast:true}).scale.set(1,1.1,.92)}}
-for(let i=0;i<115;i++){let x=(Math.random()-.5)*82,z=(Math.random()-.5)*76;if(Math.abs(x)<14&&Math.abs(z)<14)continue;if(Math.abs(x)<18&&Math.abs(z)<18&&Math.random()<.7)continue;if(x>-4&&x<8&&z>0&&z<24)continue;tree(x,z,.65+Math.random()*.9)}
-// rocks and grass tufts
-for(let i=0;i<160;i++){let x=(Math.random()-.5)*75,z=(Math.random()-.5)*70;if(Math.abs(x)<13&&Math.abs(z)<13)continue;let s=.08+Math.random()*.22;mesh(new THREE.DodecahedronGeometry(s,0),i%3?rockMat:grass2,x,.04+s*.2,z,{cast:false}).rotation.set(Math.random(),Math.random(),Math.random())}
-// bridge across river
-const bridge=box(-15,.5,1,5,.35,2.7,woodLight,{rot:[0,-.5,0]});for(let i=0;i<7;i++)box(-17+i*.65,.76,1,.12,.25,2.8,wood,{rot:[0,-.5,0]});
-// birds / distant atmosphere represented by tiny dark silhouettes
-for(let i=0;i<9;i++){let g=new THREE.Group();let wing=mesh(new THREE.BoxGeometry(.28,.025,.08),mat('#3e4c46'),0,0,0,{cast:false});wing.rotation.z=.35;g.add(wing);g.position.set(-24+i*6,10+Math.sin(i)*2,-24-Math.random()*8);scene.add(g)}
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Krallıqlar Dövrü — Orta Əsrlər Krallığı</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,2 29,9.5 29,22.5 16,30 3,22.5 3,9.5' fill='%238fb35a' stroke='%235a3d26' stroke-width='2'/%3E%3Crect x='11' y='14' width='10' height='9' fill='%23e8dcc0'/%3E%3Cpolygon points='9,15 16,8 23,15' fill='%23b0523a'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="game-canvas" aria-label="Hexkingdom game world"></canvas>
 
-/* Rival kingdom outpost */
-const enemyRed=mat('#71352e'),enemyDark=mat('#3e2927');
-cylinder(27,.18,-20,8.2,8.8,.45,mat('#4c5940'),32);
-box(27,1.5,-20,5,2.8,4.8,stoneDark);
-box(27,3,-20,5.4,.3,5.1,stone);
-tower(24.2,-22.5,1.1,4.5);tower(29.8,-22.5,1.1,4.5);
-box(27,2.5,-17.5,2,3.6,.8,enemyDark);
-cone(27,5,-20,2.5,2.8,enemyRed,4);
-box(27,6.1,-20,3.4,.18,3.5,enemyRed);
-for(let i=0;i<5;i++){box(24.8+i*1.1,3.25,-17.7,.15,.8,.1,gold)}
-const enemyMarkers=[];const enemyUnits=[];
-for(const [x,z] of [[20,-15],[31,-15],[22,-27],[32,-26]]){const marker=mesh(new THREE.IcosahedronGeometry(.6,0),enemyRed,x,.7,z);marker.userData.enemy=true;enemyMarkers.push(marker)}
-// enemy patrols around the outpost
-function makeEnemy(x,z){const g=new THREE.Group();g.position.set(x,0,z);const body=mesh(new THREE.CylinderGeometry(.28,.37,.85,8),enemyRed,0,1,0);body.position.y=1;g.add(body);const head=mesh(new THREE.SphereGeometry(.2,10,8),skin,0,1.62,0);head.position.y=1.62;g.add(head);const helm=mesh(new THREE.ConeGeometry(.24,.3,8),stoneDark,0,1.85,0);helm.position.y=1.85;g.add(helm);const shield=mesh(new THREE.BoxGeometry(.38,.58,.12),enemyDark,0,1,0);shield.position.set(-.4,1,.05);g.add(shield);scene.add(g);return {group:g,home:new THREE.Vector3(x,0,z),phase:Math.random()*6}}for(const [x,z] of [[23,-17],[30,-18],[22,-24],[31,-25]])enemyUnits.push(makeEnemy(x,z));
-\n// interactive selection and construction
-const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected='',goldCount=1250,woodCount=840,foodCount=930,stoneCount=620,year=1;let combatWins=0,enemyHP=3,enemyAttacks=0;const buildObjects=[];let armyMode=false,activeTroop=null;const troops=[];
-function toast(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),1900)}
-function placeBuilding(point,type){let x=Math.round(point.x/2)*2,z=Math.round(point.z/2)*2;if(Math.abs(x)<13&&Math.abs(z)<13){toast('Qala divarlarının içində tikinti üçün boş sahə seç');return}if(goldCount<100||woodCount<50){toast('Resurs çatmır');return}goldCount-=100;woodCount-=50;document.getElementById('gold').textContent=goldCount;document.getElementById('wood').textContent=woodCount;let obj;if(type==='tower'){cylinder(x,1.7,z,.8,.95,3.1,stone,12);cone(x,3.8,z,1.05,1.2,roofRed,8)}else if(type==='farm'){box(x,.08,z,3,.15,3.5,field,{cast:false});for(let i=0;i<6;i++)box(x-1.2+i*.48,.22,z,.05,.22,3.1,mat('#817344'),{cast:false})}else if(type==='lumber'){tree(x,z,1.1)}else if(type==='mine'){mesh(new THREE.DodecahedronGeometry(1.2,1),rockMat,x,.6,z);mesh(new THREE.DodecahedronGeometry(.65,1),mat('#9a9d92'),x+.8,.4,z+.3)}else{house(x,z,1.05,roofRed)}toast('Tikinti yerləşdirildi');selected='';document.querySelectorAll('[data-build]').forEach(b=>b.classList.remove('active'))}
-function makeSoldier(x,z){const g=new THREE.Group();g.position.set(x,0,z);const tunic=mat('#7d3028'),skin=mat('#d0a27a'),iron=mat('#7b8588',.45,.45);const body=mesh(new THREE.CylinderGeometry(.28,.38,.9,8),tunic,0,1,0);body.position.set(0,1,0);g.add(body);const head=mesh(new THREE.SphereGeometry(.22,10,8),skin,0,1.62,0);head.position.set(0,1.62,0);g.add(head);const helm=mesh(new THREE.ConeGeometry(.25,.28,8),iron,0,1.86,0);helm.position.set(0,1.86,0);g.add(helm);const shield=mesh(new THREE.BoxGeometry(.42,.62,.12),mat('#9a4b34'),0,1.05,0);shield.position.set(-.42,1.05,.08);g.add(shield);const sword=mesh(new THREE.BoxGeometry(.08,.65,.08),iron,0,1.1,0);sword.position.set(.42,1.15,.08);g.add(sword);const legs=[];for(const dx of [-.16,.16]){const leg=mesh(new THREE.BoxGeometry(.16,.55,.17),mat('#49463b'),0,.35,0);leg.position.set(dx,.35,0);g.add(leg);legs.push(leg)}scene.add(g);return {group:g,legs,target:null,phase:Math.random()*6}}
-function deployTroop(x,z){if(goldCount<180||foodCount<80){toast('Qoşun üçün resurs çatmır');return}goldCount-=180;foodCount-=80;document.getElementById('gold').textContent=goldCount;document.getElementById('food').textContent=foodCount;activeTroop=makeSoldier(0,7.5);troops.push(activeTroop);activeTroop.target=new THREE.Vector3(x,0,z);toast('Əsgər hazırlandı · istiqamət seç');}
-renderer.domElement.addEventListener('pointerdown',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);const plane=new THREE.Plane(new THREE.Vector3(0,1,0),0);const p=new THREE.Vector3();if(!raycaster.ray.intersectPlane(plane,p))return;if(armyMode){if(!activeTroop){deployTroop(p.x,p.z)}else{activeTroop.target.set(Math.round(p.x),0,Math.round(p.z));toast('Qoşun hərəkətə başladı');activeTroop=null;armyMode=false}return}if(selected)placeBuilding(p,selected)});
-document.querySelectorAll('[data-build]').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.build;document.querySelectorAll('[data-build]').forEach(x=>x.classList.toggle('active',x===b));toast('Tikinti üçün açıq torpaq sahəsinə toxun')}));document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{let a=b.dataset.action;if(a==='view'){camera.position.set(26,29,35);controls.target.set(0,2,0);controls.update();toast('Qala mənzərəsi')}else if(a==='army'){armyMode=true;activeTroop=null;selected='';toast('Əsgər hazırlamaq üçün xəritədə yerə toxun')}else{camera.position.set(38,42,45);controls.target.set(0,0,0);controls.update();toast('Krallığın ümumi xəritəsi')}}));
-document.getElementById('next').addEventListener('click',()=>{year++;goldCount+=90;woodCount+=65;stoneCount+=35;foodCount+=100;document.getElementById('gold').textContent=goldCount;document.getElementById('wood').textContent=woodCount;document.getElementById('stone').textContent=stoneCount;document.getElementById('food').textContent=foodCount;toast('Yeni gün başladı · resurslar toplandı')});
-function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.8))}addEventListener('resize',resize);
-camera.position.set(26,29,35);controls.target.set(0,2,0);controls.update();
-const clock=new THREE.Clock();let lastIncome=0;function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();controls.update();for(const u of troops){u.phase+=.09;if(u.target){const dx=u.target.x-u.group.position.x,dz=u.target.z-u.group.position.z,dist=Math.hypot(dx,dz);if(dist>.22){u.group.position.x+=dx/dist*.045;u.group.position.z+=dz/dist*.045;u.group.rotation.y=Math.atan2(dx,dz);u.legs.forEach((leg,i)=>leg.rotation.x=Math.sin(u.phase+i*Math.PI)*.55)}else{u.target=null;u.legs.forEach(leg=>leg.rotation.x=0);if(u.group.position.x>17&&u.group.position.z< -12){const target=enemyMarkers.find(m=>m.visible);if(target){target.visible=false;combatWins++;goldCount+=120;foodCount+=45;document.getElementById('gold').textContent=goldCount;document.getElementById('food').textContent=foodCount;toast('Düşmən müdafiəsi zəiflədi! Qənimət +120');}scene.remove(u.group);const idx=troops.indexOf(u);if(idx>=0)troops.splice(idx,1);}}}}for(const e of enemyUnits){e.phase+=.025;e.group.position.x=e.home.x+Math.sin(t*.45+e.phase)*1.1;e.group.position.z=e.home.z+Math.cos(t*.4+e.phase)*.8;e.group.rotation.y=Math.sin(t*.4+e.phase)}if(t-lastIncome>20){lastIncome=t;goldCount+=5;woodCount+=6;foodCount+=8;document.getElementById('gold').textContent=goldCount;document.getElementById('wood').textContent=woodCount;document.getElementById('food').textContent=foodCount;}renderer.render(scene,camera)}animate();
-</script></body></html>
+  <!-- ===================== HUD ===================== -->
+  <header id="hud-top" class="ui-panel">
+    <h1 id="game-title">Krallıqlar Dövrü</h1>
+    <section id="score-panel" aria-live="polite">
+      <span id="score-label">Score</span>
+      <span id="score-value">0</span>
+      <span id="score-popup" class="hidden"></span>
+    </section>
+  </header>
+
+  <aside id="hud-right" class="ui-panel">
+    <section id="next-tile-panel">
+      <h2 class="panel-title">Buy Tile</h2>
+      <p id="tile-cap" class="tile-meta">Tiles: 0 / 14</p>
+      <div id="tile-shop-tabs" class="tile-shop-tabs" role="tablist" aria-label="Tile categories"></div>
+      <div id="tile-shop" class="tile-shop" role="tabpanel" aria-label="Tile catalog"></div>
+      <canvas id="tile-preview" width="220" height="220" aria-label="Selected tile preview"></canvas>
+      <p id="tile-name">—</p>
+      <div id="tile-cost-breakdown" class="tile-cost-breakdown" aria-label="Placement cost"></div>
+      <p id="tile-prod" class="tile-prod"></p>
+      <div class="tile-actions">
+        <button id="reroll-btn" class="ui-btn ui-btn--sm" type="button" aria-label="Shuffle tile edges">⇄ Shuffle</button>
+        <button id="rotate-btn" class="ui-btn ui-btn--sm" type="button" aria-label="Rotate tile">⟳ Rotate</button>
+      </div>
+      <p id="hint-text">Pick tile · click map · R rotate · V shuffle</p>
+    </section>
+  </aside>
+
+  <footer id="hud-bottom" class="ui-panel">
+    <button id="restart-btn" class="ui-btn danger" aria-label="Restart game">↺ Restart</button>
+    <button id="debug-btn" class="ui-btn" aria-label="Toggle debug">⚙ Debug</button>
+    <span id="tiles-placed-label">Tiles: <b id="tiles-placed">0</b></span>
+    <span id="fps-label" class="hidden">FPS: <b id="fps-value">60</b></span>
+  </footer>
+
+  <div id="toast" class="hidden" role="status"></div>
+
+  <div id="loading-screen">
+    <div id="loading-inner">
+      <h1>Krallıqlar Dövrü</h1>
+      <p>Krallıq qurulur…</p>
+      <div id="loading-bar"><div id="loading-fill"></div></div>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
