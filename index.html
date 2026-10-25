@@ -40,7 +40,10 @@ button:active{transform:translateY(1px)}button:disabled{opacity:.45}.wide{width:
 @media(max-width:600px){
  .resources{max-width:54vw;white-space:normal;grid-template-columns:repeat(2,minmax(0,1fr));align-content:center}
  .resources span{min-width:0;font-size:10px;gap:3px}
- .card{top:auto;bottom:66px;width:min(190px,48vw);max-height:calc(100dvh - 180px);padding:9px}
+ .card{top:auto;bottom:calc(70px + env(safe-area-inset-bottom));left:10px;width:min(320px,calc(100vw - 20px));max-height:calc(100dvh - 190px);padding:30px 12px 12px}
+ .card .muted{font-size:12px;line-height:1.45}
+ .card .level{font-size:12px}
+ .card #upgrade{font-size:13px;padding:10px}
  .card h2{font-size:16px;overflow-wrap:anywhere}
  .bottom{padding:6px;gap:5px}
  .bottom button{min-width:76px;min-height:42px;padding:8px;font-size:11px}
@@ -49,7 +52,7 @@ button:active{transform:translateY(1px)}button:disabled{opacity:.45}.wide{width:
 @media(max-width:380px){
  .top{grid-template-columns:minmax(0,1fr) auto}
  .resources{max-width:56vw;gap:5px;padding:7px}
- .card{top:auto;bottom:64px;width:min(172px,47vw)}
+ .card{top:auto;bottom:calc(68px + env(safe-area-inset-bottom));left:8px;width:calc(100vw - 16px);max-height:calc(100dvh - 185px)}
  .bottom button{min-width:70px;font-size:10px;padding:8px 7px}
 }
 .quest-list{display:grid;gap:9px}.quest-list article{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:11px;background:#ffffff0b;border:1px solid #ffffff20;border-radius:12px}.quest-list article div{min-width:0}.quest-list b{display:block;font-size:13px}.quest-list small{display:block;margin-top:5px;color:#c5cec3;font-size:11px;line-height:1.4}.quest-list button{flex-shrink:0}.quest-list button:disabled{opacity:.45;filter:grayscale(1)}@media(max-width:380px){.quest-list article{align-items:flex-start}.quest-list b{font-size:12px}.quest-list button{font-size:11px;padding:8px}}.daily-reward{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:12px;border:1px solid #c9a65b;border-radius:12px;background:linear-gradient(120deg,#604b2580,#1c2a25)}.daily-reward b{display:block;font-size:13px;color:#ffe3a0}.daily-reward small{display:block;margin-top:5px;color:#e4e0d0;font-size:11px;line-height:1.4}.daily-reward button{flex-shrink:0}.daily-reward button:disabled{opacity:.5}@media(max-width:380px){.daily-reward{align-items:flex-start;flex-direction:column}.daily-reward button{width:100%}}</style>
@@ -323,6 +326,7 @@ captureButton.addEventListener('click',()=>{if(!selectedTerritory)return;const t
 document.querySelector('#focusCastle').addEventListener('click',()=>{target.set(0,0,0);dist=24;yaw=.65;pitch=.72;placeCamera();placeBuilding('select');});
 document.querySelector('#closeBuildingCard').addEventListener('click',()=>{document.querySelector('#buildingCard').hidden=true});
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));if(mode==='select')placeBuilding('select');else if(mode==='train'||mode==='train_archer'||mode==='train_cavalry'||mode==='attack')placeBuilding(mode);else placeBuilding(mode)}));
+document.querySelectorAll('.bottom button[data-mode]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.bottom button[data-mode]').forEach(item=>item.classList.remove('active'));button.classList.add('active')}));
 let battleStartedAt=0,battleDuration=0;
 function attackCamp(){
  const total=troops.infantry+troops.archers+troops.cavalry;
