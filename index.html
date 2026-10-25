@@ -1,142 +1,87 @@
 <!doctype html>
 <html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#17231c"><title>Krallıqlar Dövrü</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17231c;color:#f6e7bd;font-family:Georgia,serif}body{height:100dvh}.game{height:100%;position:relative;overflow:hidden;background:#4c6842}.landscape{position:absolute;inset:0;width:100%;height:100%;display:block}.hud{position:absolute;z-index:5;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:env(safe-area-inset-top,0px) 10px 0;pointer-events:none}.crest{width:53px;height:62px;display:grid;place-items:center;background:linear-gradient(135deg,#4b5b3c,#18261c);border:2px solid #c8a65c;clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);filter:drop-shadow(0 3px 4px #0008);font-size:27px}.resources{display:flex;gap:5px;pointer-events:auto}.resource{display:flex;align-items:center;gap:5px;padding:7px 9px;background:linear-gradient(#26392ceF,#101a14ef);border:1px solid #c4a45d;border-top:0;border-radius:0 0 8px 8px;box-shadow:0 3px 8px #0008;font:700 13px system-ui;color:#ffe8a5;min-width:58px;justify-content:center}.resource span{font-size:17px}.side-tools{position:absolute;z-index:5;right:9px;top:44%;display:grid;gap:9px}.tool{width:45px;height:45px;border-radius:50%;display:grid;place-items:center;border:2px solid #d3b56e;background:linear-gradient(135deg,#485c3d,#17251b);box-shadow:0 3px 8px #0009;color:#ffe5a0;font-size:22px}.tool:active{transform:scale(.94)}.bottom{position:absolute;z-index:6;bottom:0;left:0;right:0;padding:8px 10px max(10px,env(safe-area-inset-bottom));background:linear-gradient(0deg,#101a14f5,#101a14d9 75%,transparent);display:flex;align-items:flex-end;justify-content:space-between;gap:8px}.portrait{width:53px;height:58px;border:2px solid #c9a85e;border-radius:6px;background:linear-gradient(135deg,#7e8c68,#293c2c);display:grid;place-items:center;font-size:28px;box-shadow:0 2px 6px #0009}.builds{display:flex;gap:8px;justify-content:center;flex:1}.build{width:52px;height:54px;border:1px solid #c4a45e;border-radius:7px;background:linear-gradient(#394b37,#17241a);display:grid;place-items:center;font-size:25px;box-shadow:inset 0 1px #ffffff22,0 3px 7px #0008}.build.active{border:2px solid #ffdf7a;box-shadow:0 0 12px #f3d07877}.turn{width:50px;height:54px;border:1px solid #f2d17b;border-radius:7px;background:linear-gradient(#b68b3f,#68451e);font-size:24px;color:#fff0c0;box-shadow:0 3px 7px #0008}.tip{position:absolute;z-index:8;left:50%;top:52%;transform:translate(-50%,-50%);padding:10px 16px;border:1px solid #d6b866;border-radius:8px;background:#111b15ed;color:#ffe9af;font:13px system-ui;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}.tip.show{opacity:1}.select-ring{filter:drop-shadow(0 0 7px #fff0a1)}@media(min-width:800px){.hud{padding-left:22px;padding-right:22px}.resource{padding:10px 14px;font-size:15px}.crest{width:64px;height:73px;font-size:33px}.side-tools{right:22px}.bottom{padding:12px 24px 16px}.build{width:62px;height:61px;font-size:29px}.portrait{width:62px;height:65px}.turn{height:61px;width:60px}}@media(max-width:420px){.resource{min-width:48px;padding:6px 5px;font-size:11px}.resource span{font-size:15px}.crest{width:43px;height:52px;font-size:23px}.build{width:43px;height:48px;font-size:21px}.builds{gap:5px}.portrait{width:43px;height:49px;font-size:23px}.turn{width:43px;height:48px;font-size:20px}.side-tools{right:6px;gap:7px}.tool{width:39px;height:39px;font-size:19px}}
-</style></head><body><main class="game" id="game">
-<svg class="landscape" viewBox="0 0 1400 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Orta əsr krallığının qala və kənd mənzərəsi" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#91b5bb"/><stop offset=".42" stop-color="#c8c9a1"/><stop offset="1" stop-color="#788c5c"/></linearGradient>
-<linearGradient id="grass" x2=".15" y2="1"><stop stop-color="#9aaa68"/><stop offset=".42" stop-color="#6d8b4b"/><stop offset="1" stop-color="#35583a"/></linearGradient>
-<linearGradient id="stone" x2="1" y2="1"><stop stop-color="#d5d0b3"/><stop offset=".45" stop-color="#989b86"/><stop offset="1" stop-color="#59695d"/></linearGradient>
-<linearGradient id="roof" x2=".15" y2="1"><stop stop-color="#b9694b"/><stop offset="1" stop-color="#64372d"/></linearGradient>
-<linearGradient id="wood" x2="1" y2="1"><stop stop-color="#a77c4b"/><stop offset="1" stop-color="#493522"/></linearGradient>
-<linearGradient id="water" x2="0" y2="1"><stop stop-color="#91c4c1"/><stop offset=".45" stop-color="#438c9b"/><stop offset="1" stop-color="#25546a"/></linearGradient>
-<linearGradient id="shadow" x2="0" y2="1"><stop stop-color="#13231a" stop-opacity="0"/><stop offset="1" stop-color="#13231a" stop-opacity=".6"/></linearGradient>
-<pattern id="blocks" width="30" height="19" patternUnits="userSpaceOnUse"><path d="M0 0H30M0 9.5H30M15 0V9.5M5 9.5V19" fill="none" stroke="#39483e" stroke-opacity=".27" stroke-width="1.5"/></pattern>
-<filter id="soft"><feGaussianBlur stdDeviation="12"/></filter>
-<g id="tree"><path d="M-5 0 0-29 6 0Z" fill="#5e482f"/><path d="M0-72-23-32-12-34-30-13H30L12-34 23-32Z" fill="#214b31" stroke="#315a37" stroke-width="2"/><path d="M0-62-17-34 0-42 18-34Z" fill="#467448"/><path d="M0-50-13-28 0-33 14-28Z" fill="#6e9050"/></g>
-<g id="house"><path d="M-35 0V-39L0-63 35-39V0Z" fill="#b9b99a" stroke="#59665a" stroke-width="3"/><path d="M-42-38 0-75 42-38 31-34 0-59-31-34Z" fill="url(#roof)" stroke="#59392e" stroke-width="3"/><path d="M-10 0V-25Q0-39 10-25V0Z" fill="#4a382b"/><rect x="-26" y="-31" width="12" height="12" fill="#8cb7b6" stroke="#554d3a" stroke-width="3"/><rect x="14" y="-31" width="12" height="12" fill="#8cb7b6" stroke="#554d3a" stroke-width="3"/><path d="M-35-8H35" stroke="#e2d4ad" stroke-width="3"/></g>
-<g id="tower"><path d="M-24 0V-87H24V0Z" fill="url(#stone)" stroke="#4d5b50" stroke-width="3"/><path d="M-29-85V-101H-15V-85M-7-85V-101H7V-85M15-85V-101H29V-85" fill="#b9bba4" stroke="#4d5b50" stroke-width="3"/><path d="M-7 0V-31Q0-44 7-31V0" fill="#493b2b"/><path d="M-18-70H18M-18-48H18" stroke="#e0d8ba" stroke-width="3" opacity=".6"/></g>
-</defs>
-<!-- sky and distant mountain ridges -->
-<rect width="1400" height="1000" fill="url(#sky)"/>
-<circle cx="1080" cy="150" r="64" fill="#f5e8b5" opacity=".46"/>
-<g fill="#738c79" opacity=".82"><path d="M0 355 105 260 176 301 281 205 390 320 485 250 605 342 720 220 838 324 944 239 1060 332 1174 222 1290 307 1400 246V550H0Z"/><path d="M0 408 135 335 240 373 355 292 472 383 590 310 710 397 824 302 940 384 1060 314 1180 387 1300 315 1400 365V570H0Z" fill="#536f5b"/></g>
-<path d="M0 435Q150 375 290 432T580 418T860 430T1140 410T1400 430V1000H0Z" fill="url(#grass)"/>
-<!-- far woods -->
-<g opacity=".92">
-<use href="#tree" transform="translate(-10 420) scale(0.7)"/><use href="#tree" transform="translate(34 433) scale(0.7999999999999999)"/><use href="#tree" transform="translate(78 446) scale(0.8999999999999999)"/><use href="#tree" transform="translate(122 459) scale(1)"/><use href="#tree" transform="translate(166 420) scale(1.1)"/><use href="#tree" transform="translate(210 433) scale(0.7)"/><use href="#tree" transform="translate(254 446) scale(0.7999999999999999)"/><use href="#tree" transform="translate(298 459) scale(0.8999999999999999)"/><use href="#tree" transform="translate(342 420) scale(1)"/><use href="#tree" transform="translate(386 433) scale(1.1)"/><use href="#tree" transform="translate(430 446) scale(0.7)"/><use href="#tree" transform="translate(474 459) scale(0.7999999999999999)"/><use href="#tree" transform="translate(518 420) scale(0.8999999999999999)"/><use href="#tree" transform="translate(562 433) scale(1)"/><use href="#tree" transform="translate(606 446) scale(1.1)"/><use href="#tree" transform="translate(650 459) scale(0.7)"/><use href="#tree" transform="translate(694 420) scale(0.7999999999999999)"/><use href="#tree" transform="translate(738 433) scale(0.8999999999999999)"/><use href="#tree" transform="translate(782 446) scale(1)"/><use href="#tree" transform="translate(826 459) scale(1.1)"/><use href="#tree" transform="translate(870 420) scale(0.7)"/><use href="#tree" transform="translate(914 433) scale(0.7999999999999999)"/><use href="#tree" transform="translate(958 446) scale(0.8999999999999999)"/><use href="#tree" transform="translate(1002 459) scale(1)"/><use href="#tree" transform="translate(1046 420) scale(1.1)"/><use href="#tree" transform="translate(1090 433) scale(0.7)"/><use href="#tree" transform="translate(1134 446) scale(0.7999999999999999)"/><use href="#tree" transform="translate(1178 459) scale(0.8999999999999999)"/><use href="#tree" transform="translate(1222 420) scale(1)"/><use href="#tree" transform="translate(1266 433) scale(1.1)"/><use href="#tree" transform="translate(1310 446) scale(0.7)"/><use href="#tree" transform="translate(1354 459) scale(0.7999999999999999)"/><use href="#tree" transform="translate(1398 420) scale(0.8999999999999999)"/><use href="#tree" transform="translate(1442 433) scale(1)"/>
-</g>
-<!-- distant river -->
-<path d="M0 650Q170 600 300 675T550 716Q680 740 770 660T1010 637Q1200 650 1400 555V1000H0Z" fill="url(#water)"/>
-<path d="M0 660Q170 610 300 685T550 726Q680 750 770 670T1010 647Q1200 660 1400 565" fill="none" stroke="#b4d6c4" stroke-width="9" opacity=".7"/>
-<path d="M0 708Q170 658 300 733T550 774Q680 798 770 718T1010 695Q1200 708 1400 613" fill="none" stroke="#d0e3c9" stroke-width="3" opacity=".5"/>
-<!-- meadow texture -->
-<g fill="#d3c886" opacity=".38"><ellipse cx="41" cy="440" rx="4" ry="2" transform="rotate(0 41 440)"/><ellipse cx="214" cy="511" rx="5" ry="2" transform="rotate(31 214 511)"/><ellipse cx="387" cy="582" rx="6" ry="2" transform="rotate(62 387 582)"/><ellipse cx="560" cy="653" rx="7" ry="2" transform="rotate(93 560 653)"/><ellipse cx="733" cy="724" rx="8" ry="2" transform="rotate(124 733 724)"/><ellipse cx="906" cy="795" rx="9" ry="2" transform="rotate(155 906 795)"/><ellipse cx="1079" cy="866" rx="10" ry="2" transform="rotate(6 1079 866)"/><ellipse cx="1252" cy="497" rx="4" ry="2" transform="rotate(37 1252 497)"/><ellipse cx="25" cy="568" rx="5" ry="2" transform="rotate(68 25 568)"/><ellipse cx="198" cy="639" rx="6" ry="2" transform="rotate(99 198 639)"/><ellipse cx="371" cy="710" rx="7" ry="2" transform="rotate(130 371 710)"/><ellipse cx="544" cy="781" rx="8" ry="2" transform="rotate(161 544 781)"/><ellipse cx="717" cy="852" rx="9" ry="2" transform="rotate(12 717 852)"/><ellipse cx="890" cy="483" rx="10" ry="2" transform="rotate(43 890 483)"/><ellipse cx="1063" cy="554" rx="4" ry="2" transform="rotate(74 1063 554)"/><ellipse cx="1236" cy="625" rx="5" ry="2" transform="rotate(105 1236 625)"/><ellipse cx="9" cy="696" rx="6" ry="2" transform="rotate(136 9 696)"/><ellipse cx="182" cy="767" rx="7" ry="2" transform="rotate(167 182 767)"/><ellipse cx="355" cy="838" rx="8" ry="2" transform="rotate(18 355 838)"/><ellipse cx="528" cy="469" rx="9" ry="2" transform="rotate(49 528 469)"/><ellipse cx="701" cy="540" rx="10" ry="2" transform="rotate(80 701 540)"/><ellipse cx="874" cy="611" rx="4" ry="2" transform="rotate(111 874 611)"/><ellipse cx="1047" cy="682" rx="5" ry="2" transform="rotate(142 1047 682)"/><ellipse cx="1220" cy="753" rx="6" ry="2" transform="rotate(173 1220 753)"/><ellipse cx="1393" cy="824" rx="7" ry="2" transform="rotate(24 1393 824)"/><ellipse cx="166" cy="455" rx="8" ry="2" transform="rotate(55 166 455)"/><ellipse cx="339" cy="526" rx="9" ry="2" transform="rotate(86 339 526)"/><ellipse cx="512" cy="597" rx="10" ry="2" transform="rotate(117 512 597)"/><ellipse cx="685" cy="668" rx="4" ry="2" transform="rotate(148 685 668)"/><ellipse cx="858" cy="739" rx="5" ry="2" transform="rotate(179 858 739)"/><ellipse cx="1031" cy="810" rx="6" ry="2" transform="rotate(30 1031 810)"/><ellipse cx="1204" cy="441" rx="7" ry="2" transform="rotate(61 1204 441)"/><ellipse cx="1377" cy="512" rx="8" ry="2" transform="rotate(92 1377 512)"/><ellipse cx="150" cy="583" rx="9" ry="2" transform="rotate(123 150 583)"/><ellipse cx="323" cy="654" rx="10" ry="2" transform="rotate(154 323 654)"/><ellipse cx="496" cy="725" rx="4" ry="2" transform="rotate(5 496 725)"/><ellipse cx="669" cy="796" rx="5" ry="2" transform="rotate(36 669 796)"/><ellipse cx="842" cy="867" rx="6" ry="2" transform="rotate(67 842 867)"/><ellipse cx="1015" cy="498" rx="7" ry="2" transform="rotate(98 1015 498)"/><ellipse cx="1188" cy="569" rx="8" ry="2" transform="rotate(129 1188 569)"/><ellipse cx="1361" cy="640" rx="9" ry="2" transform="rotate(160 1361 640)"/><ellipse cx="134" cy="711" rx="10" ry="2" transform="rotate(11 134 711)"/><ellipse cx="307" cy="782" rx="4" ry="2" transform="rotate(42 307 782)"/><ellipse cx="480" cy="853" rx="5" ry="2" transform="rotate(73 480 853)"/><ellipse cx="653" cy="484" rx="6" ry="2" transform="rotate(104 653 484)"/><ellipse cx="826" cy="555" rx="7" ry="2" transform="rotate(135 826 555)"/><ellipse cx="999" cy="626" rx="8" ry="2" transform="rotate(166 999 626)"/><ellipse cx="1172" cy="697" rx="9" ry="2" transform="rotate(17 1172 697)"/><ellipse cx="1345" cy="768" rx="10" ry="2" transform="rotate(48 1345 768)"/><ellipse cx="118" cy="839" rx="4" ry="2" transform="rotate(79 118 839)"/><ellipse cx="291" cy="470" rx="5" ry="2" transform="rotate(110 291 470)"/><ellipse cx="464" cy="541" rx="6" ry="2" transform="rotate(141 464 541)"/><ellipse cx="637" cy="612" rx="7" ry="2" transform="rotate(172 637 612)"/><ellipse cx="810" cy="683" rx="8" ry="2" transform="rotate(23 810 683)"/><ellipse cx="983" cy="754" rx="9" ry="2" transform="rotate(54 983 754)"/><ellipse cx="1156" cy="825" rx="10" ry="2" transform="rotate(85 1156 825)"/><ellipse cx="1329" cy="456" rx="4" ry="2" transform="rotate(116 1329 456)"/><ellipse cx="102" cy="527" rx="5" ry="2" transform="rotate(147 102 527)"/><ellipse cx="275" cy="598" rx="6" ry="2" transform="rotate(178 275 598)"/><ellipse cx="448" cy="669" rx="7" ry="2" transform="rotate(29 448 669)"/><ellipse cx="621" cy="740" rx="8" ry="2" transform="rotate(60 621 740)"/><ellipse cx="794" cy="811" rx="9" ry="2" transform="rotate(91 794 811)"/><ellipse cx="967" cy="442" rx="10" ry="2" transform="rotate(122 967 442)"/><ellipse cx="1140" cy="513" rx="4" ry="2" transform="rotate(153 1140 513)"/><ellipse cx="1313" cy="584" rx="5" ry="2" transform="rotate(4 1313 584)"/><ellipse cx="86" cy="655" rx="6" ry="2" transform="rotate(35 86 655)"/><ellipse cx="259" cy="726" rx="7" ry="2" transform="rotate(66 259 726)"/><ellipse cx="432" cy="797" rx="8" ry="2" transform="rotate(97 432 797)"/><ellipse cx="605" cy="868" rx="9" ry="2" transform="rotate(128 605 868)"/><ellipse cx="778" cy="499" rx="10" ry="2" transform="rotate(159 778 499)"/><ellipse cx="951" cy="570" rx="4" ry="2" transform="rotate(10 951 570)"/><ellipse cx="1124" cy="641" rx="5" ry="2" transform="rotate(41 1124 641)"/><ellipse cx="1297" cy="712" rx="6" ry="2" transform="rotate(72 1297 712)"/><ellipse cx="70" cy="783" rx="7" ry="2" transform="rotate(103 70 783)"/><ellipse cx="243" cy="854" rx="8" ry="2" transform="rotate(134 243 854)"/><ellipse cx="416" cy="485" rx="9" ry="2" transform="rotate(165 416 485)"/><ellipse cx="589" cy="556" rx="10" ry="2" transform="rotate(16 589 556)"/><ellipse cx="762" cy="627" rx="4" ry="2" transform="rotate(47 762 627)"/><ellipse cx="935" cy="698" rx="5" ry="2" transform="rotate(78 935 698)"/><ellipse cx="1108" cy="769" rx="6" ry="2" transform="rotate(109 1108 769)"/><ellipse cx="1281" cy="840" rx="7" ry="2" transform="rotate(140 1281 840)"/><ellipse cx="54" cy="471" rx="8" ry="2" transform="rotate(171 54 471)"/><ellipse cx="227" cy="542" rx="9" ry="2" transform="rotate(22 227 542)"/><ellipse cx="400" cy="613" rx="10" ry="2" transform="rotate(53 400 613)"/><ellipse cx="573" cy="684" rx="4" ry="2" transform="rotate(84 573 684)"/></g>
-<!-- dirt roads winding toward castle -->
-<path d="M-30 910Q190 810 330 740T570 620T720 490T860 430" fill="none" stroke="#5a583b" stroke-width="90" opacity=".5"/>
-<path d="M-30 900Q190 800 330 730T570 610T720 480T860 420" fill="none" stroke="#c2a979" stroke-width="69"/>
-<path d="M-30 900Q190 800 330 730T570 610T720 480T860 420" fill="none" stroke="#e0c99a" stroke-width="3" stroke-dasharray="18 15" opacity=".7"/>
-<!-- outer castle shadow and bailey -->
-<ellipse cx="760" cy="485" rx="335" ry="190" fill="#172d20" opacity=".4" filter="url(#soft)"/>
-<path d="M415 515 528 355 828 315 1058 425 1010 570 712 636 440 595Z" fill="#a5a080" stroke="#4d5b4d" stroke-width="10"/>
-<path d="M438 512 543 376 817 340 1028 433 988 550 713 609 461 573Z" fill="#7c9660" stroke="#d3c6a0" stroke-width="5"/>
-<!-- wall segments -->
-<g stroke="#4f5b4e" stroke-width="4">
-<path d="M438 508 542 371 565 379 463 522Z" fill="url(#stone)"/><path d="M463 522 713 575 712 609 461 573Z" fill="url(#stone)"/><path d="M713 575 988 522 988 550 713 609Z" fill="url(#stone)"/><path d="M988 522 1028 433 1058 425 1010 570 988 550Z" fill="url(#stone)"/>
-<path d="M445 499 459 481 470 489 457 507M479 454 493 436 504 444 491 462M514 409 528 391 539 399 526 417" fill="#c9c6a9"/>
-<path d="M494 579 494 557M529 587 529 564M564 595 564 572M599 603 599 580M634 610 634 587M669 616 669 593M746 600 746 577M781 593 781 570M816 586 816 563M851 579 851 556M886 572 886 549M921 565 921 542M956 558 956 535" stroke="#6e786a" stroke-width="3"/>
-</g>
-<!-- central keep -->
-<path d="M598 477V352L645 319H800L844 351V477Z" fill="url(#stone)" stroke="#48574c" stroke-width="5"/>
-<path d="M583 355 645 306H800L859 355 832 366 795 334H650L611 367Z" fill="#d1c9ac" stroke="#4e5a4e" stroke-width="5"/>
-<path d="M625 477V390H815V477Z" fill="url(#blocks)" opacity=".75"/>
-<path d="M685 477V425Q720 386 755 425V477Z" fill="#342f26" stroke="#c3b99b" stroke-width="4"/>
-<path d="M701 477V432Q720 410 739 432V477Z" fill="#181f1a"/>
-<g fill="#c4c2a7" stroke="#4e5a4e" stroke-width="4">
-<path d="M600 352V304H632V352Z"/><path d="M591 305V279H601V289H612V279H622V305Z"/>
-<path d="M812 352V304H844V352Z"/><path d="M808 305V279H818V289H829V279H840V305Z"/>
-<path d="M654 321V280H685V321Z"/><path d="M648 281V254H659V264H670V254H681V281Z"/>
-<path d="M761 321V280H792V321Z"/><path d="M755 281V254H766V264H777V254H788V281Z"/>
-</g>
-<g fill="#7fb0b7" stroke="#5a5c4c" stroke-width="3"><path d="M638 375h18v25h-18z"/><path d="M770 375h18v25h-18z"/><path d="M699 358h20v25h-20z"/></g>
-<g fill="#d8cda7" stroke="#655c43" stroke-width="3"><path d="M644 375h5v25h-5z"/><path d="M776 375h5v25h-5z"/></g>
-<!-- gatehouse and drawbridge -->
-<path d="M674 555V485L708 459H767L803 485V555Z" fill="url(#stone)" stroke="#4e594d" stroke-width="5"/>
-<path d="M690 555V505Q738 452 786 505V555Z" fill="#352d23" stroke="#d1c5a2" stroke-width="5"/>
-<path d="M707 555V509Q738 480 769 509V555Z" fill="#161c17"/>
-<path d="M697 555 672 586 789 586 777 555Z" fill="#795b3b" stroke="#3c3226" stroke-width="5"/>
-<path d="M695 565 779 565M687 576 784 576" stroke="#c4a477" stroke-width="4"/>
-<!-- left and right towers -->
-<g transform="translate(500 465) scale(1.16)"><use href="#tower"/><path d="M-31-86 0-112 31-86Z" fill="url(#roof)" stroke="#57362b" stroke-width="4"/><path d="M0-112V-139" stroke="#e8d59b" stroke-width="3"/><path d="M0-139 27-131 0-123Z" fill="#b64d3b"/></g>
-<g transform="translate(956 463) scale(1.15)"><use href="#tower"/><path d="M-31-86 0-112 31-86Z" fill="url(#roof)" stroke="#57362b" stroke-width="4"/><path d="M0-112V-139" stroke="#e8d59b" stroke-width="3"/><path d="M0-139 27-131 0-123Z" fill="#d4b85b"/></g>
-<!-- village homes in foreground -->
-<g transform="translate(325 620) scale(1.12)"><use href="#house"/></g>
-<g transform="translate(440 678) scale(.92)"><use href="#house"/></g>
-<g transform="translate(918 628) scale(1.15)"><use href="#house"/></g>
-<g transform="translate(1034 682) scale(.9)"><use href="#house"/></g>
-<g transform="translate(575 666) scale(.78)"><use href="#house"/></g>
-<!-- barn and market -->
-<g transform="translate(250 746) scale(.95)"><path d="M-40 0V-48L0-79 40-48V0Z" fill="#a58d62" stroke="#51442e" stroke-width="4"/><path d="M-46-47 0-90 46-47 31-42 0-71-31-42Z" fill="#73513b" stroke="#44362a" stroke-width="4"/><path d="M-19 0V-36H19V0" fill="#69492f" stroke="#45372a" stroke-width="3"/><path d="M0-36V0" stroke="#c9a36b" stroke-width="3"/></g>
-<!-- trees foreground and around city -->
-<g><use href="#tree" transform="translate(48 530) scale(0.85)"/><use href="#tree" transform="translate(120 475) scale(1)"/><use href="#tree" transform="translate(205 530) scale(1.15)"/><use href="#tree" transform="translate(300 550) scale(0.8)"/><use href="#tree" transform="translate(365 495) scale(0.95)"/><use href="#tree" transform="translate(405 740) scale(1.2)"/><use href="#tree" transform="translate(1070 520) scale(0.9)"/><use href="#tree" transform="translate(1130 480) scale(1.05)"/><use href="#tree" transform="translate(1210 535) scale(0.85)"/><use href="#tree" transform="translate(1320 500) scale(1.1)"/><use href="#tree" transform="translate(1380 570) scale(0.9)"/><use href="#tree" transform="translate(75 690) scale(1.3)"/><use href="#tree" transform="translate(190 635) scale(0.95)"/><use href="#tree" transform="translate(280 835) scale(1.1)"/><use href="#tree" transform="translate(1110 750) scale(0.85)"/><use href="#tree" transform="translate(1240 675) scale(1.1)"/><use href="#tree" transform="translate(1350 790) scale(0.9)"/><use href="#tree" transform="translate(340 830) scale(1.2)"/><use href="#tree" transform="translate(1010 720) scale(0.8)"/><use href="#tree" transform="translate(1170 830) scale(1.15)"/><use href="#tree" transform="translate(60 860) scale(0.9)"/><use href="#tree" transform="translate(1300 900) scale(1.1)"/><use href="#tree" transform="translate(230 920) scale(0.9)"/><use href="#tree" transform="translate(1090 930) scale(1.15)"/><use href="#tree" transform="translate(1280 940) scale(0.8)"/><use href="#tree" transform="translate(370 930) scale(1.1)"/><use href="#tree" transform="translate(980 890) scale(0.95)"/><use href="#tree" transform="translate(1190 920) scale(1.2)"/><use href="#tree" transform="translate(90 950) scale(0.8)"/><use href="#tree" transform="translate(1320 960) scale(1.05)"/><use href="#tree" transform="translate(210 780) scale(1.15)"/></g>
-<!-- bridge across river -->
-<path d="M570 705 715 731 772 716 630 687Z" fill="#4a4635" stroke="#d0b783" stroke-width="5"/><path d="M582 704 719 728M595 697 733 722M610 692 747 718" stroke="#a58a5a" stroke-width="5"/>
-
-<!-- richer medieval details: battlements, roof tiles, lit windows, banners, crop rows -->
-<g opacity=".7" stroke="#5c4b37" stroke-width="2" fill="none">
-<path d="M603 368H839M605 380H837M607 392H835M609 404H833M611 416H831M613 428H829M615 440H827M617 452H825" opacity=".6"/>
-<path d="M615 369l12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10m12-10 12 10" opacity=".4"/>
-</g>
-<g stroke="#59372c" stroke-width="2" opacity=".82">
-<path d="M-3-1" fill="none"/>
-<path d="M288 582l37-31 37 31M402 644l38-32 38 32M881 589l37-31 37 31M1000 649l34-29 34 29M550 646l25-22 25 22" fill="none" stroke="#e1bd83" stroke-width="4"/>
-<path d="M289 582 325 553 361 582M403 644 440 612 477 644M882 589 918 558 954 589M1000 649 1034 620 1068 649" fill="none" stroke="#5d372d" stroke-width="2"/>
-</g>
-<!-- small flags above the keep -->
-<g stroke="#6b392b" stroke-width="3">
-<path d="M659 255V224M766 255V225" stroke="#574631" stroke-width="3"/>
-<path d="M659 225 690 233 659 242Z" fill="#a94735" stroke="#6d3428"/>
-<path d="M766 226 795 234 766 243Z" fill="#c6a74e" stroke="#715b2f"/>
-</g>
-<!-- warm windows and torch points -->
-<g fill="#f6c86b" stroke="#76563a" stroke-width="2">
-<rect x="640" y="376" width="12" height="19" rx="2"/><rect x="774" y="376" width="12" height="19" rx="2"/>
-<rect x="701" y="359" width="15" height="20" rx="2"/>
-<rect x="488" y="432" width="8" height="12" rx="2"/><rect x="945" y="430" width="8" height="12" rx="2"/>
-</g>
-<g fill="#ffe6a0" opacity=".55"><circle cx="646" cy="384" r="11"/><circle cx="780" cy="384" r="11"/><circle cx="708" cy="368" r="13"/></g>
-<!-- farmlands outside the walls -->
-<g transform="translate(1120 760) rotate(-14)" opacity=".82">
-<path d="M-95 0 20-40 98 14-20 55Z" fill="#9a9953" stroke="#4f6339" stroke-width="4"/>
-<path d="M-79 5 35-34M-60 16 54-24M-40 27 74-13M-20 37 92 0" stroke="#d6c77c" stroke-width="7" opacity=".75"/>
-<path d="M-89 1 27-38M-70 11 45-28M-50 22 65-17M-30 32 84-7" stroke="#637b3d" stroke-width="3"/>
-</g>
-<!-- flock of birds in the distance -->
-<g fill="none" stroke="#354a43" stroke-width="3" stroke-linecap="round" opacity=".75">
-<path d="M310 195q12-13 23 0q11-13 23 0M375 226q9-10 18 0q9-10 18 0M1015 245q10-12 20 0q10-12 20 0M1080 205q7-8 15 0q8-8 15 0"/>
-</g>
-\n<!-- foreground lighting -->
-<rect width="1400" height="1000" fill="url(#shadow)"/>
-<!-- tappable areas, invisible -->
-<g id="hotspots" fill="#fff" fill-opacity="0" stroke="#fff0a0" stroke-opacity="0" stroke-width="4" style="cursor:pointer">
-<path data-building="castle" d="M560 240H875V500H560Z"/>
-<path data-building="village" d="M230 560H490V730H230Z"/>
-<path data-building="farm" d="M190 700H310V830H190Z"/>
-<path data-building="tower" d="M440 340H550V500H440Z"/>
-<path data-building="market" d="M850 560H1080V740H850Z"/>
-</g>
-</svg>
-<div class="hud"><div class="crest">♜</div><div class="resources"><div class="resource"><span>🪙</span><b id="gold">120</b></div><div class="resource"><span>🪵</span><b id="wood">80</b></div><div class="resource"><span>🌾</span><b id="food">100</b></div></div></div>
-<div class="side-tools"><button class="tool" data-tip="Xəritə">🗺</button><button class="tool" data-tip="Ordu">⚔</button><button class="tool" data-tip="Tapşırıqlar">📜</button></div>
-<div class="bottom"><div class="portrait">👑</div><div class="builds"><button class="build" data-build="house" data-tip="Ev tik">⌂</button><button class="build" data-build="farm" data-tip="Ferma tik">🌾</button><button class="build" data-build="barracks" data-tip="Kazarma tik">⚔</button><button class="build" data-build="wall" data-tip="Divar tik">🧱</button><button class="build" data-build="market" data-tip="Bazar tik">⚒</button></div><button class="turn" id="next">➜</button></div>
-<div class="tip" id="tip"></div></main>
-<script>
-let resources={gold:120,wood:80,food:100},year=1,selected='';
-const tip=document.getElementById('tip');
-function toast(t){tip.textContent=t;tip.classList.add('show');clearTimeout(window.tipTimer);window.tipTimer=setTimeout(()=>tip.classList.remove('show'),1500)}
-document.querySelectorAll('[data-tip]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.tip)));
-document.querySelectorAll('[data-build]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-build]').forEach(x=>x.classList.remove('active'));b.classList.add('active');selected=b.dataset.build;toast(b.dataset.tip+' — xəritədə yer seç');}));
-document.querySelectorAll('#hotspots [data-building]').forEach(p=>p.addEventListener('click',()=>{if(!selected){toast('Tikinti seç');return}if(resources.gold<25||resources.wood<10){toast('Resurs çatmır');return}resources.gold-=25;resources.wood-=10;document.getElementById('gold').textContent=resources.gold;document.getElementById('wood').textContent=resources.wood;p.setAttribute('fill-opacity','.14');p.setAttribute('stroke-opacity','.9');toast('Tikinti sahəsi seçildi');selected='';document.querySelectorAll('[data-build]').forEach(x=>x.classList.remove('active'));}));
-document.getElementById('next').addEventListener('click',()=>{year++;resources.gold+=25;resources.wood+=12;resources.food+=20;for(const k of Object.keys(resources))document.getElementById(k).textContent=resources[k];toast('İl '+year);});
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8298a0;color:#f8e8bd;font-family:Georgia,serif}#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}.top{position:absolute;top:env(safe-area-inset-top,8px);left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.crest{width:49px;height:56px;display:grid;place-items:center;font-size:27px;background:linear-gradient(145deg,#5d7047,#1c2b20);border:2px solid #d8b96d;clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);filter:drop-shadow(0 3px 5px #0009)}.resources{display:flex;gap:5px}.res{background:#17251de8;border:1px solid #c8a85f;border-top:0;border-radius:0 0 8px 8px;padding:8px 9px;min-width:57px;text-align:center;box-shadow:0 3px 8px #0007;font:700 13px system-ui}.res b{font-size:16px;margin-right:3px}.tools{position:absolute;right:10px;top:43%;display:grid;gap:9px}.tool{width:44px;height:44px;border-radius:50%;border:2px solid #d7b66b;background:linear-gradient(135deg,#506443,#17271c);color:#ffe8a4;font-size:21px;box-shadow:0 3px 8px #0008}.bottom{position:absolute;bottom:0;left:0;right:0;padding:24px 12px max(12px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:10px;background:linear-gradient(0deg,#101a14f5,#101a14c9 58%,transparent)}.builds{display:flex;justify-content:center;gap:8px;flex:1}.build{width:57px;height:59px;border:1px solid #bda05e;border-radius:8px;background:linear-gradient(145deg,#40543a,#17241a);color:#f8e5ad;font-size:24px;box-shadow:0 3px 7px #0008}.build small{display:block;font:10px system-ui;margin-top:2px}.build.active{outline:2px solid #ffe4a0;transform:translateY(-4px)}.portrait{height:57px;width:48px;border:2px solid #d0ad5e;border-radius:7px;background:linear-gradient(135deg,#8a9b70,#34432c);font-size:27px}.toast{position:absolute;left:50%;top:18%;transform:translate(-50%,-8px);background:#17251eeF;border:1px solid #c8a85f;border-radius:8px;padding:10px 15px;color:#ffe8ae;font:13px system-ui;opacity:0;transition:.2s;pointer-events:none;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}.hint{position:absolute;left:50%;bottom:100px;transform:translateX(-50%);color:#fff4d3;background:#17251e9c;border-radius:20px;padding:6px 12px;font:11px system-ui;white-space:nowrap;pointer-events:none}@media(min-width:800px){.build{width:68px;height:65px}.res{padding:10px 15px}.hint{bottom:112px}}
+</style></head><body><div id="game"></div>
+<div class="top"><div class="crest">♜</div><div class="resources"><div class="res"><b>🪙</b><span id="gold">1250</span></div><div class="res"><b>🪵</b><span id="wood">840</span></div><div class="res"><b>🪨</b><span id="stone">620</span></div><div class="res"><b>🌾</b><span id="food">930</span></div></div></div>
+<div class="tools"><button class="tool" data-action="view" aria-label="Mənzərə">⌖</button><button class="tool" data-action="army" aria-label="Ordu">⚔</button><button class="tool" data-action="map" aria-label="Xəritə">▦</button></div>
+<div class="hint">Mənzərəni barmaqla sürüşdür · yaxınlaşdırmaq üçün iki barmaq</div>
+<div class="bottom"><div class="portrait">🛡️</div><div class="builds"><button class="build" data-build="house">⌂<small>Ev</small></button><button class="build" data-build="tower">♜<small>Qüllə</small></button><button class="build" data-build="farm">♧<small>Ferma</small></button><button class="build" data-build="lumber">🪓<small>Meşəçi</small></button><button class="build" data-build="mine">⛏<small>Mədən</small></button></div><button class="build" id="next">⏩<small>İrəli</small></button></div><div class="toast" id="toast"></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js';
+const root=document.getElementById('game');
+const scene=new THREE.Scene();scene.background=new THREE.Color('#9ab0b5');scene.fog=new THREE.Fog('#9ab0b5',42,105);
+const camera=new THREE.PerspectiveCamera(39,innerWidth/innerHeight,.1,180);camera.position.set(26,29,35);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;root.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,2,0);controls.enableDamping=true;controls.dampingFactor=.055;controls.minDistance=16;controls.maxDistance=65;controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.22;controls.enablePan=true;controls.panSpeed=.65;
+scene.add(new THREE.HemisphereLight(0xdde8e2,0x4c5037,2.05));const sun=new THREE.DirectionalLight(0xffe0b0,3.1);sun.position.set(-22,35,18);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;sun.shadow.bias=-.00035;scene.add(sun);
+const mat=(color,rough=.9,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+const grass=mat('#62774a'),grass2=mat('#788653'),stone=mat('#8c8b7d'),stoneDark=mat('#62665f'),stoneLight=mat('#b0a995'),roof=mat('#55443b'),roofRed=mat('#714b3b'),wood=mat('#58412b'),woodLight=mat('#80603b'),water=mat('#527f88',.24,.08),field=mat('#b2a35d'),leafMats=['#405d38','#4d693d','#657744','#344d32'].map(c=>mat(c)),rockMat=mat('#77786d'),gold=mat('#c4a25d',.55,.25);
+function mesh(g,m,x,y,z,opts={}){let o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=opts.cast!==false;o.receiveShadow=true;if(opts.rot)o.rotation.set(...opts.rot);scene.add(o);return o}
+function box(x,y,z,sx,sy,sz,m,opts={}){return mesh(new THREE.BoxGeometry(sx,sy,sz),m,x,y,z,opts)}
+function cylinder(x,y,z,rt,rb,h,m,seg=12){return mesh(new THREE.CylinderGeometry(rt,rb,h,seg),m,x,y,z)}
+function cone(x,y,z,r,h,m,seg=12){return mesh(new THREE.ConeGeometry(r,h,seg),m,x,y,z)}
+// rolling terrain
+const terrainGeo=new THREE.PlaneGeometry(120,120,90,90);terrainGeo.rotateX(-Math.PI/2);const p=terrainGeo.attributes.position;for(let i=0;i<p.count;i++){let x=p.getX(i),z=p.getZ(i);p.setY(i,Math.sin(x*.22)*.22+Math.cos(z*.19)*.25+Math.sin((x+z)*.13)*.17)}terrainGeo.computeVertexNormals();const terrain=mesh(terrainGeo,grass,0,-.18,0,{cast:false});terrain.receiveShadow=true;
+// layered distant hills
+for(let i=0;i<14;i++){let x=-48+i*7.5,h=5+Math.sin(i*1.8)*3+Math.random()*2;let hill=mesh(new THREE.ConeGeometry(10,h,7),mat(i%2?'#657c79':'#728783'),x,h*.38,-40-Math.random()*9,{cast:false});hill.scale.z=1.35;}
+// winding river
+const riverPts=[new THREE.Vector3(-38,.02,18),new THREE.Vector3(-27,.04,12),new THREE.Vector3(-20,.04,6),new THREE.Vector3(-15,.04,-2),new THREE.Vector3(-8,.04,-10),new THREE.Vector3(0,.04,-17),new THREE.Vector3(12,.04,-26),new THREE.Vector3(26,.04,-34)];
+const riverCurve=new THREE.CatmullRomCurve3(riverPts);const river=mesh(new THREE.TubeGeometry(riverCurve,100,2.25,8,false),water,0,0,0,{cast:false});river.material.side=THREE.DoubleSide;
+// riverbank stones
+for(let i=0;i<75;i++){let t=i/75,pt=riverCurve.getPoint(t),side=i%2?1:-1;let s=.2+Math.random()*.42;mesh(new THREE.DodecahedronGeometry(s,0),rockMat,pt.x+side*(2+Math.random()),.1+s*.25,pt.z+side*(.4+Math.random()),{cast:false});}
+// road to castle
+const roadPts=[new THREE.Vector3(1,.03,28),new THREE.Vector3(1,.03,20),new THREE.Vector3(-3,.03,13),new THREE.Vector3(-2,.03,7),new THREE.Vector3(0,.03,1)];
+const road=mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(roadPts),60,1.4,7,false),mat('#a39370'),0,0,0,{cast:false});
+// castle platform
+cylinder(0,.32,0,13.8,14.5,.8,mat('#5a6547'),48);cylinder(0,.75,0,12.5,13,.35,mat('#91866c'),48);
+// outer wall four sides with crenellations
+function wall(x,z,len,rot=0){let w=box(x,2.25,z,len,3.0,.75,stone,{rot:[0,rot,0]});let n=Math.floor(len/1.35);for(let i=0;i<n;i++){let xx=x-Math.cos(rot)*len/2+(i+.5)*len/n,zz=z+Math.sin(rot)*(xx-x);box(xx,3.95,zz,.52,.55,.9,stoneLight,{cast:true})}for(let y=1.25;y<3.2;y+=.85)for(let i=0;i<n;i++)box(x-len/2+(i+.5)*len/n,y,z-.4,.8,.07,.06,stoneDark,{cast:false});return w}
+wall(0,-9.8,19.5);wall(0,9.8,19.5);wall(-9.8,0,19.5,Math.PI/2);wall(9.8,0,19.5,Math.PI/2);
+// round corner towers
+function tower(x,z,r=1.7,h=6){cylinder(x,h/2+.8,z,r,r,h,stone,16);cylinder(x,h+.8,z,r*1.12,r*1.12,.32,stoneDark,16);for(let i=0;i<10;i++){let a=i*Math.PI/5;box(x+Math.cos(a)*r*.83,h+1.1,z+Math.sin(a)*r*.83,.42,.5,.42,stoneLight)}cone(x,h+2.25,z,r*1.22,2.5,roofRed,12);cylinder(x,h+1.12,z,r*.86,r*.86,.18,wood,16);for(let yy=2;yy<h-1;yy+=1.35){let a=.4;box(x+Math.cos(a)*r*.93,yy,z+Math.sin(a)*r*.93,.23,.65,.12,woodLight,{rot:[0,-a,0]})}}
+tower(-9.8,-9.8,1.65,6.3);tower(9.8,-9.8,1.65,6.3);tower(-9.8,9.8,1.65,6.3);tower(9.8,9.8,1.65,6.3);
+// gatehouse and raised portcullis
+box(0,2.1,9.8,4.4,4.3,1.4,stone);box(0,4.4,9.8,4.9,.55,1.7,stoneLight);box(0,1.4,9.02,1.9,2.7,.25,wood);for(let i=-3;i<=3;i++)box(i*.24,1.3,8.85,.08,2.5,.08,gold);
+tower(-2.3,9.7,1.1,4.2);tower(2.3,9.7,1.1,4.2);
+// keep base, upper floors, roof
+box(0,2.4,-1.5,8,4.2,6.5,stone);box(0,4.55,-1.5,8.3,.35,6.8,stoneDark);box(0,5.65,-1.5,6.7,2.3,5.4,stoneLight);box(0,6.9,-1.5,7.1,.35,5.8,stone);box(0,7.8,-1.5,5.8,1.6,4.6,stone);
+box(-3.4,8.2,-1.5,.45,1.1,4.8,stoneLight);box(3.4,8.2,-1.5,.45,1.1,4.8,stoneLight);box(0,8.8,-3.7,6.9,.6,.5,stoneLight);box(0,8.8,.7,6.9,.6,.5,stoneLight);
+cone(-1.7,10,-1.5,2.15,2.7,roof,4);cone(1.7,10,-1.5,2.15,2.7,roof,4);
+for(let i=0;i<5;i++){let x=-2.6+i*1.3;box(x,5.5,1.82,.38,.75,.18,wood);box(x,5.7,1.7,.18,.4,.08,gold)}
+for(let x of [-2.6,2.6]){box(x,2.8,1.83,.55,1.2,.18,wood);box(x,3.1,1.72,.25,.6,.08,gold)}
+// roof ridge and banners
+box(0,9.2,-1.5,5.5,.18,.2,wood);cylinder(0,11.5,-1.5,.08,.08,2,gold,8);mesh(new THREE.PlaneGeometry(1.2,.8),mat('#9c3e32'),.55,11.05,-1.5,{rot:[0,0,-.08]});
+// inner barracks and armory
+function house(x,z,s=1,roofMat=roof){box(x,.75*s,z,2.7*s,1.5*s,2.4*s,mat('#b4a486'));let g=new THREE.ConeGeometry(1.9*s,1.5*s,4);g.rotateY(Math.PI/4);mesh(g,roofMat,x,1.95*s,z);box(x,.65*s,z+1.22*s,.45*s,.9*s,.1*s,wood);for(let xx of [x-.7*s,x+.7*s])box(xx,1*s,z+1.24*s,.22*s,.3*s,.08*s,mat('#e5b65e'))}
+house(-5,-4,.85,roofRed);house(5,-4,.9,roof);house(-5,4,.8,roof);house(5,4,.85,roofRed);
+// walkways
+for(let i=0;i<16;i++){let a=i/16*Math.PI*2;let x=Math.cos(a)*6.7,z=Math.sin(a)*6.7;mesh(new THREE.BoxGeometry(1.1,.09,.75),mat('#b0a487'),x,.98,z,{rot:[0,-a,0],cast:false})}
+// village outside walls
+const village=[[-17,13],[-21,8],[-17,3],[-20,-3],[-15,-15],[-9,-17],[1,-17],[15,-14],[18,-7],[18,5],[16,14],[8,17],[-3,18]];
+village.forEach((v,i)=>{house(v[0],v[1],.75+(i%3)*.12,i%2?roof:roofRed);});
+// timber fences around gardens
+for(let i=0;i<5;i++){let x=-22+i*2.2;box(x,.5,17,.12,.9,3.5,woodLight);box(x,.8,15.4,.12,.15,3.5,woodLight)}
+// crop fields with furrows
+for(let f=0;f<3;f++){let x=20+f*3.3,z=13-f*1.2;box(x,.04,z,3.0,.1,5.5,field,{cast:false});for(let j=0;j<7;j++)box(x-1.25+j*.4,.15,z,.055,.18,5.1,mat('#817344'),{cast:false});}
+// trees, layered foliage
+function tree(x,z,s=1){let h=1.8*s;cylinder(x,h/2,z,.18*s,.28*s,h,wood,7);for(let j=0;j<3;j++){let r=(1.15-j*.2)*s;mesh(new THREE.IcosahedronGeometry(r,1),leafMats[(Math.random()*leafMats.length)|0],x,.9*s+j*.75*s,z,{cast:true}).scale.set(1,1.1,.92)}}
+for(let i=0;i<115;i++){let x=(Math.random()-.5)*82,z=(Math.random()-.5)*76;if(Math.abs(x)<14&&Math.abs(z)<14)continue;if(Math.abs(x)<18&&Math.abs(z)<18&&Math.random()<.7)continue;if(x>-4&&x<8&&z>0&&z<24)continue;tree(x,z,.65+Math.random()*.9)}
+// rocks and grass tufts
+for(let i=0;i<160;i++){let x=(Math.random()-.5)*75,z=(Math.random()-.5)*70;if(Math.abs(x)<13&&Math.abs(z)<13)continue;let s=.08+Math.random()*.22;mesh(new THREE.DodecahedronGeometry(s,0),i%3?rockMat:grass2,x,.04+s*.2,z,{cast:false}).rotation.set(Math.random(),Math.random(),Math.random())}
+// bridge across river
+const bridge=box(-15,.5,1,5,.35,2.7,woodLight,{rot:[0,-.5,0]});for(let i=0;i<7;i++)box(-17+i*.65,.76,1,.12,.25,2.8,wood,{rot:[0,-.5,0]});
+// birds / distant atmosphere represented by tiny dark silhouettes
+for(let i=0;i<9;i++){let g=new THREE.Group();let wing=mesh(new THREE.BoxGeometry(.28,.025,.08),mat('#3e4c46'),0,0,0,{cast:false});wing.rotation.z=.35;g.add(wing);g.position.set(-24+i*6,10+Math.sin(i)*2,-24-Math.random()*8);scene.add(g)}
+// interactive selection and construction
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected='',goldCount=1250,woodCount=840,foodCount=930,stoneCount=620,year=1;const buildObjects=[];
+function toast(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),1900)}
+function placeBuilding(point,type){let x=Math.round(point.x/2)*2,z=Math.round(point.z/2)*2;if(Math.abs(x)<13&&Math.abs(z)<13){toast('Qala divarlarının içində tikinti üçün boş sahə seç');return}if(goldCount<100||woodCount<50){toast('Resurs çatmır');return}goldCount-=100;woodCount-=50;document.getElementById('gold').textContent=goldCount;document.getElementById('wood').textContent=woodCount;let obj;if(type==='tower'){cylinder(x,1.7,z,.8,.95,3.1,stone,12);cone(x,3.8,z,1.05,1.2,roofRed,8)}else if(type==='farm'){box(x,.08,z,3,.15,3.5,field,{cast:false});for(let i=0;i<6;i++)box(x-1.2+i*.48,.22,z,.05,.22,3.1,mat('#817344'),{cast:false})}else if(type==='lumber'){tree(x,z,1.1)}else if(type==='mine'){mesh(new THREE.DodecahedronGeometry(1.2,1),rockMat,x,.6,z);mesh(new THREE.DodecahedronGeometry(.65,1),mat('#9a9d92'),x+.8,.4,z+.3)}else{house(x,z,1.05,roofRed)}toast('Tikinti yerləşdirildi');selected='';document.querySelectorAll('[data-build]').forEach(b=>b.classList.remove('active'))}
+renderer.domElement.addEventListener('pointerdown',e=>{if(!selected)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);const plane=new THREE.Plane(new THREE.Vector3(0,1,0),0);const p=new THREE.Vector3();if(raycaster.ray.intersectPlane(plane,p))placeBuilding(p,selected)});
+document.querySelectorAll('[data-build]').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.build;document.querySelectorAll('[data-build]').forEach(x=>x.classList.toggle('active',x===b));toast('Tikinti üçün açıq torpaq sahəsinə toxun')}));document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{let a=b.dataset.action;if(a==='view'){camera.position.set(26,29,35);controls.target.set(0,2,0);controls.update();toast('Qala mənzərəsi')}else if(a==='army')toast('Ordu idarəetməsi növbəti mərhələdə açılacaq');else{camera.position.set(38,42,45);controls.target.set(0,0,0);controls.update();toast('Krallığın ümumi xəritəsi')}}));
+document.getElementById('next').addEventListener('click',()=>{year++;goldCount+=90;woodCount+=65;stoneCount+=35;foodCount+=100;document.getElementById('gold').textContent=goldCount;document.getElementById('wood').textContent=woodCount;document.getElementById('stone').textContent=stoneCount;document.getElementById('food').textContent=foodCount;toast('Yeni gün başladı · resurslar toplandı')});
+function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.8))}addEventListener('resize',resize);
+camera.position.set(26,29,35);controls.target.set(0,2,0);controls.update();
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
 </script></body></html>
