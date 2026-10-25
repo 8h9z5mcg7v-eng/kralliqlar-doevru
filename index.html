@@ -83,6 +83,43 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),grass);ground.rotat
 for(let i=0;i<36;i++){const x=((i*17)%51)-25,z=((i*29)%55)-27;const p=new THREE.Mesh(new THREE.CircleGeometry(1.7+(i%4)*.45,12),i%3?grass2:grass);p.rotation.x=-Math.PI/2;p.position.set(x,-.12,z);scene.add(p)}
 const river=new THREE.Mesh(new THREE.PlaneGeometry(4,65),water);river.rotation.x=-Math.PI/2;river.rotation.z=-.34;river.position.set(-13,-.08,-7);scene.add(river);
 const roadmat=mat('#b4a27d');const road=new THREE.Mesh(new THREE.PlaneGeometry(5,45),roadmat);road.rotation.x=-Math.PI/2;road.rotation.z=.25;road.position.set(0,-.07,14);scene.add(road);
+ // Forest groves and rocky terrain details
+ const bark=mat('#59402b'),leafDark=mat('#31573a'),leafMid=mat('#477342'),leafLight=mat('#688d4b'),rockMat=mat('#858b85'),bushMat=mat('#3c653b');
+ function makeTree(x,z,s=1){
+  const g=new THREE.Group();
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16*s,.25*s,1.35*s,7),bark);
+  trunk.position.y=.66*s;trunk.castShadow=true;g.add(trunk);
+  for(const layer of [{y:1.25,r:.9,h:1.5,m:leafDark},{y:1.9,r:.72,h:1.25,m:leafMid},{y:2.45,r:.48,h:.95,m:leafLight}]){
+   const crown=new THREE.Mesh(new THREE.ConeGeometry(layer.r*s,layer.h*s,7),layer.m);
+   crown.position.y=layer.y*s;crown.rotation.y=(x-z)*.035;crown.castShadow=true;crown.receiveShadow=true;g.add(crown);
+  }
+  g.position.set(x,0,z);g.rotation.y=((x*13+z*7)%9)*.31;world.add(g);return g;
+ }
+ function makeRock(x,z,s=1){
+  const g=new THREE.Group();
+  const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),rockMat);
+  rock.scale.set(1.2,.72,.9);rock.position.y=s*.52;rock.rotation.set((x%3)*.12,(z%4)*.2,(z%3)*.1);rock.castShadow=true;rock.receiveShadow=true;g.add(rock);
+  const small=new THREE.Mesh(new THREE.DodecahedronGeometry(s*.52,0),stoneDark);
+  small.position.set(s*.72,s*.24,s*.2);small.scale.set(1,.75,.9);small.castShadow=true;g.add(small);
+  g.position.set(x,0,z);world.add(g);return g;
+ }
+ function makeBush(x,z,s=1){
+  const g=new THREE.Group();
+  for(const [dx,dy,dz,k] of [[0,.35,0,.48],[-.32,.27,.08,.35],[.28,.25,-.12,.33]]){
+   const b=new THREE.Mesh(new THREE.IcosahedronGeometry(k*s,1),bushMat);b.position.set(dx*s,dy*s,dz*s);b.scale.y=.8;b.castShadow=true;g.add(b);
+  }
+  g.position.set(x,0,z);world.add(g);
+ }
+ const forestSpots=[[-19,-22],[-14,-24],[-9,-22],[-22,-16],[-17,-13],[-22,-7],[-25,-2],[-20,4],[-17,22],[-12,25],[-7,23],[8,-23],[13,-24],[22,-23],[25,-17],[25,-8],[26,1],[26,7],[23,19],[17,24],[8,25],[2,23],[-27,18],[-29,9]];
+ forestSpots.forEach(([x,z],i)=>{makeTree(x,z,.82+(i%4)*.13);if(i%2===0)makeTree(x+1.8,z+1.1,.68+(i%3)*.12);if(i%3===0)makeBush(x-1.1,z+.9,.9)});
+ [[-12,-15,1.1],[-9,-12,.8],[13,-16,.9],[15,-13,.65],[13,14,1.0],[16,16,.72],[-19,16,.95],[-21,19,.7],[7,-8,.55],[9,-7,.45],[-10,17,.7],[5,21,.8]].forEach(([x,z,s])=>makeRock(x,z,s));
+ // Small ground tufts add texture without covering paths or buildings.
+ for(let i=0;i<48;i++){
+  const x=((i*19)%59)-29,z=((i*31)%57)-28;
+  if(Math.hypot(x,z)<10||Math.hypot(x+13,z+7)<4)continue;
+  makeBush(x,z,.28+(i%3)*.09);
+ }
+
 // Outer defensive walls and gate towers
 const world=new THREE.Group();scene.add(world);
 function makeFallbackCastle(parent){
