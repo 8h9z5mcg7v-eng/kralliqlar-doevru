@@ -118,11 +118,12 @@ const fountainJet=new THREE.Mesh(new THREE.ConeGeometry(.12,.52,7),fountainWater
 for(let i=0;i<8;i++){const a=i*Math.PI/4;const post=new THREE.Mesh(new THREE.CylinderGeometry(.045,.06,.7,6),pavingGold);post.position.set(Math.cos(a)*1.8,.35,Math.sin(a)*1.8);fountain.add(post);const chain=new THREE.Mesh(new THREE.TorusGeometry(.23,.018,4,10,Math.PI),pavingDark);chain.position.set(Math.cos(a+Math.PI/8)*1.8,.28,Math.sin(a+Math.PI/8)*1.8);chain.rotation.y=-a;chain.rotation.x=Math.PI/2;fountain.add(chain)}
 fountain.position.set(0,0,-6.2);
 // Stone royal banners on either side of the main approach.
+const bannerCloths=[];
 for(const side of [-1,1]){
  const bannerPole=new THREE.Group();scene.add(bannerPole);
  const base=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.2,8),stoneDark);base.position.y=.1;bannerPole.add(base);
  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.055,.07,3.4,7),goldmat);pole.position.y=1.85;bannerPole.add(pole);
- const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.95,1.45),new THREE.MeshStandardMaterial({color:side===-1?'#a83c36':'#315a7a',side:THREE.DoubleSide,roughness:.85}));cloth.position.set(.45,2.7,0);bannerPole.add(cloth);
+ const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.95,1.45),new THREE.MeshStandardMaterial({color:side===-1?'#a83c36':'#315a7a',side:THREE.DoubleSide,roughness:.85}));cloth.position.set(.45,2.7,0);bannerPole.add(cloth);bannerCloths.push(cloth);
  const badge=new THREE.Mesh(new THREE.CircleGeometry(.19,8),goldmat);badge.position.set(.45,2.75,.025);bannerPole.add(badge);
  const tip=new THREE.Mesh(new THREE.ConeGeometry(.12,.32,5),goldmat);tip.position.y=3.65;bannerPole.add(tip);
  bannerPole.position.set(side*8.3,0,2.6);
@@ -572,7 +573,7 @@ setInterval(()=>{woodCount+=3+level+(built.farm?4:0);stoneCount+=1+Math.floor(le
 let drag=false,lastX=0,lastY=0;const activePointers=new Set();canvas.addEventListener('pointerdown',e=>{activePointers.add(e.pointerId);if(activePointers.size>1){drag=false;return}drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag||activePointers.size>1)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;yaw-=dx*.005;pitch=THREE.MathUtils.clamp(pitch+dy*.003,.35,1.15);placeCamera()});function endPointer(e){activePointers.delete(e.pointerId);drag=false;if(activePointers.size===1){const id=activePointers.values().next().value;activePointers.delete(id)}}canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);canvas.addEventListener('wheel',e=>{dist=THREE.MathUtils.clamp(dist+e.deltaY*.018,10,42);placeCamera()},{passive:true});
 let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(pinch)dist=THREE.MathUtils.clamp(dist*(pinch/d),10,42);pinch=d;placeCamera()}},{passive:true});canvas.addEventListener('touchend',()=>pinch=0,{passive:true});
 function animate(){requestAnimationFrame(animate);
- const ambience=performance.now()*.001;sails.rotation.z=ambience*.32;flame.scale.set(.82+Math.sin(ambience*11)*.12, .82+Math.sin(ambience*14)*.2, .82+Math.sin(ambience*9)*.12);fireLight.intensity=1.0+Math.sin(ambience*12)*.28;
+ const ambience=performance.now()*.001;sails.rotation.z=ambience*.32;bannerCloths.forEach((cloth,i)=>{cloth.rotation.y=Math.sin(ambience*1.7+i*Math.PI)*.11;cloth.rotation.z=Math.sin(ambience*1.25+i)*.035});waterSurface.position.y=.41+Math.sin(ambience*2.4)*.018;upperWater.position.y=1.32+Math.sin(ambience*2.8)*.012;fountainJet.scale.y=.85+Math.sin(ambience*3.2)*.12;flame.scale.set(.82+Math.sin(ambience*11)*.12, .82+Math.sin(ambience*14)*.2, .82+Math.sin(ambience*9)*.12);fireLight.intensity=1.0+Math.sin(ambience*12)*.28;
  if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);
  for(const a of troopActors){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+(-7+a.home.x*.08-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.8-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.sin(performance.now()*.018+a.phase)*.5}
  for(const a of enemyUnits){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+((a.home.x< -18?-18.8:-17.2)-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.4-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.PI+Math.sin(performance.now()*.02+a.phase)*.45}
