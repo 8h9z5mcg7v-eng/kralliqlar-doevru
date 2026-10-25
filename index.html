@@ -87,7 +87,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,1.35));renderer.setSize(innerWi
 const scene=new THREE.Scene();scene.background=new THREE.Color('#9ab9c2');scene.fog=new THREE.Fog('#9ab9c2',28,90);
 const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,200);let target=new THREE.Vector3(0,0,0),yaw=Math.PI/4,pitch=.82,dist=20;
 function placeCamera(){camera.position.set(target.x+dist*Math.sin(yaw)*Math.cos(pitch),target.y+dist*Math.sin(pitch),target.z+dist*Math.cos(yaw)*Math.cos(pitch));camera.lookAt(target)}placeCamera();
-scene.add(new THREE.HemisphereLight(0xd9efff,0x53603b,2.0));const sun=new THREE.DirectionalLight(0xffe1a4,3.0);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xd9efff,0x53603b,2.0));const sun=new THREE.DirectionalLight(0xffe1a4,3.0);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-38;sun.shadow.camera.right=38;sun.shadow.camera.top=38;sun.shadow.camera.bottom=-38;sun.shadow.bias=-0.00025;scene.add(sun);
 const mat=(c,rough=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:rough});
 const grass=mat('#587b43'),grass2=mat('#73934d'),stone=mat('#c2c4bd'),stoneDark=mat('#5b6263'),roof=mat('#8e3d30'),wood=mat('#69452a'),goldmat=mat('#e8c36e'),water=new THREE.MeshStandardMaterial({color:'#398fa6',roughness:.25,metalness:.12});
 function box(parent,w,h,d,m,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
@@ -252,7 +252,25 @@ function makeTroop(isEnemy=false,isCavalry=false,isArcher=false){
   const blade=new THREE.Mesh(new THREE.BoxGeometry(.045,.45,.055),metalMat);blade.position.set(.25,y+.87,.05);blade.rotation.z=-.35;blade.castShadow=true;g.add(blade);
   const guard=new THREE.Mesh(new THREE.BoxGeometry(.2,.045,.07),goldmat);guard.position.set(.25,y+.68,.05);guard.rotation.z=-.35;g.add(guard);
  }
- for(const side of [-1,1]){const boot=new THREE.Mesh(new THREE.BoxGeometry(.12,.18,.16),bootMat);boot.position.set(side*.1,y+.12,.04);g.add(boot)}
+ for(const side of [-1,1]){
+  const boot=new THREE.Mesh(new THREE.BoxGeometry(.12,.18,.16),bootMat);boot.position.set(side*.1,y+.12,.04);boot.castShadow=true;g.add(boot);
+  const greave=new THREE.Mesh(new THREE.CapsuleGeometry(.065,.19,3,6),isEnemy?enemyShield:metalMat);greave.position.set(side*.1,y+.31,.055);greave.castShadow=true;g.add(greave);
+  const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.07,.25,3,6),isEnemy?enemyMat:clothLight);arm.position.set(side*.235,y+.65,.02);arm.rotation.z=side*.28;arm.castShadow=true;g.add(arm);
+  const vambrace=new THREE.Mesh(new THREE.CylinderGeometry(.075,.085,.17,7),isEnemy?enemyShield:metalMat);vambrace.position.set(side*.27,y+.55,.04);vambrace.rotation.z=side*.28;g.add(vambrace);
+ }
+ // Layered chest plate, rivets, nose guard and a plume distinguish each soldier at game scale.
+ const cuirass=new THREE.Mesh(new THREE.BoxGeometry(.28,.28,.09),isEnemy?enemyShield:metalMat);cuirass.position.set(0,y+.72,.17);cuirass.castShadow=true;g.add(cuirass);
+ for(const side of [-1,1]){const rivet=new THREE.Mesh(new THREE.SphereGeometry(.025,5,4),goldmat);rivet.position.set(side*.085,y+.75,.225);g.add(rivet)}
+ const noseGuard=new THREE.Mesh(new THREE.BoxGeometry(.035,.17,.04),goldmat);noseGuard.position.set(0,y+1.02,.145);g.add(noseGuard);
+ const plume=new THREE.Mesh(new THREE.ConeGeometry(.055,.28,5),isEnemy?mat('#e2b7a1'):mat('#b64236'));plume.position.set(0,y+1.28,-.015);plume.rotation.z=-.12;g.add(plume);
+ const cape=new THREE.Mesh(new THREE.BoxGeometry(.28,.42,.045),isEnemy?enemyMat:shieldBlue);cape.position.set(0,y+.68,-.16);cape.rotation.x=-.08;cape.castShadow=true;g.add(cape);
+ if(isCavalry){
+  // Saddle cloth and bridle make mounted units easier to identify.
+  const saddle=new THREE.Mesh(new THREE.BoxGeometry(.42,.09,.42),isEnemy?enemyShield:shieldBlue);saddle.position.set(0,.72,-.27);saddle.castShadow=true;g.add(saddle);
+  const bridle=new THREE.Mesh(new THREE.TorusGeometry(.14,.025,5,10),goldmat);bridle.position.set(0,.91,.35);bridle.rotation.y=Math.PI/2;g.add(bridle);
+ }else if(!isArcher){
+  const pommel=new THREE.Mesh(new THREE.SphereGeometry(.055,6,5),goldmat);pommel.position.set(.25,y+1.12,.05);g.add(pommel);
+ }
  return g;
 }
 const enemyDisplay=new THREE.Group();scene.add(enemyDisplay);const enemyUnits=[];
