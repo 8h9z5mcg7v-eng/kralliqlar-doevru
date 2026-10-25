@@ -410,6 +410,37 @@ castleAssetLoader.load('https://cdn.3dassets.dev/assets/23508/v1/model.glb',(glt
   });
   if(node.material.length===1)node.material=node.material[0];
  });
+ // Add a small set of royal standards around the imported keep to give the kingdom a readable RTS silhouette.
+ const castleBounds=new THREE.Box3().setFromObject(importedCastle);
+ const castleSize=castleBounds.getSize(new THREE.Vector3());
+ const castleCenter=castleBounds.getCenter(new THREE.Vector3());
+ const poleH=Math.max(1.15,castleSize.y*.16),flagW=Math.max(.48,castleSize.x*.045),flagH=poleH*.56;
+ const flagCanvas=document.createElement('canvas');flagCanvas.width=128;flagCanvas.height=160;
+ const flagCtx=flagCanvas.getContext('2d');
+ const flagGrad=flagCtx.createLinearGradient(0,0,128,0);flagGrad.addColorStop(0,'#16334a');flagGrad.addColorStop(.5,'#28536a');flagGrad.addColorStop(1,'#10283b');
+ flagCtx.fillStyle=flagGrad;flagCtx.fillRect(0,0,128,160);
+ flagCtx.strokeStyle='#e8c36e';flagCtx.lineWidth=8;flagCtx.strokeRect(5,5,118,150);
+ flagCtx.beginPath();flagCtx.arc(64,70,25,0,Math.PI*2);flagCtx.fillStyle='#e8c36e';flagCtx.fill();
+ flagCtx.beginPath();flagCtx.moveTo(64,48);flagCtx.lineTo(70,63);flagCtx.lineTo(86,64);flagCtx.lineTo(74,74);flagCtx.lineTo(78,90);flagCtx.lineTo(64,81);flagCtx.lineTo(50,90);flagCtx.lineTo(54,74);flagCtx.lineTo(42,64);flagCtx.lineTo(58,63);flagCtx.closePath();flagCtx.fillStyle='#173448';flagCtx.fill();
+ const flagTexture=new THREE.CanvasTexture(flagCanvas);flagTexture.colorSpace=THREE.SRGBColorSpace;
+ const flagMaterial=new THREE.MeshStandardMaterial({map:flagTexture,roughness:.86,side:THREE.DoubleSide});
+ const flagDecor=new THREE.Group();
+ const standards=[
+  {x:castleCenter.x-castleSize.x*.34,z:castleCenter.z-castleSize.z*.34,rot:-Math.PI/2},
+  {x:castleCenter.x+castleSize.x*.34,z:castleCenter.z-castleSize.z*.34,rot:Math.PI/2},
+  {x:castleCenter.x-castleSize.x*.34,z:castleCenter.z+castleSize.z*.34,rot:-Math.PI/2},
+  {x:castleCenter.x+castleSize.x*.34,z:castleCenter.z+castleSize.z*.34,rot:Math.PI/2}
+ ];
+ for(const standard of standards){
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.025,.04,poleH,8),goldmat);
+  pole.position.set(standard.x,castleBounds.min.y+castleSize.y*.61+poleH*.5,standard.z);pole.castShadow=true;flagDecor.add(pole);
+  const finial=new THREE.Mesh(new THREE.SphereGeometry(.075,10,8),goldmat);
+  finial.position.set(standard.x,castleBounds.min.y+castleSize.y*.61+poleH+.035,standard.z);flagDecor.add(finial);
+  const cloth=new THREE.Mesh(new THREE.PlaneGeometry(flagW,flagH),flagMaterial);
+  cloth.position.set(standard.x+Math.cos(standard.rot)*flagW*.48,castleBounds.min.y+castleSize.y*.61+poleH*.73,standard.z+Math.sin(standard.rot)*flagW*.48);
+  cloth.rotation.y=standard.rot;cloth.castShadow=true;flagDecor.add(cloth);
+ }
+ importedCastle.add(flagDecor);
  castle.clear();
  castle.add(importedCastle);
  loadedCastleModel=true;
