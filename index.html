@@ -17,13 +17,13 @@
   </script>
 </head>
 <body>
-  <canvas id="game-canvas" aria-label="Hexkingdom game world"></canvas>
+  <canvas id="game-canvas" aria-label="Krallıqlar Dövrü oyun xəritəsi"></canvas>
 
   <!-- ===================== HUD ===================== -->
   <header id="hud-top" class="ui-panel">
     <h1 id="game-title">Krallıqlar Dövrü</h1>
     <section id="score-panel" aria-live="polite">
-      <span id="score-label">Score</span>
+      <span id="score-label">Xal</span>
       <span id="score-value">0</span>
       <span id="score-popup" class="hidden"></span>
     </section>
@@ -34,22 +34,22 @@
       <h2 class="panel-title">Torpaq al</h2>
       <p id="tile-cap" class="tile-meta">Sahələr: 0 / 14</p>
       <div id="tile-shop-tabs" class="tile-shop-tabs" role="tablist" aria-label="Sahə kateqoriyaları"></div>
-      <div id="tile-shop" class="tile-shop" role="tabpanel" aria-label="Tile catalog"></div>
+      <div id="tile-shop" class="tile-shop" role="tabpanel" aria-label="Sahə kataloqu"></div>
       <canvas id="tile-preview" width="220" height="220" aria-label="Seçilmiş sahənin önbaxışı"></canvas>
       <p id="tile-name">—</p>
       <div id="tile-cost-breakdown" class="tile-cost-breakdown" aria-label="Yerləşdirmə xərci"></div>
       <p id="tile-prod" class="tile-prod"></p>
       <div class="tile-actions">
         <button id="reroll-btn" class="ui-btn ui-btn--sm" type="button" aria-label="Sahənin kənarlarını qarışdır">⇄ Qarışdır</button>
-        <button id="rotate-btn" class="ui-btn ui-btn--sm" type="button" aria-label="Rotate tile">⟳ Döndər</button>
+        <button id="rotate-btn" class="ui-btn ui-btn--sm" type="button" aria-label="Sahəni döndər">⟳ Döndər</button>
       </div>
       <p id="hint-text">Sahə seç · xəritəyə toxun · R döndər · V qarışdır</p>
     </section>
   </aside>
 
   <footer id="hud-bottom" class="ui-panel">
-    <button id="restart-btn" class="ui-btn danger" aria-label="Restart game">↺ Yenidən başla</button>
-    <button id="debug-btn" class="ui-btn" aria-label="Toggle debug">⚙ Diaqnostika</button>
+    <button id="restart-btn" class="ui-btn danger" aria-label="Oyunu yenidən başlat">↺ Yenidən başla</button>
+    <button id="debug-btn" class="ui-btn" aria-label="Diaqnostikanı aç və bağla">⚙ Diaqnostika</button>
     <span id="tiles-placed-label">Sahələr: <b id="tiles-placed">0</b></span>
     <span id="fps-label" class="hidden">FPS: <b id="fps-value">60</b></span>
   </footer>
