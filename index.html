@@ -100,6 +100,36 @@ const roadmat=mat('#b4a27d');const road=new THREE.Mesh(new THREE.PlaneGeometry(5
 // Castle approach: a tiled stone forecourt, worn paving, and warm gate lanterns.
 const plazaBase=new THREE.Mesh(new THREE.CircleGeometry(10.2,48),mat('#777d73'));plazaBase.rotation.x=-Math.PI/2;plazaBase.position.set(0,-.055,0);plazaBase.receiveShadow=true;scene.add(plazaBase);
 const plazaRim=new THREE.Mesh(new THREE.TorusGeometry(9.9,.16,6,64),mat('#b2a27d'));plazaRim.rotation.x=-Math.PI/2;plazaRim.position.set(0,-.015,0);plazaRim.receiveShadow=true;scene.add(plazaRim);
+// Royal courtyard embellishments: carved paving, drainage, banners, statues and a central fountain.
+const pavingGold=mat('#c6a768'),pavingDark=mat('#5c625f'),fountainStone=mat('#a6aaa0'),fountainWater=new THREE.MeshStandardMaterial({color:'#3e98b0',roughness:.22,metalness:.12});
+for(let side of [-1,1]){
+ const stripe=new THREE.Mesh(new THREE.BoxGeometry(8.2,.025,.12),pavingGold);stripe.position.set(side*5.65,.018,0);scene.add(stripe);
+ const crossStripe=new THREE.Mesh(new THREE.BoxGeometry(.12,.025,8.2),pavingGold);crossStripe.position.set(0,.019,side*5.65);scene.add(crossStripe);
+}
+// Alternating inset stone medallions around the approach.
+for(let i=0;i<16;i++){const a=i*Math.PI/8;const tile=new THREE.Mesh(new THREE.CylinderGeometry(.25,.25,.035,8),i%2?pavingGold:pavingDark);tile.position.set(Math.cos(a)*8.2,.015,Math.sin(a)*8.2);tile.rotation.y=a;scene.add(tile)}
+const fountain=new THREE.Group();scene.add(fountain);
+const basin=new THREE.Mesh(new THREE.CylinderGeometry(1.45,1.28,.38,12),fountainStone);basin.position.y=.2;basin.castShadow=true;fountain.add(basin);
+const waterSurface=new THREE.Mesh(new THREE.CylinderGeometry(1.22,1.22,.035,16),fountainWater);waterSurface.position.y=.41;fountain.add(waterSurface);
+const fountainStem=new THREE.Mesh(new THREE.CylinderGeometry(.2,.34,.85,8),fountainStone);fountainStem.position.y=.78;fountain.add(fountainStem);
+const upperBowl=new THREE.Mesh(new THREE.CylinderGeometry(.7,.48,.16,10),fountainStone);upperBowl.position.y=1.22;fountain.add(upperBowl);
+const upperWater=new THREE.Mesh(new THREE.CylinderGeometry(.56,.56,.025,12),fountainWater);upperWater.position.y=1.32;fountain.add(upperWater);
+const fountainJet=new THREE.Mesh(new THREE.ConeGeometry(.12,.52,7),fountainWater);fountainJet.position.y=1.58;fountain.add(fountainJet);
+for(let i=0;i<8;i++){const a=i*Math.PI/4;const post=new THREE.Mesh(new THREE.CylinderGeometry(.045,.06,.7,6),pavingGold);post.position.set(Math.cos(a)*1.8,.35,Math.sin(a)*1.8);fountain.add(post);const chain=new THREE.Mesh(new THREE.TorusGeometry(.23,.018,4,10,Math.PI),ironDark);chain.position.set(Math.cos(a+Math.PI/8)*1.8,.28,Math.sin(a+Math.PI/8)*1.8);chain.rotation.y=-a;chain.rotation.x=Math.PI/2;fountain.add(chain)}
+fountain.position.set(0,0,-6.2);
+// Stone royal banners on either side of the main approach.
+for(const side of [-1,1]){
+ const bannerPole=new THREE.Group();scene.add(bannerPole);
+ const base=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.2,8),stoneDark);base.position.y=.1;bannerPole.add(base);
+ const pole=new THREE.Mesh(new THREE.CylinderGeometry(.055,.07,3.4,7),goldmat);pole.position.y=1.85;bannerPole.add(pole);
+ const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.95,1.45),new THREE.MeshStandardMaterial({color:side===-1?'#a83c36':'#315a7a',side:THREE.DoubleSide,roughness:.85}));cloth.position.set(.45,2.7,0);bannerPole.add(cloth);
+ const badge=new THREE.Mesh(new THREE.CircleGeometry(.19,8),goldmat);badge.position.set(.45,2.75,.025);bannerPole.add(badge);
+ const tip=new THREE.Mesh(new THREE.ConeGeometry(.12,.32,5),goldmat);tip.position.y=3.65;bannerPole.add(tip);
+ bannerPole.position.set(side*8.3,0,2.6);
+}
+// Decorative stone planters with clipped shrubs.
+for(const [x,z] of [[-7.8,-2.5],[7.8,-2.5],[-7.8,4.8],[7.8,4.8]]){const pot=new THREE.Mesh(new THREE.CylinderGeometry(.42,.32,.38,8),fountainStone);pot.position.set(x,.19,z);scene.add(pot);const shrub=new THREE.Mesh(new THREE.SphereGeometry(.48,8,6),bushMat);shrub.position.set(x,.62,z);shrub.scale.y=.78;shrub.castShadow=true;scene.add(shrub)}
+
 const pavingMats=[mat('#a7a18e'),mat('#8e9288'),mat('#b9b09a'),mat('#777e78')];
 for(let row=-5;row<=5;row++){for(let col=-5;col<=5;col++){const x=col*1.65+(row%2)*.38,z=row*1.55;if(Math.hypot(x,z)>9.25||Math.hypot(x,z)<5.1)continue;const tile=new THREE.Mesh(new THREE.BoxGeometry(1.48,.055,1.36),pavingMats[Math.abs(row*7+col*3)%pavingMats.length]);tile.position.set(x,-.005,z);tile.rotation.y=((row+col)%3)*.025;tile.receiveShadow=true;scene.add(tile)}}
 const lanternMetal=mat('#514537'),lanternGlow=new THREE.MeshStandardMaterial({color:'#ffd783',emissive:'#ff9e36',emissiveIntensity:1.25,roughness:.35});
