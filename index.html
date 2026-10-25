@@ -342,6 +342,41 @@ for(const x of [-.95,.95])for(const z of [-.43,.43])box(stall,.09,1.65,.09,wood,
 const awning=new THREE.Mesh(new THREE.BoxGeometry(2.45,.13,1.4),mat('#a64a38'));awning.position.y=1.68;awning.castShadow=true;stall.add(awning);
 for(let i=0;i<5;i++){const basket=new THREE.Mesh(new THREE.CylinderGeometry(.18,.15,.2,8),mat(i%2?'#b38a4b':'#648147'));basket.position.set(-.75+i*.37,.25,.1);stall.add(basket)}
 stall.position.set(-7,0,8);
+ // Natural world dressing: varied boulders, mossy shrubs, flowers and roadside stones.
+ const rockMats=[mat('#777d79'),mat('#92958b'),mat('#666e6a')],shrubMats=[mat('#345d35'),mat('#49743d'),mat('#63864a')];
+ for(let i=0;i<54;i++){
+  const x=((i*19)%78)-39,z=((i*31)%78)-39;
+  if(Math.hypot(x,z)<11||Math.hypot(x+13,z+7)<5||Math.abs(x)<5&&z>4&&z<25)continue;
+  if(i%3===0){
+   const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.35+(i%4)*.12,0),rockMats[i%rockMats.length]);
+   rock.position.set(x,.17,z);rock.rotation.set(i*.17,i*.41,i*.23);rock.scale.set(1.1,.72,.86);rock.castShadow=true;rock.receiveShadow=true;scene.add(rock);
+   if(i%2===0){const moss=new THREE.Mesh(new THREE.SphereGeometry(.2,6,5),shrubMats[i%shrubMats.length]);moss.position.set(x+.2,.18,z+.12);moss.scale.set(1,.5,1);scene.add(moss)}
+  }else{
+   const bush=new THREE.Group();scene.add(bush);
+   for(let j=0;j<3;j++){const b=new THREE.Mesh(new THREE.IcosahedronGeometry(.28+(j%2)*.07,1),shrubMats[(i+j)%shrubMats.length]);b.position.set((j-1)*.22,.22+(j%2)*.08,(j%2)*.12);b.scale.set(1,.82,1);b.castShadow=true;bush.add(b)}
+   bush.position.set(x,0,z);
+  }
+ }
+ // Small wildflowers and grass clumps soften the edges of paths and fields.
+ const petalMats=[mat('#f1d58b'),mat('#d9b3a0'),mat('#e8e4ce')],stemMat=mat('#486b38');
+ for(let i=0;i<72;i++){
+  const x=((i*13)%58)-29,z=((i*17)%58)-29;
+  if(Math.hypot(x,z)<10||Math.hypot(x+13,z+7)<4||Math.abs(x)<3&&z>5&&z<24)continue;
+  const tuft=new THREE.Group();scene.add(tuft);
+  for(let j=0;j<3;j++){const blade=new THREE.Mesh(new THREE.ConeGeometry(.045,.36,4),stemMat);blade.position.set((j-1)*.09,.17,0);blade.rotation.z=(j-1)*-.25;tuft.add(blade)}
+  if(i%3===0){const flower=new THREE.Mesh(new THREE.SphereGeometry(.075,6,5),petalMats[i%petalMats.length]);flower.position.set(0,.34,.02);tuft.add(flower)}
+  tuft.position.set(x,0,z);
+ }
+ // A timber footbridge over the narrow stream, with rail posts and cross braces.
+ const bridge=new THREE.Group();scene.add(bridge);bridge.position.set(-12.2,0,-1.2);bridge.rotation.y=-.34;
+ const bridgeWood=mat('#68462d'),bridgeEdge=mat('#8c623a');
+ box(bridge,5.2,.22,2.1,bridgeWood,0,.28,0);
+ for(let i=0;i<9;i++){box(bridge,.48,.035,1.95,bridgeEdge,-2.1+i*.525,.405,0)}
+ for(const z of [-.92,.92]){
+  box(bridge,5.3,.12,.12,bridgeWood,0,.92,z);
+  for(let i=0;i<7;i++)box(bridge,.12,.78,.12,bridgeEdge,-2.45+i*.82,.57,z);
+ }
+
 // External GLB is attempted as an enhancement; procedural fallback above is always present.
 let level=1,woodCount=2500,stoneCount=1800,goldCount=900,armyCount=120,mode='select',built={barracks:0,archery:0,stable:0,farm:0};
 let troops={infantry:60,archers:40,cavalry:20},enemy={infantry:50,archers:35,cavalry:25},battleCount=0;
