@@ -320,6 +320,20 @@ button:active{transform:translateY(1px)}
 .building-detail{background:linear-gradient(135deg,#263f31,#182c27)!important;border:1px solid #bca56b!important;box-shadow:inset 0 1px #ffffff14,0 5px 12px #0005}
 @media(prefers-reduced-motion:reduce){.flag-wave,.water-glint{animation:none!important}.tile .building-art{transition:none!important}}
 
+
+/* Kingdom battle feedback and ambient depth */
+@keyframes battleWinPulse{0%{filter:brightness(1)}25%{filter:brightness(1.8) drop-shadow(0 0 12px #ffe17b)}100%{filter:brightness(1)}}
+@keyframes battleLossPulse{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-3px)}40%,80%{transform:translateX(3px)}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+.tile.battle-win .building-art{animation:battleWinPulse 1.2s ease-out}
+.tile.battle-loss .building-art{animation:battleLossPulse .42s ease-in-out 2}
+.kingdom-toast{position:absolute;z-index:15;left:50%;bottom:18%;transform:translateX(-50%);width:max-content;max-width:88%;padding:9px 13px;border:1px solid #e7cf82;border-radius:9px;background:#14281feF;color:#fff2c3;font-weight:800;font-size:12px;text-align:center;box-shadow:0 5px 16px #0009;animation:toastIn .22s ease-out;pointer-events:none}
+.kingdom-toast.loss{border-color:#ce7666;color:#ffe0d6}
+.city-scene{isolation:isolate}
+.city-scene:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;background:linear-gradient(115deg,#fff1 0%,transparent 27%,transparent 72%,#001b1833 100%);mix-blend-mode:screen}
+.city-label,.city-river,.city-wall{z-index:4}
+@media(prefers-reduced-motion:reduce){.tile.battle-win .building-art,.tile.battle-loss .building-art{animation:none!important}}
+
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
@@ -368,6 +382,19 @@ function buildingArt(t){
  if((t.level||1)>=5){s+='<path d="M60 4v-3m0 3 14 5H60" stroke="#f5d77c" stroke-width="3" fill="none"/><circle cx="60" cy="8" r="3" fill="#f6d57b"/>';}
  s+='<path d="M9 80h102" stroke="#e2d39b" stroke-width="2" opacity=".8"/></svg>';
  return s;
+}
+
+/* Kingdom feedback effects: battle pulse and seasonal scene ambience */
+function kingdomToast(message,kind){
+ const old=document.getElementById('kingdomToast');if(old)old.remove();
+ const toast=document.createElement('div');toast.id='kingdomToast';toast.className='kingdom-toast '+(kind||'');
+ toast.textContent=message;document.querySelector('.city-scene')?.appendChild(toast);
+}
+function kingdomBattlePulse(index,won){
+ const el=document.querySelectorAll('#map .tile')[index];if(!el)return;
+ el.classList.remove('battle-win','battle-loss');void el.offsetWidth;
+ el.classList.add(won?'battle-win':'battle-loss');
+ window.setTimeout(()=>el.classList.remove('battle-win','battle-loss'),1400);
 }
 function render(){['gold','wood','food','army'].forEach(k=>$(k).textContent=s[k]);$('turn').textContent=s.year+'-ci il';$('status').textContent=s.over?(s.tiles[19].owner==='mine'?'Qələbə!':'Müharibə bitdi'):'Sülh və inkişaf';$('map').innerHTML='';s.tiles.forEach((t,i)=>{const b=document.createElement('button');b.className='tile '+t.owner+' '+(t.name==='Paytaxt'||t.name.includes('qala')||t.name==='Kral qalası'?'building-castle':t.name.includes('Meşə')||t.name==='Meşəlik'?'building-forest':t.name.includes('Kənd')||t.name==='Bazar'?'building-village':t.name.includes('mədən')||t.name.includes('Dəmir')?'building-mine':t.name.includes('Əkin')||t.name.includes('Taxıl')||t.name==='Otlaq'?'building-farm':t.name==='Liman'?'building-port':t.name==='Dağ'?'building-mountain':'building-land')+(s.selected===i?' selected':'');b.innerHTML='<span class="building-art">'+buildingArt(t)+'</span><span>'+t.name+'</span><small>'+(t.owner==='mine'?'Sənin':t.owner==='enemy'?'Rəqib':'Neytral')+(t.level?' · Lv.'+t.level:'')+(t.fortified?' · 🧱 Müdafiəli':'')+'</small>';b.onclick=()=>{s.selected=i;render()};$('map').appendChild(b)});const t=s.tiles[s.selected];$('selectedText').textContent=t.name+' — '+(t.owner==='mine'?'sənin nəzarətindədir.':t.owner==='enemy'?'rəqibin müdafiəsi: '+t.power+'.':'neytral ərazi, müdafiə gücü: '+t.power+'.');const detail=$('buildingDetail');if(detail){const lv=t.level||1;const kind=t.owner==='mine'?'Sənin binan':t.owner==='enemy'?'Düşmən binası':'Neytral ərazi';const nextCost=(40*lv)+' qızıl · '+(25*lv)+' taxta';detail.innerHTML='<div class="detail-head"><strong>'+t.emoji+' '+t.name+(t.structure?' · '+({farm:'Ferma',lumber:'Taxtaçı',barracks:'Kazarma',market:'Bazar',mine:'Mədən'}[t.structure]||'Bina'):'')+'</strong><span class="level-badge">SƏVİYYƏ '+lv+'/5</span></div><div class="detail-meta">'+kind+' · Güc: '+(t.power||0)+(t.fortified?' · Müdafiə möhkəmləndirilib':'')+'</div><div class="level-track">'+[1,2,3,4,5].map(n=>'<i class="'+(n<=lv?'filled':'')+'"></i>').join('')+'</div><small>'+(t.owner==='mine'?(lv>=5?'Maksimum səviyyə':'Növbəti səviyyə: '+nextCost):'Əraziyə hücum edərək nəzarəti ələ keçir.')+'</small>';}['farm','lumber','train','attack','endTurn','fortify','upgrade','barracks'].forEach(id=>$(id).disabled=s.over);$('attack').disabled=s.over||t.owner==='mine'||s.army<10;$('fortify').disabled=s.over||t.owner!=='mine'||t.fortified;$('upgrade').disabled=s.over||t.owner!=='mine'||(t.level||1)>=5;$('barracks').disabled=s.over||t.owner!=='mine';saveGame()}
 function setupBuildTabs(){const cats={economy:['farm','lumber','market'],military:['train','attack','barracks','hospital','fortify'],upgradeTab:['upgrade','research','endTurn','restart']};document.querySelectorAll('.build-tab').forEach(tab=>{tab.onclick=()=>{document.querySelectorAll('.build-tab').forEach(x=>x.classList.toggle('active',x===tab));const allowed=cats[tab.dataset.tab]||[];document.querySelectorAll('.actions button').forEach(btn=>{btn.classList.toggle('shown',allowed.includes(btn.id));});}});document.querySelectorAll('.actions button').forEach(btn=>{btn.dataset.category='1';});const active=document.querySelector('.build-tab.active');if(active)active.click();}
