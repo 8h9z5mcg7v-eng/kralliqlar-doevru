@@ -325,7 +325,7 @@ captureButton.addEventListener('click',()=>{if(!selectedTerritory)return;const t
 
 document.querySelector('#focusCastle').addEventListener('click',()=>{target.set(0,0,0);dist=24;yaw=.65;pitch=.72;placeCamera();placeBuilding('select');});
 document.querySelector('#closeBuildingCard').addEventListener('click',()=>{document.querySelector('#buildingCard').hidden=true});
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));if(mode==='select')placeBuilding('select');else if(mode==='train'||mode==='train_archer'||mode==='train_cavalry'||mode==='attack')placeBuilding(mode);else placeBuilding(mode)}));
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));if(mode!=='select')document.querySelector('#buildingCard').hidden=true;if(mode==='select')placeBuilding('select');else if(mode==='train'||mode==='train_archer'||mode==='train_cavalry'||mode==='attack')placeBuilding(mode);else placeBuilding(mode)}));
 document.querySelectorAll('.bottom button[data-mode]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.bottom button[data-mode]').forEach(item=>item.classList.remove('active'));button.classList.add('active')}));
 let battleStartedAt=0,battleDuration=0;
 function attackCamp(){
