@@ -917,3 +917,62 @@
   #ui-tooltip.hidden { opacity: 0; }
   #ui-tooltip .tip-bad { color: #e08a7a; font-style: italic; }
   
+
+/* Krallıqlar Dövrü — tünd qrafit və qızılı strategiya mövzusu */
+:root {
+  --parchment: #e2e8f0;
+  --parchment-dark: #cbd5e1;
+  --wood: #2a2f3a;
+  --wood-light: #414958;
+  --ink: #e2e8f0;
+  --gold: #cda250;
+  --accent: #e5bc6b;
+  --danger: #b8563b;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+html, body { background: #0d0f12; color: #e2e8f0; }
+#hud-top, #hud-right, #hud-bottom, #gameplay-hud, #hud-kingdom-panel, #hud-territory-panel, #research-panel, #faction-panel {
+  color: #e2e8f0;
+}
+#game-title { color: #cda250; text-shadow: 0 2px 12px rgba(0,0,0,.7); }
+#score-panel, .hud-bar, #next-tile-panel, #toast {
+  background: linear-gradient(180deg, #1c2028, #12151b);
+  border: 1px solid #45404a;
+  color: #e2e8f0;
+  box-shadow: 0 8px 24px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.04);
+}
+#score-label, .panel-title, #tile-name, .hud-res-val, .construction-name {
+  color: #e2e8f0;
+}
+#score-value { color: #cda250; }
+#score-label, .panel-title { letter-spacing: 1.2px; }
+#tile-preview { background: radial-gradient(circle at 50% 35%, #303b49, #141820); border-color: #5a4b31; }
+#tile-cap, .tile-meta, #hint-text, .tile-prod, .hud-res-rate { color: #aab4c3; }
+.cost-chip.ok { background: rgba(65,120,75,.18); color: #a7d6a8; border-color: rgba(100,170,105,.35); }
+.cost-chip.bad { background: rgba(160,50,40,.16); color: #ff9d8c; border-color: rgba(200,80,65,.4); }
+.ui-btn {
+  color: #111318;
+  background: linear-gradient(180deg, #e5bc6b, #cda250);
+  border: 1px solid #87662f;
+  border-radius: 6px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.35);
+}
+.ui-btn:hover { filter: brightness(1.08); box-shadow: 0 0 12px rgba(205,162,80,.25); }
+.ui-btn.danger { color: #fff; background: linear-gradient(180deg, #c96a52, #8d3428); border-color: #6f2921; }
+.tile-shop-tab, .tile-chip {
+  border-color: #343b47;
+}
+.tile-shop-tab { background: #191d25; color: #cbd5e1; }
+.tile-shop-tab.active { background: #cda250; color: #111318; border-color: #e5bc6b; }
+.tile-chip { background: #171b22; color: #e2e8f0; }
+.tile-chip:hover, .tile-chip.selected { border-color: #cda250; }
+#tiles-placed-label, #fps-label { background: rgba(13,15,18,.82); border: 1px solid #343b47; color: #e2e8f0; }
+#loading-screen { background: radial-gradient(ellipse at 50% 40%, #252a34, #0d0f12); }
+#loading-inner h1 { color: #cda250; }
+#toast { color: #e2e8f0; }
+@media (max-width: 640px) {
+  #hud-top { left: 10px; top: 10px; }
+  #hud-right { right: 8px; top: 8px; }
+  #hud-bottom { left: 8px; bottom: 8px; gap: 6px; flex-wrap: wrap; }
+  .ui-btn { padding: 7px 10px; font-size: 11px; }
+}
