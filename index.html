@@ -284,6 +284,35 @@ function makeFallbackCastle(parent){
  // Royal crest above the gate.
  const shield=new THREE.Mesh(new THREE.OctahedronGeometry(.48,0),archGold);shield.scale.set(.8,1.1,.28);shield.position.set(0,3.75,4.34);castle.add(shield);
  const shieldCore=new THREE.Mesh(new THREE.OctahedronGeometry(.22,0),archRed);shieldCore.position.set(0,3.76,4.48);castle.add(shieldCore);
+
+ // Royal silhouette upgrade: four smaller keep turrets, roof bands, tower windows and gate torches.
+ const royalStone=mat('#c0bcae'),roofEdge=mat('#74332b'),iron=mat('#343a3b');
+ for(const [x,z] of [[-1.62,-1.92],[1.62,-1.92],[-1.62,1.32],[1.62,1.32]]){
+  const turret=new THREE.Mesh(new THREE.CylinderGeometry(.43,.52,2.65,8),royalStone);
+  turret.position.set(x,4.55,z);turret.castShadow=true;turret.receiveShadow=true;castle.add(turret);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(.48,.07,5,10),roofEdge);rim.rotation.x=Math.PI/2;rim.position.set(x,5.82,z);castle.add(rim);
+  cone(castle,.72,1.25,roof,x,7.05,z,8);
+  const finial=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),goldmat);finial.position.set(x,7.72,z);castle.add(finial);
+  // Small lit windows on the outward faces of the mini-turrets.
+  box(castle,.17,.38,.06,windowGlass,x,4.6,z+(z>0?.48:-.48));
+ }
+ // Decorative roof edge and layered bands on the central keep.
+ box(castle,3.92,.14,3.92,roofEdge,0,4.86,-.3);
+ for(const y of [1.05,1.85,2.65,3.45])box(castle,3.58,.035,3.58,royalStone,0,y,-.3);
+ // Gate hinges, rivets and torch sconces make the entrance more readable.
+ for(const x of [-.72,.72]){
+  box(castle,.12,1.65,.09,iron,x,1.35,4.58);
+  for(const y of [.62,1.28,1.94]){const rivet=new THREE.Mesh(new THREE.SphereGeometry(.075,7,5),goldmat);rivet.position.set(x,y,4.65);castle.add(rivet)}
+  box(castle,.18,.38,.16,iron,x*1.95,2.05,4.18);
+  const flameMat=new THREE.MeshStandardMaterial({color:'#ffb13b',emissive:'#ff6a12',emissiveIntensity:1.25,roughness:.4});
+  const flame=new THREE.Mesh(new THREE.SphereGeometry(.13,8,6),flameMat);flame.scale.set(.7,1.5,.7);flame.position.set(x*1.95,2.38,4.18);castle.add(flame);
+ }
+ // Corner tower crowns get an extra pale stone rim and a dark red roof lip.
+ for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]]){
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(1.02,.09,5,12),royalStone);rim.rotation.x=Math.PI/2;rim.position.set(x,4.28,z);castle.add(rim);
+  const lip=new THREE.Mesh(new THREE.TorusGeometry(.78,.055,5,12),roofEdge);lip.rotation.x=Math.PI/2;lip.position.set(x,6.0,z);castle.add(lip);
+ }
+
  return castle;
 }
 const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
