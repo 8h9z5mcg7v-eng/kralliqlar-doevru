@@ -418,6 +418,42 @@ button:active{transform:translateY(1px)}
 /* Deployment marker: remove after live verification */
 .deploy-check{position:relative;z-index:5;display:table;margin:-4px auto 10px;padding:5px 10px;border:1px solid #f3d37d;border-radius:6px;background:#4a2f20;color:#fff2c5;font-size:10px;font-weight:900;letter-spacing:1px;box-shadow:0 2px 8px #0007}
 
+
+/* HOTFIX: guarantee the SVG buildings render in a visible, responsive city grid */
+.city-scene{min-height:0!important;height:auto!important;padding:18px 8px 36px!important;overflow:hidden!important;background:radial-gradient(ellipse at 50% 15%,#aebd7b 0,#6c8e55 38%,#284b35 100%)!important}
+.city-scene:before{z-index:0!important;pointer-events:none}
+.city-scene:after{z-index:0!important;pointer-events:none}
+.city-hills,.city-label,.deploy-check,.city-river,.city-wall{position:relative;z-index:2}
+.city-label{margin:0 auto 8px!important}
+.deploy-check{margin:0 auto 8px!important}
+.map#map{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:auto!important;gap:10px!important;padding:8px 2px 16px!important;width:100%!important;height:auto!important;z-index:3!important}
+.map#map .tile{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;width:100%!important;height:auto!important;min-width:0!important;min-height:150px!important;transform:none!important;clip-path:none!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-end!important;gap:5px!important;overflow:hidden!important;padding:8px 4px!important;border:1px solid #e4d09a!important;border-radius:10px!important;background:linear-gradient(155deg,#a7bb7a,#648653 45%,#2e5139)!important;box-shadow:inset 0 1px 0 #ffffff55,0 5px 9px #07120e99!important}
+.map#map .tile:before{inset:0!important;z-index:0!important;border:0!important;border-radius:inherit!important;background:linear-gradient(135deg,#ffffff20,transparent 48%,#07140b40)!important;pointer-events:none}
+.map#map .tile:after{display:none!important}
+.map#map .tile .building-art{display:flex!important;position:relative!important;z-index:1!important;align-items:flex-end!important;justify-content:center!important;width:100%!important;height:92px!important;min-height:92px!important;opacity:1!important;visibility:visible!important;overflow:visible!important;filter:drop-shadow(0 5px 3px #10201699)!important}
+.map#map .tile .building-art svg{display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;height:100%!important;max-width:145px!important;max-height:100px!important;overflow:visible!important}
+.map#map .tile span:not(.building-art),.map#map .tile small{position:relative!important;z-index:2!important;display:block!important;visibility:visible!important;opacity:1!important;max-width:100%!important;text-align:center!important;white-space:normal!important;overflow:visible!important}
+.map#map .tile span:not(.building-art){font-size:11px!important;font-weight:800!important;padding:3px 5px!important;background:#132119eF!important;border:1px solid #c9ab65!important;border-radius:4px!important;color:#fff0c1!important}
+.map#map .tile small{font-size:9px!important;background:#101811eF!important;color:#fff0c1!important;border:1px solid #8c9a72!important;border-radius:4px!important;padding:2px 4px!important}
+.map#map .tile.building-castle{background:linear-gradient(155deg,#d0cda5,#8c9672 48%,#514b3a)!important;border-color:#ffe29a!important}
+.map#map .tile.building-farm{background:linear-gradient(155deg,#d5ce7d,#8b9d48 52%,#4d6a2f)!important}
+.map#map .tile.building-forest{background:linear-gradient(155deg,#77a16a,#356843 52%,#183c2a)!important}
+.map#map .tile.building-mine,.map#map .tile.building-mountain{background:linear-gradient(145deg,#b9c5bb,#798985 48%,#414f50)!important}
+.map#map .tile.building-village{background:linear-gradient(155deg,#d7c18a,#a88e5b 55%,#695039)!important}
+.map#map .tile.enemy{background:linear-gradient(155deg,#b77d68,#854a40 55%,#482a2c)!important;border-color:#edaa8b!important}
+.map#map .tile.selected{outline:3px solid #ffe08a!important;outline-offset:1px!important;transform:translateY(-2px)!important}
+.city-wall{display:none!important}
+.city-river{margin-top:8px!important}
+@media(max-width:700px){
+ .city-scene{padding:12px 5px 26px!important}
+ .map#map{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;padding:6px 1px 12px!important}
+ .map#map .tile{min-height:132px!important;padding:6px 3px!important}
+ .map#map .tile .building-art{height:76px!important;min-height:76px!important}
+ .map#map .tile .building-art svg{max-height:80px!important}
+ .map#map .tile span:not(.building-art){font-size:10px!important}
+ .map#map .tile small{font-size:8px!important}
+}
+
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
