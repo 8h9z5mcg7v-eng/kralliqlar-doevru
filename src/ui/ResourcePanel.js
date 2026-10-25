@@ -10,11 +10,11 @@ import { fmtCost } from '../config/BuildingConfig.js';
 import { iconHtml, iconLabel } from './GameIcons.js';
 
 const TOP_RES = [
-  { key: 'wood', icon: 'wood', label: 'Wood' },
-  { key: 'stone', icon: 'stone', label: 'Stone' },
-  { key: 'food', icon: 'food', label: 'Food' },
-  { key: 'gold', icon: 'gold', label: 'Gold' },
-  { key: 'influence', icon: 'influence', label: 'Influence' },
+  { key: 'wood', icon: 'wood', label: 'Taxta' },
+  { key: 'stone', icon: 'stone', label: 'Daş' },
+  { key: 'food', icon: 'food', label: 'Ərzaq' },
+  { key: 'gold', icon: 'gold', label: 'Qızıl' },
+  { key: 'influence', icon: 'influence', label: 'Nüfuz' },
 ];
 
 const STABILITY_TIP =
@@ -143,7 +143,7 @@ export class ResourcePanel {
       const prog = this.game.progressionSystem;
       const check = prog.canStartUpgrade();
       if (!check.ok) {
-        this.game.ui.toast(check.reason || 'Cannot upgrade yet');
+        this.game.ui.toast(check.reason || 'Hələ yüksəltmək mümkün deyil');
         this.el.upgradeBtn.classList.add('shake');
         setTimeout(() => this.el.upgradeBtn.classList.remove('shake'), 400);
         return;
@@ -250,7 +250,7 @@ export class ResourcePanel {
     this.el.tierName.textContent = prog.current.name;
 
     if (prog.maxed) {
-      this.el.tierNext.textContent = 'Maximum tier reached';
+      this.el.tierNext.textContent = 'Maksimum səviyyəyə çatdın';
       this.el.tierProgress.classList.add('hidden');
       this.el.upgradeBtn.classList.add('hidden');
       this.el.upgradeBtn.disabled = true;
