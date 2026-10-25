@@ -360,7 +360,48 @@ for(const x of [-.95,.95])for(const z of [-.43,.43])box(stall,.09,1.65,.09,wood,
 const awning=new THREE.Mesh(new THREE.BoxGeometry(2.45,.13,1.4),mat('#a64a38'));awning.position.y=1.68;awning.castShadow=true;stall.add(awning);
 for(let i=0;i<5;i++){const basket=new THREE.Mesh(new THREE.CylinderGeometry(.18,.15,.2,8),mat(i%2?'#b38a4b':'#648147'));basket.position.set(-.75+i*.37,.25,.1);stall.add(basket)}
 stall.position.set(-7,0,8);
- // Natural world dressing: varied boulders, mossy shrubs, flowers and roadside stones.
+
+// Settlement expansion: a timber watchtower, windmill, cart, crates and a campfire.
+const villageWood=mat('#68472c'),villageWoodLight=mat('#987044'),ironDark=mat('#393d3b'),flameMat=new THREE.MeshStandardMaterial({color:'#ff9b35',emissive:'#e85b12',emissiveIntensity:1.6});
+const watch=new THREE.Group();scene.add(watch);
+const watchLegs=[[-.8,-.65],[.8,-.65],[-.8,.65],[.8,.65]];
+for(const [x,z] of watchLegs){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.12,.17,3.1,6),villageWood);leg.position.set(x,1.55,z);leg.rotation.z=x*.08;leg.castShadow=true;watch.add(leg)}
+for(const y of [.65,1.8,3.05]){for(const z of [-.65,.65]){const beam=new THREE.Mesh(new THREE.BoxGeometry(1.8,.13,.13),villageWoodLight);beam.position.set(0,y,z);watch.add(beam)}for(const x of [-.8,.8]){const beam=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,1.3),villageWoodLight);beam.position.set(x,y,0);watch.add(beam)}}
+const platform=new THREE.Mesh(new THREE.BoxGeometry(2.05,.2,1.8),villageWood);platform.position.y=3.0;platform.castShadow=true;watch.add(platform);
+for(let x=-.75;x<=.76;x+=.5){const merlon=new THREE.Mesh(new THREE.BoxGeometry(.22,.38,.2),villageWoodLight);merlon.position.set(x,3.28,.78);watch.add(merlon)}
+const watchRoof=new THREE.Mesh(new THREE.ConeGeometry(1.35,.85,4),roof);watchRoof.position.y=4.1;watchRoof.rotation.y=Math.PI/4;watch.add(watchRoof);watch.position.set(18,0,4);
+
+// A small windmill with timber sails beside the farm.
+const mill=new THREE.Group();scene.add(mill);
+const millBase=new THREE.Mesh(new THREE.CylinderGeometry(.65,.95,3.2,8),mat('#c5b99c'));millBase.position.y=1.6;millBase.castShadow=true;mill.add(millBase);
+const millRoof=new THREE.Mesh(new THREE.ConeGeometry(.9,.8,6),roof);millRoof.position.y=3.55;mill.add(millRoof);
+const axle=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.5,8),ironDark);axle.rotation.z=Math.PI/2;axle.position.set(0,2.65,.7);mill.add(axle);
+const sails=new THREE.Group();sails.position.set(0,2.65,1.0);mill.add(sails);
+for(let a=0;a<4;a++){const blade=new THREE.Group();blade.rotation.z=a*Math.PI/2;const sail=new THREE.Mesh(new THREE.BoxGeometry(.22,1.55,.09),villageWoodLight);sail.position.y=.78;sail.castShadow=true;blade.add(sail);const cross=new THREE.Mesh(new THREE.BoxGeometry(.42,.1,.1),villageWood);cross.position.y=.3;blade.add(cross);sails.add(blade)}
+const millHub=new THREE.Mesh(new THREE.SphereGeometry(.2,8,6),goldmat);millHub.position.set(0,2.65,1.1);mill.add(millHub);mill.position.set(18,0,-7);
+
+// Merchant cart: wooden bed, side rails, two wheels and sacks.
+const cart=new THREE.Group();scene.add(cart);
+box(cart,1.65,.16,.95,villageWood,0,.78,0);
+for(const x of [-.72,.72])for(const z of [-.42,.42])box(cart,.09,.48,.09,villageWoodLight,x,1.02,z);
+for(const z of [-.42,.42])box(cart,1.55,.1,.1,villageWoodLight,0,1.15,z);
+const cartAxle=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,1.45,8),ironDark);cartAxle.rotation.z=Math.PI/2;cartAxle.position.set(0,.52,-.05);cart.add(cartAxle);
+for(const x of [-.78,.78]){const wheel=new THREE.Mesh(new THREE.TorusGeometry(.39,.075,7,14),villageWood);wheel.position.set(x,.52,-.05);wheel.rotation.y=Math.PI/2;wheel.castShadow=true;cart.add(wheel);for(let spoke=0;spoke<8;spoke++){const s=new THREE.Mesh(new THREE.BoxGeometry(.045,.68,.045),villageWoodLight);s.position.set(x,.52,-.05);s.rotation.z=spoke*Math.PI/4;cart.add(s)}}
+for(const [x,z] of [[-.3,0],[.15,.12],[.35,-.12]]){const sack=new THREE.Mesh(new THREE.SphereGeometry(.25,7,6),mat('#b4a078'));sack.scale.set(1,.8,1.1);sack.position.set(x,1.05,z);cart.add(sack)}
+cart.position.set(-9,0,5.5);cart.rotation.y=-.35;
+
+// Barrels and stacked supply crates around the market.
+for(const [x,z] of [[-5.45,7.3],[-5.1,7.8],[-8.4,7.4]]){const barrel=new THREE.Group();scene.add(barrel);const body=new THREE.Mesh(new THREE.CylinderGeometry(.23,.25,.58,9),villageWood);body.position.y=.3;barrel.add(body);for(const y of [.12,.47]){const hoop=new THREE.Mesh(new THREE.TorusGeometry(.24,.025,5,10),ironDark);hoop.position.y=y;barrel.add(hoop)}barrel.position.set(x,0,z)}
+for(const [x,z] of [[-8.8,8.4],[-8.35,8.4]]){const crate=new THREE.Group();scene.add(crate);box(crate,.48,.48,.48,villageWood,x, .24,z);box(crate,.5,.07,.06,villageWoodLight,x,.24,z+.25);box(crate,.5,.07,.06,villageWoodLight,x,.24,z-.25);box(crate,.06,.5,.5,villageWoodLight,x+.2,.24,z)}
+
+// Campfire, stones and crossed logs add a warm village focal point.
+const firepit=new THREE.Group();scene.add(firepit);
+for(let i=0;i<9;i++){const a=i*Math.PI*2/9;const stoneRing=new THREE.Mesh(new THREE.DodecahedronGeometry(.22,0),rockMat);stoneRing.position.set(Math.cos(a)*.62,.14,Math.sin(a)*.62);stoneRing.scale.set(1,.65,.9);firepit.add(stoneRing)}
+for(const a of [-.5,.5]){const log=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,.95,7),villageWood);log.rotation.z=Math.PI/2;log.rotation.y=a;log.position.y=.19;firepit.add(log)}
+const flame=new THREE.Mesh(new THREE.ConeGeometry(.28,.85,7),flameMat);flame.position.y=.68;firepit.add(flame);
+const fireLight=new THREE.PointLight(0xff8a32,1.25,7);fireLight.position.y=1;firepit.add(fireLight);firepit.position.set(-2,0,9.5);
+
+// Natural world dressing: varied boulders, mossy shrubs, flowers and roadside stones.
  const rockMats=[mat('#777d79'),mat('#92958b'),mat('#666e6a')],shrubMats=[mat('#345d35'),mat('#49743d'),mat('#63864a')];
  for(let i=0;i<54;i++){
   const x=((i*19)%78)-39,z=((i*31)%78)-39;
