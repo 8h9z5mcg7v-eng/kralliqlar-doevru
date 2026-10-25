@@ -665,6 +665,9 @@ const fireLight=new THREE.PointLight(0xff8a32,1.25,7);fireLight.position.y=1;fir
   for(let i=0;i<7;i++)box(bridge,.12,.78,.12,bridgeEdge,-2.45+i*.82,.57,z);
  }
 
+// Keep references to the original environment so a complete city template can replace it only after successful loading.
+const originalEnvironment=scene.children.slice();
+
 // External GLB is attempted as an enhancement; procedural fallback above is always present.
 let level=1,woodCount=2500,stoneCount=1800,goldCount=900,armyCount=120,mode='select',built={barracks:0,archery:0,stable:0,farm:0};
 let troops={infantry:60,archers:40,cavalry:20},enemy={infantry:50,archers:35,cavalry:25},battleCount=0;
@@ -786,6 +789,26 @@ setInterval(()=>{woodCount+=3+level+(built.farm?4*built.farm:0);stoneCount+=1+Ma
 // Drag to pan, pinch/wheel to zoom
 let drag=false,lastX=0,lastY=0;const activePointers=new Set();canvas.addEventListener('pointerdown',e=>{activePointers.add(e.pointerId);if(activePointers.size>1){drag=false;return}drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag||activePointers.size>1)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;yaw-=dx*.005;pitch=THREE.MathUtils.clamp(pitch+dy*.003,.35,1.15);placeCamera()});function endPointer(e){activePointers.delete(e.pointerId);drag=false;if(activePointers.size===1){const id=activePointers.values().next().value;activePointers.delete(id)}}canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);canvas.addEventListener('wheel',e=>{dist=THREE.MathUtils.clamp(dist+e.deltaY*.018,10,42);placeCamera()},{passive:true});
 let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(pinch)dist=THREE.MathUtils.clamp(dist*(pinch/d),10,42);pinch=d;placeCamera()}},{passive:true});canvas.addEventListener('touchend',()=>pinch=0,{passive:true});
+// Ready-made full medieval city scene (CC0): walls, gatehouse, houses, guilds, farm, bridges, forest and outlands.
+const townTemplateLoader=new GLTFLoader();
+townTemplateLoader.load('https://cdn.3dassets.dev/assets/28840/v1/model.glb',(gltf)=>{
+ const town=gltf.scene;
+ const bounds=new THREE.Box3().setFromObject(town);
+ const size=bounds.getSize(new THREE.Vector3());
+ const center=bounds.getCenter(new THREE.Vector3());
+ const largest=Math.max(size.x,size.y,size.z);
+ if(!Number.isFinite(largest)||largest<=0)throw new Error('Şəhər şablonunun ölçüləri düzgün deyil');
+ const scale=40/largest;
+ town.scale.setScalar(scale);
+ town.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
+ town.traverse((node)=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true;const materials=Array.isArray(node.material)?node.material:[node.material];for(const material of materials){if(material&&'roughness' in material)material.roughness=Math.max(.72,material.roughness||0);}}});
+ // Only hide the old scenery after the new scene has loaded; preserve lights and active game overlays.
+ for(const old of originalEnvironment){if(!old.isLight)old.visible=false;}
+ scene.add(town);
+ target.set(0,1.8,0);pitch=.78;dist=39;placeCamera();
+ console.info('Şəhər şablonu uğurla yükləndi.');
+},undefined,(error)=>{console.warn('Şəhər şablonu yüklənmədi; mövcud şəhər saxlanıldı.',error);});
+
 function animate(){requestAnimationFrame(animate);
  const ambience=performance.now()*.001;sails.rotation.z=ambience*.32;bannerCloths.forEach((cloth,i)=>{cloth.rotation.y=Math.sin(ambience*1.7+i*Math.PI)*.11;cloth.rotation.z=Math.sin(ambience*1.25+i)*.035});waterSurface.position.y=.41+Math.sin(ambience*2.4)*.018;upperWater.position.y=1.32+Math.sin(ambience*2.8)*.012;fountainJet.scale.y=.85+Math.sin(ambience*3.2)*.12;flame.scale.set(.82+Math.sin(ambience*11)*.12, .82+Math.sin(ambience*14)*.2, .82+Math.sin(ambience*9)*.12);fireLight.intensity=1.0+Math.sin(ambience*12)*.28;
  if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);
