@@ -251,6 +251,61 @@ button:active{transform:translateY(1px)}
  .tile:nth-child(20){left:42%;top:3%;width:16%;height:20%}
 }
 
+
+/* Kingdom scene polish: winding roads, stronger building silhouettes and compact labels */
+.city-scene{
+ min-height:760px;
+ border:2px solid #b9a46d;
+ border-radius:13px;
+ box-shadow:inset 0 0 0 5px #172c20,inset 0 0 45px #14271899,0 12px 28px #0008;
+ background:
+  radial-gradient(ellipse at 51% 49%,#a8bf7b 0%,#7da363 31%,transparent 59%),
+  radial-gradient(ellipse at 8% 12%,#2d5738 0 7%,transparent 8%),
+  radial-gradient(ellipse at 92% 16%,#2a5738 0 8%,transparent 9%),
+  radial-gradient(ellipse at 8% 67%,#2a5738 0 8%,transparent 9%),
+  radial-gradient(ellipse at 92% 72%,#2a5738 0 7%,transparent 8%),
+  linear-gradient(155deg,transparent 0 32%,#d8c995 32.4% 35%,#a8a078 35.3% 37%,transparent 37.3%),
+  linear-gradient(27deg,transparent 0 45%,#d7c48e 45.4% 48%,#9e9a70 48.3% 50%,transparent 50.3%),
+  repeating-linear-gradient(115deg,#416b42 0 28px,#507849 29px 58px,#436b40 59px 88px);
+}
+.city-scene:before{
+ background:
+  radial-gradient(ellipse at 50% 40%,#e9e1b522 0 15%,transparent 42%),
+  radial-gradient(ellipse at 18% 28%,#d0c48a88 0 2%,transparent 3%),
+  radial-gradient(ellipse at 76% 52%,#d0c48a88 0 2%,transparent 3%),
+  radial-gradient(ellipse at 34% 74%,#d0c48a88 0 2%,transparent 3%),
+  radial-gradient(circle at 10% 20%,#173e2c 0 5px,transparent 6px),
+  radial-gradient(circle at 15% 24%,#245638 0 10px,transparent 11px),
+  radial-gradient(circle at 88% 28%,#173e2c 0 6px,transparent 7px),
+  radial-gradient(circle at 83% 23%,#245638 0 12px,transparent 13px),
+  radial-gradient(circle at 10% 72%,#173e2c 0 6px,transparent 7px),
+  radial-gradient(circle at 15% 76%,#245638 0 12px,transparent 13px),
+  radial-gradient(circle at 90% 72%,#173e2c 0 6px,transparent 7px);
+}
+.city-label{box-shadow:0 4px 10px #0007;text-shadow:0 1px 2px #000;position:relative}
+.map{z-index:3}
+.tile{overflow:visible!important;align-items:center;justify-content:flex-end;gap:2px;cursor:pointer}
+.tile .building-art{height:82%;width:100%;display:flex;align-items:flex-end;justify-content:center;filter:drop-shadow(0 8px 4px #0c1b11bb);transition:transform .18s ease,filter .18s ease}
+.tile .building-art svg{width:100%;height:100%;max-height:none;max-width:160px;overflow:visible}
+.tile span:not(.building-art){font-size:clamp(7px,1.6vw,10px)!important;line-height:1.1;max-width:96%;padding:3px 4px!important;white-space:nowrap;box-shadow:0 2px 5px #0007;text-shadow:0 1px 1px #000}
+.tile small{font-size:clamp(6px,1.25vw,8px);max-width:96%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.95}
+.tile:nth-child(1){z-index:5}
+.tile:nth-child(1) .building-art svg{max-width:200px}
+.tile:nth-child(3) .building-art,.tile:nth-child(14) .building-art{filter:drop-shadow(0 7px 3px #132414)}
+.tile:nth-child(2) .building-art,.tile:nth-child(16) .building-art{height:88%}
+.tile:nth-child(4),.tile:nth-child(9),.tile:nth-child(13),.tile:nth-child(17),.tile:nth-child(20){z-index:2}
+.city-wall{pointer-events:none;filter:drop-shadow(0 4px 3px #12201699)}
+.city-wall.wall-back{top:16%;opacity:.9}
+.city-wall.wall-front{bottom:16%;opacity:.85}
+.city-river{letter-spacing:1px;text-shadow:0 2px 4px #001b25;background:linear-gradient(180deg,#2e617055,#173e54cc);padding:5px 0}
+@media(max-width:700px){
+ .city-scene{min-height:650px}
+ .tile .building-art{height:76%}
+ .tile span:not(.building-art){font-size:7px!important;letter-spacing:-.2px;padding:2px 3px!important}
+ .tile small{font-size:5.5px}
+ .tile:nth-child(1) .building-art svg{max-width:none}
+}
+
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
