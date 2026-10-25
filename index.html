@@ -353,24 +353,36 @@ function updateCastleAppearance(){
 }
 
  
-// Load a real, reusable 3D castle courtyard model; retain the procedural castle if the CDN fails.
+// Import and normalize the assembled 3D castle so its real dimensions and pivot fit the game camera.
 const castleAssetLoader=new GLTFLoader();
 castleAssetLoader.load('https://cdn.3dassets.dev/assets/23508/v1/model.glb',(gltf)=>{
  const importedCastle=gltf.scene;
- importedCastle.scale.setScalar(.65);
- importedCastle.position.set(0,0,0);
+ const rawBounds=new THREE.Box3().setFromObject(importedCastle);
+ const rawSize=rawBounds.getSize(new THREE.Vector3());
+ const rawCenter=rawBounds.getCenter(new THREE.Vector3());
+ const largest=Math.max(rawSize.x,rawSize.y,rawSize.z);
+ if(!Number.isFinite(largest)||largest<=0)throw new Error('Qala modelinin ölçüləri düzgün deyil');
+ const fittedScale=16/largest;
+ importedCastle.scale.setScalar(fittedScale);
+ importedCastle.position.set(-rawCenter.x*fittedScale,-rawBounds.min.y*fittedScale,-rawCenter.z*fittedScale);
  importedCastle.traverse((node)=>{
-  if(node.isMesh){node.castShadow=true;node.receiveShadow=true;
-   if(node.material){node.material.needsUpdate=true;}
+  if(!node.isMesh)return;
+  node.castShadow=true;node.receiveShadow=true;
+  const materials=Array.isArray(node.material)?node.material:[node.material];
+  for(const material of materials){
+   if(!material)continue;
+   material.needsUpdate=true;
+   if('roughness' in material)material.roughness=Math.max(.68,material.roughness||0);
+   if('metalness' in material)material.metalness=Math.min(.12,material.metalness||0);
   }
  });
  castle.clear();
  castle.add(importedCastle);
  loadedCastleModel=true;
  updateCastleAppearance();
- console.info('Krallıqlar Dövrü: 3D qala modeli yükləndi.');
+ console.info('Krallıqlar Dövrü: 3D qala modeli yükləndi və kamera ölçüsünə uyğunlaşdırıldı.');
 },undefined,(error)=>{
- console.warn('3D qala modeli yüklənmədi; ehtiyat qala saxlanılır.',error);
+ console.warn('Xarici 3D qala yüklənmədi; ehtiyat qala göstərilir.',error);
 });
 
 // Small stylized troops make the kingdom feel alive; their number is illustrative, not the full army count.
