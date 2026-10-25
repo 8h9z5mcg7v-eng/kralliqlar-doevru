@@ -139,7 +139,7 @@ for(const [x,z] of [[-7,7],[7,7],[-7,-7],[7,-7]]){const post=new THREE.Group();s
 // Outer defensive walls and gate towers
 const world=new THREE.Group();scene.add(world);
  // Forest groves and rocky terrain details
- const bark=mat('#59402b'),leafDark=mat('#31573a'),leafMid=mat('#477342'),leafLight=mat('#688d4b'),rockMat=mat('#858b85'),bushMat=mat('#3c653b');
+ const bark=mat('#59402b'),leafDark=mat('#31573a'),leafMid=mat('#477342'),leafLight=mat('#688d4b'),rockMat=mat('#858b85');
  function makeTree(x,z,s=1){
   const g=new THREE.Group();
   const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16*s,.25*s,1.35*s,7),bark);
@@ -161,7 +161,7 @@ const world=new THREE.Group();scene.add(world);
  function makeBush(x,z,s=1){
   const g=new THREE.Group();
   for(const [dx,dy,dz,k] of [[0,.35,0,.48],[-.32,.27,.08,.35],[.28,.25,-.12,.33]]){
-   const b=new THREE.Mesh(new THREE.IcosahedronGeometry(k*s,1),bushMat);b.position.set(dx*s,dy*s,dz*s);b.scale.y=.8;b.castShadow=true;g.add(b);
+   const b=new THREE.Mesh(new THREE.IcosahedronGeometry(k*s,1),leafMid);b.position.set(dx*s,dy*s,dz*s);b.scale.y=.8;b.castShadow=true;g.add(b);
   }
   g.position.set(x,0,z);world.add(g);
  }
