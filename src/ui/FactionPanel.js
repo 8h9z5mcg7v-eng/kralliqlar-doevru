@@ -70,7 +70,7 @@ export class FactionPanel {
       this.refresh();
     });
     events.on('territory:captured', ({ factionLabel }) => {
-      this.game.ui.toast(`${iconLabel('flag')} ${factionLabel || 'Enemies'} captured a border tile!`);
+      this.game.ui.toast(`${iconLabel('flag')} ${factionLabel || 'Düşmənlər'} captured a border tile!`);
       this.refresh();
     });
     events.on('territory:reclaimed', () => this.refresh());
@@ -79,7 +79,7 @@ export class FactionPanel {
   refresh() {
     const fs = this.game.factionSystem;
     if (!fs?.factions?.length) {
-      this.el.list.innerHTML = '<p class="hud-muted">No neighbours yet…</p>';
+      this.el.list.innerHTML = '<p class="hud-muted">Hələ qonşu krallıq yoxdur…</p>';
       return;
     }
 
