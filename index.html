@@ -364,6 +364,31 @@ button:active{transform:translateY(1px)}
 .quest-item button{border:1px solid #c4a75e;border-radius:7px;padding:8px;background:#4a442e;color:#fff0c1;font-weight:800;cursor:pointer}.quest-item button:disabled{opacity:.5;cursor:default}
 @media(max-width:700px){.quest-list{grid-template-columns:1fr}.quest-item{padding:10px}.quest-item p{font-size:13px}}
 
+
+/* Visual pass: make the actual buildings the focus */
+.city-scene{position:relative;isolation:isolate;overflow:hidden;min-height:650px;padding:24px 12px 28px;background:radial-gradient(ellipse at 50% 20%,#e2d6a3 0%,#a3b77b 16%,transparent 39%),linear-gradient(180deg,#7f9f8b 0%,#62865e 25%,#436d47 54%,#2b5650 78%,#23424b 100%);border:4px solid #bda05d;border-radius:15px;box-shadow:inset 0 0 75px #101f1a99,0 12px 30px #0007}
+.city-scene:before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(155deg,transparent 0 17%,#2c503b 18% 27%,transparent 28%),linear-gradient(25deg,transparent 0 33%,#c5c78c55 34% 40%,transparent 41%),linear-gradient(160deg,transparent 0 55%,#315c3b99 56% 67%,transparent 68%),repeating-linear-gradient(160deg,transparent 0 49px,#ffffff0a 50px 51px)}
+.city-scene:after{content:"";position:absolute;z-index:-1;bottom:0;left:-5%;width:110%;height:13%;background:repeating-linear-gradient(0deg,#246d7a 0 6px,#398b94 7px 9px,#317b89 10px 14px);border-top:4px solid #9ebd91;transform:skewY(-2deg)}
+.city-hills{position:absolute;z-index:-1;inset:10% 0 0;background:radial-gradient(ellipse at 12% 53%,#d1d39b55 0 2%,transparent 25%),radial-gradient(ellipse at 88% 43%,#d1d39b44 0 3%,transparent 23%);pointer-events:none}
+.city-label{display:inline-block;position:relative;margin:0 auto 18px;left:50%;transform:translateX(-50%);padding:7px 18px;border:1px solid #ead28b;border-radius:20px;background:#14291de8;color:#f8e6ad;font-size:12px;font-weight:900;letter-spacing:3px;text-shadow:0 2px 4px #000;white-space:nowrap;box-shadow:0 4px 12px #14231b88}
+.map{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 10px;padding:10px 3px 25px;align-items:stretch}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;min-height:156px;padding:4px 3px 8px;overflow:hidden;border-radius:11px;clip-path:none;background:linear-gradient(160deg,#b6c58b 0%,#6d955c 40%,#34583e 100%);border:1px solid #d9c68a;box-shadow:inset 0 1px 0 #ffffff55,0 7px 12px #102117a8;transition:transform .18s,filter .18s}
+.tile:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#ffffff20,transparent 46%,#07140b4d);border:0;pointer-events:none}
+.tile:after{content:"";position:absolute;bottom:45px;left:22%;right:22%;height:9px;border-radius:50%;background:#13251a80;filter:blur(6px)}
+.tile:hover{transform:translateY(-3px) scale(1.02);filter:brightness(1.12)}
+.tile .building-art{display:block;position:relative;z-index:1;width:100%;height:112px;flex:0 0 112px}
+.building-art svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 6px 3px #10201688)}
+.tile span:not(.building-art){position:relative;z-index:2;max-width:100%;font-size:11px;font-weight:900;text-shadow:0 2px 4px #000,0 0 2px #000;line-height:1.1;text-align:center}
+.tile small{position:relative;z-index:2;display:inline-block;max-width:100%;margin-top:4px;padding:3px 5px;background:#111b13e8;border:1px solid #c6a65e;border-radius:5px;color:#fff0c4;font-size:9px;text-align:center;white-space:normal}
+.tile.mine{background:linear-gradient(155deg,#c7c38b 0%,#82985a 45%,#3d613c 100%);border-color:#f6dc85}
+.tile.enemy{background:linear-gradient(155deg,#c28b70 0%,#985347 48%,#4e2e30 100%);border-color:#edaa8b}
+.tile.neutral{background:linear-gradient(155deg,#b4bba0 0%,#778a73 48%,#3c5650 100%);border-color:#a8b7a1}
+.tile.selected{outline:3px solid #ffe08a;outline-offset:1px;box-shadow:0 0 0 3px #6e4d1e,0 0 25px #ffd778aa;transform:translateY(-3px);z-index:3}
+.building-detail{position:relative;background:linear-gradient(120deg,#273c34,#111c22);border:1px solid #b69a57;border-radius:10px;padding:14px;margin-top:12px;box-shadow:inset 0 1px 0 #ffffff12}
+.city-river{position:relative;z-index:1;margin:0 auto;padding:5px 12px;width:max-content;max-width:100%;border-radius:20px;background:#173c47dd;border:1px solid #76b6b0;color:#d9f1df;font-size:11px;font-weight:800;letter-spacing:1px}
+.city-wall{z-index:0}
+@media(max-width:700px){.city-scene{min-height:540px;padding:16px 5px 20px}.map{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 5px;padding:6px 0 18px}.tile{min-height:132px;padding:3px 2px 6px}.tile .building-art{height:88px;flex-basis:88px}.tile span:not(.building-art){font-size:10px}.tile small{font-size:8px;padding:2px 3px}.city-label{font-size:10px;letter-spacing:2px;margin-bottom:12px}}
+
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
