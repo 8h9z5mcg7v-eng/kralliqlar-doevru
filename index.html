@@ -62,10 +62,37 @@ button:active{transform:translateY(1px)}
 .tile.enemy{filter:saturate(.82);border-color:#d58a78}
 .tile.selected{outline:3px solid #ffe18a;outline-offset:1px;box-shadow:0 0 0 2px #60431d,0 0 18px #ffd36bbb;transform:translateY(-2px);z-index:2}
 @media(max-width:700px){.map{gap:5px;padding:6px}.tile{min-height:102px;padding:5px 2px}.tile .emoji{font-size:34px}.tile.building-castle .emoji{font-size:41px}.tile span:not(.emoji){font-size:10px}.tile small{font-size:8px;padding:2px}}
+
+/* Kingdom city-view inspired layout */
+.hero{padding:18px 12px 13px;background:linear-gradient(180deg,#101820e8,#263b38dd),radial-gradient(ellipse at center,#758d65,#17251f);border-bottom:3px solid #a27a39}
+.king-banner{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px auto 0;max-width:900px}
+.king-banner span{padding:6px 12px;border:1px solid #b18a4a;border-radius:5px;background:linear-gradient(#3d3527dd,#171d20ee);font-size:11px;font-weight:800;letter-spacing:.5px;color:#ffe1a0}
+.kingdom-panel{background:linear-gradient(145deg,#28362d,#101b20 85%);border-color:#b18a4a}
+.city-scene{position:relative;isolation:isolate;overflow:hidden;padding:28px 12px 30px;border:2px solid #a78a4c;border-radius:13px;background:linear-gradient(180deg,#78936b 0%,#476e4b 35%,#2d563f 63%,#254b54 100%);box-shadow:inset 0 0 50px #0a1b18a8}
+.city-scene:before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 28%,#b8c58b 0,transparent 34%),linear-gradient(145deg,transparent 30%,#d7c99020 30.5% 32%,transparent 32.5%),linear-gradient(35deg,transparent 48%,#e4d5a622 49% 51%,transparent 52%)}
+.city-scene:after{content:"";position:absolute;z-index:-1;left:-5%;right:-5%;bottom:0;height:22%;background:linear-gradient(180deg,#326c7a88,#153e50);border-top:3px solid #91b6a0;transform:skewY(-3deg)}
+.city-hills{position:absolute;z-index:-1;left:-8%;right:-8%;top:0;height:33%;background:linear-gradient(160deg,transparent 0 20%,#1f3c2b99 21% 30%,transparent 31%),linear-gradient(25deg,transparent 0 40%,#a1b07a66 41% 48%,transparent 49%)}
+.city-label{text-align:center;font-family:Georgia,serif;font-weight:900;letter-spacing:3px;color:#ffe5a4;text-shadow:0 2px 5px #07100a;margin:0 0 16px}
+.city-river{text-align:center;margin-top:18px;color:#d2e8d9;font-size:10px;font-weight:900;letter-spacing:2px;text-shadow:0 2px 4px #000}
+.map{position:relative;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;padding:8px;background:transparent;border:0;box-shadow:none}
+.tile{min-height:128px;justify-content:center;background:linear-gradient(180deg,#8aa873,#4b7049 48%,#344f37);border:1px solid #e0cb8b;border-radius:9px;clip-path:polygon(0 8%,50% 0,100% 8%,100% 92%,50% 100%,0 92%);padding:10px 3px;box-shadow:none}
+.tile:before{inset:5px;background:linear-gradient(135deg,#ffffff17,transparent 45%,#0004);border:1px solid #ffffff1a}
+.tile:after{bottom:38px}
+.tile .emoji{font-size:clamp(38px,5.5vw,58px);filter:drop-shadow(0 5px 2px #152417aa)}
+.tile.building-castle .emoji{font-size:clamp(48px,6.5vw,70px)}
+.tile.building-castle{background:linear-gradient(180deg,#b8b48c,#7e8766 45%,#554c3d);border-color:#ffdf89}
+.tile.building-farm{background:linear-gradient(180deg,#d5ce7d,#8b9d48 52%,#4d6a2f)}
+.tile.building-forest{background:linear-gradient(180deg,#6c9b6b,#356843 52%,#183c2a)}
+.tile.building-mine,.tile.building-mountain{background:linear-gradient(180deg,#b0c0b6,#71817c 48%,#35454a)}
+.tile.building-port{background:linear-gradient(180deg,#a4d0d1,#5796a0 50%,#2c5969)}
+.tile.building-village{background:linear-gradient(180deg,#c9b786,#9c895a 50%,#665039)}
+.tile.enemy{background:linear-gradient(180deg,#c98470,#92534d 48%,#482d30);border-color:#ed9b83}
+.tile.selected{clip-path:polygon(0 8%,50% 0,100% 8%,100% 92%,50% 100%,0 92%);outline:3px solid #ffe18a;outline-offset:-3px;filter:brightness(1.12)}
+@media(max-width:700px){.city-scene{padding:18px 5px 22px}.map{gap:4px;padding:3px}.tile{min-height:91px;padding:7px 1px}.tile .emoji{font-size:31px}.tile.building-castle .emoji{font-size:38px}.tile span:not(.emoji){font-size:9px}.tile small{font-size:7px;padding:2px}.king-banner span{font-size:9px;padding:5px 7px}}
 </style></head><body>
-<header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Torpağını genişləndir, iqtisadiyyat qur və rəqib krallığı məğlub et.</p></header>
+<header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
-<div class="layout"><section class="panel"><div class="topline"><h2>🗺️ Krallıq xəritəsi</h2><span class="pill" id="turn">1-ci il</span></div><p class="note">Ərazi seç, sonra onu tut və krallığını böyüt.</p><div class="map" id="map"></div><p class="note">🟨 Sənin ərazin · 🟥 Rəqib · 🟦 Neytral</p></section>
+<div class="layout"><section class="panel kingdom-panel"><div class="topline"><h2>🏰 Sənin şəhərin</h2><span class="pill" id="turn">1-ci il</span></div><p class="note">Binaların üzərinə toxunaraq seç və sağ paneldən idarə et.</p><div class="city-scene"><div class="city-hills"></div><div class="city-label">PAYTAXT ŞƏHƏRİ</div><div class="map" id="map"></div><div class="city-river">🌊 ÇAY VƏ TİCARƏT YOLU</div></div><p class="note">🟨 Sənin binaların · 🟥 Düşmən · 🟦 Neytral ərazilər</p></section>
 <section class="panel"><h2>🏰 Krallığın idarəsi</h2><p id="selectedText" class="note">Ərazi seçilməyib.</p><div class="actions">
 <button id="farm"><b>🌾 Ferma qur</b><small>25 qızıl · 10 taxta</small></button><button id="lumber"><b>🪵 Taxtaçı tik</b><small>20 qızıl</small></button><button id="train"><b>🛡️ Qoşun hazırla</b><small>20 qızıl · 15 ərzaq</small></button><button id="attack" class="primary"><b>⚔️ Əraziyə hücum</b><small>10 qoşun tələb olunur</small></button><button id="fortify"><b>🧱 Müdafiəni gücləndir</b><small>30 qızıl · 20 taxta</small></button><button id="upgrade"><b>🏗️ Binanı inkişaf etdir</b><small>40 qızıl · 25 taxta</small></button><button id="barracks"><b>⚔️ Kazarma qur</b><small>45 qızıl · 30 taxta</small></button><button id="endTurn" class="wide">⏳ İli başa vur</button><button id="restart" class="wide">🔄 Oyunu yenidən başlat</button></div></section>
 <section class="panel wide" id="battlePanel" hidden><div class="topline"><h2>⚔️ Döyüş hesabatı</h2><span class="pill" id="battleOutcome">Döyüş</span></div><p id="battleReport" class="note"></p><button id="closeBattle">Hesabatı bağla</button></section><section class="panel wide"><div class="topline"><h2>📜 Krallığın salnaməsi</h2><span class="pill" id="status">Sülh dövrü</span></div><div class="log" id="log"><p>Krallığın quruldu! Məqsədin xəritədəki rəqib qalasını ələ keçirməkdir.</p></div></section></div></main><div class="footer">Krallıqlar Dövrü · Brauzerdə oynanılan strategiya oyunu</div>
