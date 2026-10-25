@@ -98,6 +98,19 @@ button:active{transform:translateY(1px)}
 .tile.building-castle .building-art{height:84px}
 .tile.building-castle .building-art svg{max-width:112px}
 @media(max-width:700px){.building-art{height:53px}.tile.building-castle .building-art{height:59px}.tile .building-art svg{max-height:58px}}
+
+/* Upgraded kingdom walls and level visuals */
+.city-scene{box-shadow:inset 0 0 50px #0a1b18a8,0 8px 18px #0005}
+.city-scene .map{z-index:1}
+.city-scene:before{background:radial-gradient(ellipse at 50% 28%,#b8c58b 0,transparent 34%),linear-gradient(145deg,transparent 30%,#d7c99020 30.5% 32%,transparent 32.5%),linear-gradient(35deg,transparent 48%,#e4d5a622 49% 51%,transparent 52%)}
+.tile{min-height:136px}
+.tile .building-art{transition:transform .2s,filter .2s}
+.tile:hover .building-art{transform:translateY(-3px) scale(1.04);filter:drop-shadow(0 6px 5px #10180f99)}
+.tile small{max-width:100%;white-space:normal}
+.tile.mine{box-shadow:inset 0 0 0 2px #f0d27a,0 4px 8px #0009}
+.tile.enemy{box-shadow:inset 0 0 0 2px #c97a69,0 4px 8px #0009}
+.tile.neutral{border-color:#b9d0c0}
+@media(max-width:700px){.tile{min-height:96px}}
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
@@ -132,6 +145,10 @@ function buildingArt(t){
  }else{
  s+='<path d="M15 75 27 43 39 52 57 25 73 44 90 33 107 75Z" fill="#75856e" stroke="#455849" stroke-width="2"/><path d="M40 75V57l19-14 20 14v18Z" fill="#c3b58a" stroke="#61513b" stroke-width="2"/><path d="M35 58 59 39 84 58Z" fill="#a4513e" stroke="#67372e" stroke-width="2"/><rect x="54" y="62" width="10" height="13" fill="#55422e"/>';
  }
+ if((t.level||1)>=2){s+='<path d="M22 78v-9h7v9m62 0v-9h7v9" fill="#d7c9a1" stroke="#655e4b" stroke-width="2"/><path d="M19 68h13m55 0h13" stroke="#e4d6ad" stroke-width="4"/>';}
+ if((t.level||1)>=3){s+='<path d="M42 39 60 27 78 39" fill="#d9c99a" stroke="#5a5140" stroke-width="2"/><path d="M55 27V16h10v11" fill="#a84f3e" stroke="#65352e" stroke-width="2"/>';}
+ if((t.level||1)>=4){s+='<path d="M13 77V61h13v16m68 0V61h13v16" fill="#a7a999" stroke="#535c54" stroke-width="2"/><path d="M11 61h17l-3-7H14zm66 0h17l-3-7H80z" fill="#a84f3e"/>';}
+ if((t.level||1)>=5){s+='<path d="M60 4v-3m0 3 14 5H60" stroke="#f5d77c" stroke-width="3" fill="none"/><circle cx="60" cy="8" r="3" fill="#f6d57b"/>';}
  s+='<path d="M9 80h102" stroke="#e2d39b" stroke-width="2" opacity=".8"/></svg>';
  return s;
 }
