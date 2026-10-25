@@ -23,7 +23,7 @@ button:active{transform:translateY(1px)}button:disabled{opacity:.45}.wide{width:
 .bottom{position:absolute;z-index:3;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:7px;padding:8px;pointer-events:auto;width:max-content;max-width:calc(100% - 20px);overflow-x:auto;overscroll-behavior-x:contain}
 .bottom button{flex:0 0 auto;min-width:84px;padding:10px;white-space:nowrap}.bottom button.active{background:linear-gradient(#d5ac5c,#805724);color:#211a0d}
 .battle-status{position:absolute;z-index:4;top:88px;left:50%;transform:translateX(-50%);padding:8px 13px;border-radius:10px;background:#231c1beF;border:1px solid #c66d54;color:#ffe0b0;font:700 12px system-ui;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}.battle-status.show{opacity:1}
-.toast{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);background:#13201ef5;border:1px solid var(--gold);padding:14px 18px;border-radius:12px;max-width:min(360px,88vw);text-align:center;line-height:1.45;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 12px 35px #0008}.toast.show{opacity:1}#toast,.battle-status{display:none!important}
+.toast{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);background:#13201ef5;border:1px solid var(--gold);padding:14px 18px;border-radius:12px;max-width:min(360px,88vw);text-align:center;line-height:1.45;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 12px 35px #0008}.toast.show{opacity:1}#toast{display:none!important}.battle-status{display:block!important}
 .hint{position:absolute;z-index:1;bottom:72px;left:50%;transform:translateX(-50%);font-size:11px;color:#f5f0df;background:#101c1ad9;padding:7px 11px;border-radius:8px;white-space:nowrap;max-width:calc(100% - 24px)}
 .loading{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at center,#30473a,#101b1a);z-index:10;transition:opacity .4s}.loading.hide{opacity:0;pointer-events:none}
 .loadbox{text-align:center;color:#f2d18a;font:24px Georgia,serif;letter-spacing:1px;padding:24px}.loadbox small{display:block;margin-top:10px;font:12px/1.5 system-ui;color:#e3e3d8;letter-spacing:0}
@@ -339,10 +339,10 @@ function attackCamp(){
  const win=ours>theirs*(.72+Math.random()*.45);
  const loss=Math.min(.55, win ? (.12+Math.random()*.12) : (.25+Math.random()*.2));
  for(const k of Object.keys(troops))troops[k]=Math.max(0,Math.floor(troops[k]*(1-loss)));
- if(win){woodCount+=500+Math.floor(Math.random()*350);stoneCount+=300;goldCount+=150;battleCount++;enemyCamp.scale.setScalar(Math.max(.82,enemyCamp.scale.x-.04));toast('Qələbə! Düşərgə talan edildi: resurslar qazandın.');}
- else{toast('Hücum uğursuz oldu. Ordunu yenidən hazırla.');}
- enemy={infantry:45+Math.floor(Math.random()*25),archers:25+Math.floor(Math.random()*20),cavalry:20+Math.floor(Math.random()*20)};
- updateHud();saveGame();
+ if(win){battleCount++;const rewardScale=1+Math.min(battleCount-1,10)*.12;const woodReward=Math.floor((500+Math.floor(Math.random()*350))*rewardScale),stoneReward=Math.floor(300*rewardScale),goldReward=Math.floor(150*rewardScale);woodCount+=woodReward;stoneCount+=stoneReward;goldCount+=goldReward;enemyCamp.scale.setScalar(Math.max(.82,enemyCamp.scale.x-.04));bs.textContent='🏆 QƏLƏBƏ! +'+woodReward+' taxta · +'+stoneReward+' daş · +'+goldReward+' qızıl';}
+ else{bs.textContent='🛡️ MƏĞLUBİYYƏT — ordunu gücləndir';}
+ const difficulty=1+Math.min(battleCount,8)*.1;enemy={infantry:Math.floor((45+Math.floor(Math.random()*25))*difficulty),archers:Math.floor((25+Math.floor(Math.random()*20))*difficulty),cavalry:Math.floor((20+Math.floor(Math.random()*20))*difficulty)};
+ updateHud();saveGame();setTimeout(()=>bs.classList.remove('show'),4200);
 }
 function saveGame(){try{localStorage.setItem('kd-save-v1',JSON.stringify({level,woodCount,stoneCount,goldCount,troops,built,battleCount}));}catch(e){}}
 function loadGame(){try{const d=JSON.parse(localStorage.getItem('kd-save-v1')||'null');if(d){level=Math.max(1,Math.min(5,d.level||1));woodCount=d.woodCount??woodCount;stoneCount=d.stoneCount??stoneCount;goldCount=d.goldCount??goldCount;if(d.troops)troops={...troops,...d.troops};if(d.built)built={...built,...d.built};battleCount=d.battleCount||0;castle.scale.setScalar(1+(level-1)*.12);updateCastleAppearance();
