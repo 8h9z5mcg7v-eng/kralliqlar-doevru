@@ -129,7 +129,7 @@ for(const side of [-1,1]){
  bannerPole.position.set(side*8.3,0,2.6);
 }
 // Decorative stone planters with clipped shrubs.
-for(const [x,z] of [[-7.8,-2.5],[7.8,-2.5],[-7.8,4.8],[7.8,4.8]]){const pot=new THREE.Mesh(new THREE.CylinderGeometry(.42,.32,.38,8),fountainStone);pot.position.set(x,.19,z);scene.add(pot);const shrub=new THREE.Mesh(new THREE.SphereGeometry(.48,8,6),bushMat);shrub.position.set(x,.62,z);shrub.scale.y=.78;shrub.castShadow=true;scene.add(shrub)}
+for(const [x,z] of [[-7.8,-2.5],[7.8,-2.5],[-7.8,4.8],[7.8,4.8]]){const pot=new THREE.Mesh(new THREE.CylinderGeometry(.42,.32,.38,8),fountainStone);pot.position.set(x,.19,z);scene.add(pot);const shrub=new THREE.Mesh(new THREE.SphereGeometry(.48,8,6),grass2);shrub.position.set(x,.62,z);shrub.scale.y=.78;shrub.castShadow=true;scene.add(shrub)}
 
 const pavingMats=[mat('#a7a18e'),mat('#8e9288'),mat('#b9b09a'),mat('#777e78')];
 for(let row=-5;row<=5;row++){for(let col=-5;col<=5;col++){const x=col*1.65+(row%2)*.38,z=row*1.55;if(Math.hypot(x,z)>9.25||Math.hypot(x,z)<5.1)continue;const tile=new THREE.Mesh(new THREE.BoxGeometry(1.48,.055,1.36),pavingMats[Math.abs(row*7+col*3)%pavingMats.length]);tile.position.set(x,-.005,z);tile.rotation.y=((row+col)%3)*.025;tile.receiveShadow=true;scene.add(tile)}}
