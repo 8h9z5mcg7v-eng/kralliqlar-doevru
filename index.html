@@ -5,9 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Krallıqlar Dövrü — Krallığını qur</title>
 <style>
-:root{--gold:#f4cf7b;--panel:rgba(18,27,29,.96);--line:rgba(244,207,123,.42)}
+:root{--gold:#f4cf7b;--panel:rgba(15,24,27,.94);--line:rgba(244,207,123,.48);--text-soft:#d9e0d8;--shadow-deep:0 12px 34px #0008}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#172b27;color:#fff;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,sans-serif}
-canvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+canvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none;background:radial-gradient(ellipse at 50% 30%,#8daeb4,#233d36)}
+.brand,.resources,.card,.bottom{box-shadow:var(--shadow-deep),inset 0 1px #ffffff0d}
+.brand{background:linear-gradient(145deg,rgba(28,42,40,.97),rgba(10,18,20,.95))}
+.brand strong{text-shadow:0 2px 12px #e6b64b38}
+.resources{background:linear-gradient(145deg,rgba(27,40,40,.97),rgba(12,20,22,.95))}
+.resources span{padding:3px 5px;border-radius:7px;background:#ffffff08;border:1px solid #ffffff0b}
+.card{background:linear-gradient(150deg,rgba(29,43,40,.98),rgba(11,18,20,.97));border-color:#d6b66d8a}
+button{transition:filter .16s ease,box-shadow .16s ease,transform .12s ease;background:linear-gradient(180deg,#a77c42,#594020);box-shadow:inset 0 1px #ffffff2b,0 3px 9px #0003}
+button:hover:not(:disabled){filter:brightness(1.14);box-shadow:inset 0 1px #ffffff38,0 4px 14px #0005}
+.bottom button.active{background:linear-gradient(180deg,#f1d28b,#a56d2d);border-color:#fff0b2;box-shadow:0 0 0 1px #f5d28a44,0 3px 13px #0006;color:#20190d}
+.bar{height:8px;background:#0b1315;border:1px solid #ffffff16}.bar span{background:linear-gradient(90deg,#8b5a25,#e6b951,#fff0ae);box-shadow:0 0 10px #e9bb5b70}
 #hud{position:fixed;inset:0;pointer-events:none;isolation:isolate}
 .top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px;padding:12px;position:relative;z-index:2}
 .brand,.resources,.card,.bottom{background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 26px #0006;backdrop-filter:blur(12px);border-radius:14px}
@@ -87,6 +97,13 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),grass);ground.rotat
 for(let i=0;i<36;i++){const x=((i*17)%51)-25,z=((i*29)%55)-27;const p=new THREE.Mesh(new THREE.CircleGeometry(1.7+(i%4)*.45,12),i%3?grass2:grass);p.rotation.x=-Math.PI/2;p.position.set(x,-.12,z);scene.add(p)}
 const river=new THREE.Mesh(new THREE.PlaneGeometry(4,65),water);river.rotation.x=-Math.PI/2;river.rotation.z=-.34;river.position.set(-13,-.08,-7);scene.add(river);
 const roadmat=mat('#b4a27d');const road=new THREE.Mesh(new THREE.PlaneGeometry(5,45),roadmat);road.rotation.x=-Math.PI/2;road.rotation.z=.25;road.position.set(0,-.07,14);scene.add(road);
+// Castle approach: a tiled stone forecourt, worn paving, and warm gate lanterns.
+const plazaBase=new THREE.Mesh(new THREE.CircleGeometry(10.2,48),mat('#777d73'));plazaBase.rotation.x=-Math.PI/2;plazaBase.position.set(0,-.055,0);plazaBase.receiveShadow=true;scene.add(plazaBase);
+const plazaRim=new THREE.Mesh(new THREE.TorusGeometry(9.9,.16,6,64),mat('#b2a27d'));plazaRim.rotation.x=-Math.PI/2;plazaRim.position.set(0,-.015,0);plazaRim.receiveShadow=true;scene.add(plazaRim);
+const pavingMats=[mat('#a7a18e'),mat('#8e9288'),mat('#b9b09a'),mat('#777e78')];
+for(let row=-5;row<=5;row++){for(let col=-5;col<=5;col++){const x=col*1.65+(row%2)*.38,z=row*1.55;if(Math.hypot(x,z)>9.25||Math.hypot(x,z)<5.1)continue;const tile=new THREE.Mesh(new THREE.BoxGeometry(1.48,.055,1.36),pavingMats[Math.abs(row*7+col*3)%pavingMats.length]);tile.position.set(x,-.005,z);tile.rotation.y=((row+col)%3)*.025;tile.receiveShadow=true;scene.add(tile)}}
+const lanternMetal=mat('#514537'),lanternGlow=new THREE.MeshStandardMaterial({color:'#ffd783',emissive:'#ff9e36',emissiveIntensity:1.25,roughness:.35});
+for(const [x,z] of [[-7,7],[7,7],[-7,-7],[7,-7]]){const post=new THREE.Group();scene.add(post);const base=new THREE.Mesh(new THREE.CylinderGeometry(.24,.3,.22,8),stoneDark);base.position.y=.11;post.add(base);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.055,.075,1.45,7),lanternMetal);pole.position.y=.88;post.add(pole);const cap=new THREE.Mesh(new THREE.ConeGeometry(.32,.3,6),lanternMetal);cap.position.y=1.72;post.add(cap);const glow=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),lanternGlow);glow.position.y=1.48;post.add(glow);const halo=new THREE.PointLight(0xffb75a,.45,4);halo.position.y=1.5;post.add(halo);post.position.set(x,0,z)}
 
 // Outer defensive walls and gate towers
 const world=new THREE.Group();scene.add(world);
