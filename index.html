@@ -127,6 +127,7 @@ button:active{transform:translateY(1px)}button:disabled{opacity:.45}.wide{width:
 <div class="loading" id="loading"><div class="loadbox">KRALLIQLAR DÖVRÜ<small>Krallıq hazırlanır…</small></div></div><script>window.addEventListener("error",function(e){var n=document.querySelector("#loading .loadbox small");if(n)n.textContent="Yükləmə xətası: "+(e.message||"JavaScript xətası");});window.addEventListener("unhandledrejection",function(e){var n=document.querySelector("#loading .loadbox small");if(n)n.textContent="Resurs yüklənmədi. Səhifəni yenilə.";});</script>
 <script type="module">
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const canvas=document.querySelector('#world');
 let renderer;
 try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});}catch(err){const n=document.querySelector('#loading .loadbox small');if(n)n.textContent='3D qrafika açıla bilmədi. Səhifəni yenilə və ya başqa brauzerdə yoxla.';throw err;}
@@ -317,8 +318,10 @@ function makeFallbackCastle(parent){
 }
 const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
 let levelDecor=new THREE.Group();castle.add(levelDecor);
+let loadedCastleModel=false;
 function updateCastleAppearance(){
  castle.remove(levelDecor);levelDecor=new THREE.Group();castle.add(levelDecor);
+ if(loadedCastleModel)return;
  if(level>=2){
   for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]]){
    const ring=new THREE.Mesh(new THREE.TorusGeometry(1.02,.07,6,12),goldmat);ring.rotation.x=Math.PI/2;ring.position.set(x,4.12,z);levelDecor.add(ring);
@@ -348,6 +351,27 @@ function updateCastleAppearance(){
   const crest=new THREE.Mesh(new THREE.TorusGeometry(.42,.11,8,16),goldmat);crest.position.set(0,6.65,1.55);levelDecor.add(crest);
  }
 }
+
+ 
+// Load a real, reusable 3D castle courtyard model; retain the procedural castle if the CDN fails.
+const castleAssetLoader=new GLTFLoader();
+castleAssetLoader.load('https://cdn.3dassets.dev/assets/23508/v1/model.glb',(gltf)=>{
+ const importedCastle=gltf.scene;
+ importedCastle.scale.setScalar(.65);
+ importedCastle.position.set(0,0,0);
+ importedCastle.traverse((node)=>{
+  if(node.isMesh){node.castShadow=true;node.receiveShadow=true;
+   if(node.material){node.material.needsUpdate=true;}
+  }
+ });
+ castle.clear();
+ castle.add(importedCastle);
+ loadedCastleModel=true;
+ updateCastleAppearance();
+ console.info('Krallıqlar Dövrü: 3D qala modeli yükləndi.');
+},undefined,(error)=>{
+ console.warn('3D qala modeli yüklənmədi; ehtiyat qala saxlanılır.',error);
+});
 
 // Small stylized troops make the kingdom feel alive; their number is illustrative, not the full army count.
 const troopActors=[];
