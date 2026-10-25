@@ -467,6 +467,9 @@ function buildHouse(x,z){
 // A single well and market are built in the city district below; remove older duplicate props.
 // Keep the watchtower only in the organized city district below; remove the older duplicate tower.
 
+// Shared timber materials used by the windmill and cart outside the city-builder scope.
+const villageWood=new THREE.MeshStandardMaterial({color:'#68472c',roughness:.9});
+const villageWoodLight=new THREE.MeshStandardMaterial({color:'#987044',roughness:.9});
 // A small windmill with timber sails beside the farm.
 const mill=new THREE.Group();scene.add(mill);
 const millBase=new THREE.Mesh(new THREE.CylinderGeometry(.65,.95,3.2,8),mat('#c5b99c'));millBase.position.y=1.6;millBase.castShadow=true;mill.add(millBase);
