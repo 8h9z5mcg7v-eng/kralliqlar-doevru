@@ -263,6 +263,27 @@ function makeFallbackCastle(parent){
   const f=new THREE.Mesh(new THREE.PlaneGeometry(.62,.42),new THREE.MeshStandardMaterial({color:x<0?'#b83e32':'#d6b85f',side:THREE.DoubleSide,roughness:.8}));
   f.position.set(x+(x<0?.3:-.3),5.78,z+.03);castle.add(f);
  }
+
+ // Extra royal architecture: a heavier gatehouse, battlements and tower details.
+ const archStone=mat('#a9aaa0'),archShadow=mat('#343d3a'),archGold=mat('#d5ad55'),archRed=mat('#b83e32');
+ box(castle,.42,3.05,.95,archStone,-1.38,1.55,4.05);box(castle,.42,3.05,.95,archStone,1.38,1.55,4.05);
+ box(castle,3.25,.32,1.02,archStone,0,3.05,4.05);box(castle,2.75,.12,1.08,archGold,0,3.25,4.07);
+ // Crenellations along the curtain walls make the fortification silhouette stronger.
+ for(let x=-4.5;x<=4.51;x+=.9){box(castle,.42,.48,.42,archStone,x,2.92,-4);box(castle,.42,.48,.42,archStone,x,2.92,4)}
+ for(let z=-3.2;z<=3.21;z+=.9){box(castle,.42,.48,.42,archStone,-5,2.92,z);box(castle,.42,.48,.42,archStone,5,2.92,z)}
+ // Narrow arrow slits and projecting stone ledges on all four towers.
+ for(const [x,z] of [[-5,4],[5,4],[-5,-4],[5,-4]]){
+  const front=z>0?4.93:-4.93;
+  for(const y of [1.8,3.15]){box(castle,.13,.58,.07,archShadow,x,y,front);box(castle,.035,.58,.08,archGold,x,y,front+(z>0?.045:-.045))}
+  box(castle,1.55,.18,1.12,archStone,x,3.55,z);
+  for(let k=-1;k<=1;k++)box(castle,.16,.25,.16,stone,x+k*.48,3.76,z+.12);
+ }
+ // Stone approach and joints in front of the main gate.
+ box(castle,3.4,.18,1.7,stoneDark,0,.12,5.15);box(castle,2.9,.12,1.25,archStone,0,.23,5.5);
+ for(let k=-2;k<=2;k++)box(castle,.035,.018,1.08,stoneDark,k*.55,.30,5.5);
+ // Royal crest above the gate.
+ const shield=new THREE.Mesh(new THREE.OctahedronGeometry(.48,0),archGold);shield.scale.set(.8,1.1,.28);shield.position.set(0,3.75,4.34);castle.add(shield);
+ const shieldCore=new THREE.Mesh(new THREE.OctahedronGeometry(.22,0),archRed);shieldCore.position.set(0,3.76,4.48);castle.add(shieldCore);
  return castle;
 }
 const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
