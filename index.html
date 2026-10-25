@@ -338,9 +338,10 @@ function attackCamp(){
  const theirs=enemy.infantry*100*advantage('infantry',troops.cavalry)+enemy.archers*120*advantage('archers',troops.infantry)+enemy.cavalry*110*advantage('cavalry',troops.archers);
  const win=ours>theirs*(.72+Math.random()*.45);
  const loss=Math.min(.55, win ? (.12+Math.random()*.12) : (.25+Math.random()*.2));
- for(const k of Object.keys(troops))troops[k]=Math.max(0,Math.floor(troops[k]*(1-loss)));
- if(win){battleCount++;const rewardScale=1+Math.min(battleCount-1,10)*.12;const woodReward=Math.floor((500+Math.floor(Math.random()*350))*rewardScale),stoneReward=Math.floor(300*rewardScale),goldReward=Math.floor(150*rewardScale);woodCount+=woodReward;stoneCount+=stoneReward;goldCount+=goldReward;enemyCamp.scale.setScalar(Math.max(.82,enemyCamp.scale.x-.04));bs.textContent='🏆 QƏLƏBƏ! +'+woodReward+' taxta · +'+stoneReward+' daş · +'+goldReward+' qızıl';}
- else{bs.textContent='🛡️ MƏĞLUBİYYƏT — ordunu gücləndir';}
+ const casualties={};for(const k of Object.keys(troops)){const before=troops[k];const classLoss=Math.min(.7,loss*(k==='infantry'?.85:k==='archers'?1.05:1.15));troops[k]=Math.max(0,Math.floor(before*(1-classLoss)));casualties[k]=before-troops[k];}
+ const lossReport=' İtkilər — Piyada: '+casualties.infantry+', oxçu: '+casualties.archers+', süvari: '+casualties.cavalry+'.';
+ if(win){battleCount++;const rewardScale=1+Math.min(battleCount-1,10)*.12;const woodReward=Math.floor((500+Math.floor(Math.random()*350))*rewardScale),stoneReward=Math.floor(300*rewardScale),goldReward=Math.floor(150*rewardScale);woodCount+=woodReward;stoneCount+=stoneReward;goldCount+=goldReward;enemyCamp.scale.setScalar(Math.max(.82,enemyCamp.scale.x-.04));bs.textContent='🏆 QƏLƏBƏ! +'+woodReward+' taxta · +'+stoneReward+' daş · +'+goldReward+' qızıl.'+lossReport;}
+ else{bs.textContent='🛡️ MƏĞLUBİYYƏT.'+lossReport+' Ordunu yenidən hazırla.';}
  const difficulty=1+Math.min(battleCount,8)*.1;enemy={infantry:Math.floor((45+Math.floor(Math.random()*25))*difficulty),archers:Math.floor((25+Math.floor(Math.random()*20))*difficulty),cavalry:Math.floor((20+Math.floor(Math.random()*20))*difficulty)};
  updateHud();saveGame();setTimeout(()=>bs.classList.remove('show'),4200);
 }
