@@ -393,7 +393,7 @@ for(let i=0;i<5;i++){const basket=new THREE.Mesh(new THREE.CylinderGeometry(.18,
 stall.position.set(-7,0,8);
 
 // Settlement expansion: a timber watchtower, windmill, cart, crates and a campfire.
-const villageWood=mat('#68472c'),villageWoodLight=mat('#987044'),ironDark=mat('#393d3b'),flameMat=new THREE.MeshStandardMaterial({color:'#ff9b35',emissive:'#e85b12',emissiveIntensity:1.6});
+const villageWood=mat('#68472c'),villageWoodLight=mat('#987044'),flameMat=new THREE.MeshStandardMaterial({color:'#ff9b35',emissive:'#e85b12',emissiveIntensity:1.6});
 const watch=new THREE.Group();scene.add(watch);
 const watchLegs=[[-.8,-.65],[.8,-.65],[-.8,.65],[.8,.65]];
 for(const [x,z] of watchLegs){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.12,.17,3.1,6),villageWood);leg.position.set(x,1.55,z);leg.rotation.z=x*.08;leg.castShadow=true;watch.add(leg)}
@@ -406,7 +406,7 @@ const watchRoof=new THREE.Mesh(new THREE.ConeGeometry(1.35,.85,4),roof);watchRoo
 const mill=new THREE.Group();scene.add(mill);
 const millBase=new THREE.Mesh(new THREE.CylinderGeometry(.65,.95,3.2,8),mat('#c5b99c'));millBase.position.y=1.6;millBase.castShadow=true;mill.add(millBase);
 const millRoof=new THREE.Mesh(new THREE.ConeGeometry(.9,.8,6),roof);millRoof.position.y=3.55;mill.add(millRoof);
-const axle=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.5,8),ironDark);axle.rotation.z=Math.PI/2;axle.position.set(0,2.65,.7);mill.add(axle);
+const axle=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.5,8),pavingDark);axle.rotation.z=Math.PI/2;axle.position.set(0,2.65,.7);mill.add(axle);
 const sails=new THREE.Group();sails.position.set(0,2.65,1.0);mill.add(sails);
 for(let a=0;a<4;a++){const blade=new THREE.Group();blade.rotation.z=a*Math.PI/2;const sail=new THREE.Mesh(new THREE.BoxGeometry(.22,1.55,.09),villageWoodLight);sail.position.y=.78;sail.castShadow=true;blade.add(sail);const cross=new THREE.Mesh(new THREE.BoxGeometry(.42,.1,.1),villageWood);cross.position.y=.3;blade.add(cross);sails.add(blade)}
 const millHub=new THREE.Mesh(new THREE.SphereGeometry(.2,8,6),goldmat);millHub.position.set(0,2.65,1.1);mill.add(millHub);mill.position.set(18,0,-7);
@@ -416,13 +416,13 @@ const cart=new THREE.Group();scene.add(cart);
 box(cart,1.65,.16,.95,villageWood,0,.78,0);
 for(const x of [-.72,.72])for(const z of [-.42,.42])box(cart,.09,.48,.09,villageWoodLight,x,1.02,z);
 for(const z of [-.42,.42])box(cart,1.55,.1,.1,villageWoodLight,0,1.15,z);
-const cartAxle=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,1.45,8),ironDark);cartAxle.rotation.z=Math.PI/2;cartAxle.position.set(0,.52,-.05);cart.add(cartAxle);
+const cartAxle=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,1.45,8),pavingDark);cartAxle.rotation.z=Math.PI/2;cartAxle.position.set(0,.52,-.05);cart.add(cartAxle);
 for(const x of [-.78,.78]){const wheel=new THREE.Mesh(new THREE.TorusGeometry(.39,.075,7,14),villageWood);wheel.position.set(x,.52,-.05);wheel.rotation.y=Math.PI/2;wheel.castShadow=true;cart.add(wheel);for(let spoke=0;spoke<8;spoke++){const s=new THREE.Mesh(new THREE.BoxGeometry(.045,.68,.045),villageWoodLight);s.position.set(x,.52,-.05);s.rotation.z=spoke*Math.PI/4;cart.add(s)}}
 for(const [x,z] of [[-.3,0],[.15,.12],[.35,-.12]]){const sack=new THREE.Mesh(new THREE.SphereGeometry(.25,7,6),mat('#b4a078'));sack.scale.set(1,.8,1.1);sack.position.set(x,1.05,z);cart.add(sack)}
 cart.position.set(-9,0,5.5);cart.rotation.y=-.35;
 
 // Barrels and stacked supply crates around the market.
-for(const [x,z] of [[-5.45,7.3],[-5.1,7.8],[-8.4,7.4]]){const barrel=new THREE.Group();scene.add(barrel);const body=new THREE.Mesh(new THREE.CylinderGeometry(.23,.25,.58,9),villageWood);body.position.y=.3;barrel.add(body);for(const y of [.12,.47]){const hoop=new THREE.Mesh(new THREE.TorusGeometry(.24,.025,5,10),ironDark);hoop.position.y=y;barrel.add(hoop)}barrel.position.set(x,0,z)}
+for(const [x,z] of [[-5.45,7.3],[-5.1,7.8],[-8.4,7.4]]){const barrel=new THREE.Group();scene.add(barrel);const body=new THREE.Mesh(new THREE.CylinderGeometry(.23,.25,.58,9),villageWood);body.position.y=.3;barrel.add(body);for(const y of [.12,.47]){const hoop=new THREE.Mesh(new THREE.TorusGeometry(.24,.025,5,10),pavingDark);hoop.position.y=y;barrel.add(hoop)}barrel.position.set(x,0,z)}
 for(const [x,z] of [[-8.8,8.4],[-8.35,8.4]]){const crate=new THREE.Group();scene.add(crate);box(crate,.48,.48,.48,villageWood,x, .24,z);box(crate,.5,.07,.06,villageWoodLight,x,.24,z+.25);box(crate,.5,.07,.06,villageWoodLight,x,.24,z-.25);box(crate,.06,.5,.5,villageWoodLight,x+.2,.24,z)}
 
 // Campfire, stones and crossed logs add a warm village focal point.
