@@ -172,6 +172,85 @@ button:active{transform:translateY(1px)}
  .tile.selected,.tile:hover{transform:translateY(-3px) scale(1.02)}
 }
 
+
+/* True open city layout: buildings sit in the landscape, not inside UI cards */
+.city-scene{position:relative;min-height:710px;padding:0 10px 40px;overflow:hidden;background:
+ radial-gradient(ellipse at 50% 44%,#9eb979 0%,#6f965b 36%,transparent 63%),
+ linear-gradient(160deg,transparent 0 35%,#d5c48a 35.3% 37.5%,#8f9b68 37.8% 40%,transparent 40.3%),
+ linear-gradient(25deg,transparent 0 46%,#d7c68a 46.3% 48.5%,#8f9b68 48.8% 51%,transparent 51.3%),
+ repeating-linear-gradient(115deg,#416b42 0 30px,#527c4b 31px 61px,#426b3e 62px 92px);
+}
+.city-scene:before{background:radial-gradient(ellipse at 50% 32%,#e2d9a533,transparent 43%),radial-gradient(ellipse at 12% 18%,#153d2a99 0 5%,transparent 6%),radial-gradient(ellipse at 87% 23%,#153d2a99 0 6%,transparent 7%),radial-gradient(ellipse at 13% 69%,#153d2a88 0 7%,transparent 8%),radial-gradient(ellipse at 89% 72%,#153d2a88 0 7%,transparent 8%)}
+.city-scene:after{height:12%;background:linear-gradient(180deg,#3e8190,#19475a);border-top:4px solid #9fc3a2;transform:skewY(-2deg)}
+.city-label{position:relative;z-index:10;margin:14px auto 0;width:max-content;max-width:100%;padding:6px 12px;background:#17271cdd;border:1px solid #d8b765;border-radius:5px;letter-spacing:2px}
+.map{position:absolute;left:2%;right:2%;top:56px;bottom:80px;display:block;padding:0;background:none;border:0;box-shadow:none}
+.tile{position:absolute;width:18%;height:25%;min-height:0;display:flex;justify-content:flex-end;gap:3px;padding:3px 2px 7px;clip-path:none;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;transform:none!important;filter:none!important;overflow:visible}
+.tile:before{content:"";position:absolute;left:10%;right:10%;bottom:19%;height:15%;z-index:-1;border-radius:50%;background:#10231588;filter:blur(7px);border:0}
+.tile:after{display:none}
+.tile .building-art{height:78%;width:100%;filter:drop-shadow(0 7px 3px #122016aa);transition:transform .2s;align-items:flex-end}
+.tile .building-art svg{width:100%;height:100%;max-width:140px;max-height:none;overflow:visible}
+.tile span:not(.building-art){position:relative;z-index:2;max-width:100%;font-size:10px!important;line-height:1.15;padding:3px 5px!important;border:1px solid #d4b46b;border-radius:4px;background:#15241de8!important;color:#fff0c1;box-shadow:0 2px 4px #0008;white-space:normal}
+.tile small{font-size:8px;line-height:1.1;background:#101811d9;border:1px solid #8c9a72;border-radius:3px;padding:2px 3px}
+.tile:hover .building-art,.tile.selected .building-art{transform:translateY(-5px) scale(1.1);filter:drop-shadow(0 9px 5px #07120e)}
+.tile.selected{outline:none;z-index:9;filter:none}
+.tile.selected span:not(.building-art){border-color:#ffe18a;background:#725421!important;color:#fff8d9}
+.tile.mine:before{background:#e7c96855;filter:blur(10px)}
+.tile.enemy span:not(.building-art){border-color:#d48b7c;color:#ffe0d7}
+.tile.neutral span:not(.building-art){border-color:#9bc7cf}
+.tile:nth-child(1){left:39%;top:29%;width:23%;height:31%;z-index:4}
+.tile:nth-child(2){left:5%;top:12%;width:17%;height:24%}
+.tile:nth-child(3){left:24%;top:9%;width:17%;height:24%}
+.tile:nth-child(4){left:63%;top:9%;width:17%;height:24%}
+.tile:nth-child(5){left:81%;top:16%;width:16%;height:23%}
+.tile:nth-child(6){left:4%;top:39%;width:18%;height:24%}
+.tile:nth-child(7){left:22%;top:37%;width:17%;height:24%}
+.tile:nth-child(8){left:64%;top:37%;width:17%;height:24%}
+.tile:nth-child(9){left:81%;top:42%;width:16%;height:24%}
+.tile:nth-child(10){left:7%;top:65%;width:17%;height:23%}
+.tile:nth-child(11){left:25%;top:66%;width:17%;height:23%}
+.tile:nth-child(12){left:44%;top:64%;width:16%;height:23%}
+.tile:nth-child(13){left:62%;top:65%;width:17%;height:23%}
+.tile:nth-child(14){left:80%;top:67%;width:16%;height:22%}
+.tile:nth-child(15){left:13%;top:84%;width:15%;height:16%}
+.tile:nth-child(16){left:30%;top:84%;width:15%;height:16%}
+.tile:nth-child(17){left:48%;top:84%;width:15%;height:16%}
+.tile:nth-child(18){left:65%;top:84%;width:15%;height:16%}
+.tile:nth-child(19){left:82%;top:84%;width:15%;height:16%}
+.tile:nth-child(20){left:43%;top:4%;width:15%;height:23%}
+.tile.building-castle .building-art{height:82%}
+.tile.building-castle .building-art svg{max-width:170px}
+.city-wall{z-index:1;opacity:.9;left:3%;right:3%}
+.city-river{position:absolute;bottom:7px;left:0;right:0;z-index:2}
+@media(max-width:700px){
+ .city-scene{min-height:600px;padding:0 3px 32px}
+ .map{left:0;right:0;top:48px;bottom:62px}
+ .tile{width:19%;height:22%;padding:2px 1px 5px}
+ .tile .building-art{height:70%}
+ .tile .building-art svg{max-width:none}
+ .tile span:not(.building-art){font-size:8px!important;padding:2px 3px!important}
+ .tile small{font-size:6px;padding:1px 2px}
+ .tile:nth-child(1){left:39%;top:29%;width:23%;height:27%}
+ .tile:nth-child(2){left:2%;top:10%;width:18%;height:21%}
+ .tile:nth-child(3){left:22%;top:8%;width:17%;height:21%}
+ .tile:nth-child(4){left:62%;top:8%;width:17%;height:21%}
+ .tile:nth-child(5){left:81%;top:12%;width:17%;height:21%}
+ .tile:nth-child(6){left:1%;top:35%;width:18%;height:21%}
+ .tile:nth-child(7){left:20%;top:35%;width:18%;height:21%}
+ .tile:nth-child(8){left:63%;top:35%;width:18%;height:21%}
+ .tile:nth-child(9){left:81%;top:37%;width:18%;height:21%}
+ .tile:nth-child(10){left:2%;top:60%;width:18%;height:20%}
+ .tile:nth-child(11){left:22%;top:62%;width:17%;height:20%}
+ .tile:nth-child(12){left:42%;top:60%;width:17%;height:20%}
+ .tile:nth-child(13){left:62%;top:62%;width:17%;height:20%}
+ .tile:nth-child(14){left:81%;top:62%;width:17%;height:20%}
+ .tile:nth-child(15){left:7%;top:80%;width:16%;height:17%}
+ .tile:nth-child(16){left:25%;top:81%;width:16%;height:17%}
+ .tile:nth-child(17){left:43%;top:80%;width:16%;height:17%}
+ .tile:nth-child(18){left:61%;top:81%;width:16%;height:17%}
+ .tile:nth-child(19){left:79%;top:80%;width:16%;height:17%}
+ .tile:nth-child(20){left:42%;top:3%;width:16%;height:20%}
+}
+
 </style></head><body>
 <header class="hero"><h1>⚔️ Krallıqlar Dövrü</h1><p>Krallığını qur · Qalanı inkişaf etdir · Düşmənə qalib gəl</p><div class="king-banner"><span>👑 KRALINLIQ SƏVİYYƏSİ 1</span><span>🏰 Paytaxtın</span><span>⚔️ Müharibəyə hazır ol</span></div></header>
 <main><div class="stats"><div class="stat"><span>🪙 Qızıl</span><strong id="gold">120</strong></div><div class="stat"><span>🪵 Taxta</span><strong id="wood">80</strong></div><div class="stat"><span>🌾 Ərzaq</span><strong id="food">100</strong></div><div class="stat"><span>🛡️ Qoşun</span><strong id="army">20</strong></div></div>
