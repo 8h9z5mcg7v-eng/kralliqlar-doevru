@@ -8,7 +8,7 @@
 export const RESEARCH = {
   agriculture: {
     id: 'agriculture',
-    name: 'Agriculture',
+    name: 'Kənd təsərrüfatı',
     icon: 'agriculture',
     cost: { food: 30, gold: 10 },
     duration: 30,             // seconds
@@ -18,7 +18,7 @@ export const RESEARCH = {
   },
   mining: {
     id: 'mining',
-    name: 'Mining',
+    name: 'Mədənçilik',
     icon: 'mining',
     cost: { wood: 25, gold: 15 },
     duration: 40,
@@ -28,7 +28,7 @@ export const RESEARCH = {
   },
   engineering: {
     id: 'engineering',
-    name: 'Engineering',
+    name: 'Mühəndislik',
     icon: 'engineering',
     cost: { wood: 40, stone: 30, gold: 20 },
     duration: 60,
@@ -38,7 +38,7 @@ export const RESEARCH = {
   },
   trade: {
     id: 'trade',
-    name: 'Trade',
+    name: 'Ticarət',
     icon: 'trade',
     cost: { gold: 35, food: 20 },
     duration: 50,
@@ -48,7 +48,7 @@ export const RESEARCH = {
   },
   military: {
     id: 'military',
-    name: 'Military',
+    name: 'Hərbi iş',
     icon: 'military',
     cost: { wood: 30, stone: 25, gold: 25 },
     duration: 55,
