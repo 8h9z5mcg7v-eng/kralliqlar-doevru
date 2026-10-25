@@ -179,7 +179,7 @@ function updateCastleAppearance(){
 
 // Small stylized troops make the kingdom feel alive; their number is illustrative, not the full army count.
 const troopActors=[];
-const armorMat=mat('#344b58'),leatherMat=mat('#6b4930'),enemyMat=mat('#8f3935'),skinMat=mat('#d4a77d'),metalMat=mat('#aeb8bd',.48),shieldBlue=mat('#416b82'),enemyShield=mat('#9d4238'),bootMat=mat('#302a24');
+const armorMat=mat('#344b58'),leatherMat=mat('#6b4930'),enemyMat=mat('#8f3935'),skinMat=mat('#d4a77d'),metalMat=mat('#aeb8bd',.48),shieldBlue=mat('#416b82'),enemyShield=mat('#9d4238'),bootMat=mat('#302a24'),clothLight=mat('#c9c5ae');
 function makeTroop(isEnemy=false,isCavalry=false,isArcher=false){
  const g=new THREE.Group(),tunic=isEnemy?enemyMat:armorMat,y=isCavalry?.85:0;
  // Horse and rider silhouette for cavalry.
