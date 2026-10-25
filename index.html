@@ -40,7 +40,7 @@ button:active{transform:translateY(1px)}button:disabled{opacity:.45}.wide{width:
  <div class="top"><div class="brand"><strong>⚔ KRALLIQLAR DÖVRÜ</strong><small>Öz imperiyanı qur · səltənətini qoru</small></div><div class="resources"><span>🪵 <b id="wood">2500</b></span><span>🪨 <b id="stone">1800</b></span><span>🥇 <b id="gold">900</b></span><span>⚔️ <b id="army">120</b></span></div></div>
  <section class="card"><h2 id="selectedTitle">Baş Qala</h2><div class="muted" id="description">Krallığının ürəyi. Qalanı inkişaf etdir, ordunu gücləndir və yeni tikililər aç.</div><div class="level">Səviyyə: <b id="level">1</b> / 5</div><div class="bar"><span id="progress"></span></div><div class="muted" id="cost">Növbəti səviyyə: 500 🪵 · 100 🪨 · 200 🥇</div><button class="wide" id="upgrade" style="margin-top:10px">⬆ Qalanı yüksəlt</button></section>
  <div class="hint">Xəritəni sürüşdür · iki barmaqla yaxınlaşdır · tikili seç</div>
- <nav class="bottom"><button class="active" data-mode="select">🏰 Qala</button><button data-mode="barracks">🛡 Kazarma</button><button data-mode="archery">🏹 Oxçular</button><button data-mode="stable">🐎 Tövlə</button><button data-mode="farm">🌾 Ferma</button><button data-mode="train">⚔️ Əsgər hazırla</button><button data-mode="attack">🔥 Düşərgəyə hücum</button></nav>
+ <nav class="bottom"><button class="active" data-mode="select">🏰 Qala</button><button data-mode="barracks">🛡 Kazarma</button><button data-mode="archery">🏹 Oxçular</button><button data-mode="stable">🐎 Tövlə</button><button data-mode="farm">🌾 Ferma</button><button data-mode="train">🛡 Piyada +20</button><button data-mode="train_archer">🏹 Oxçu +20</button><button data-mode="train_cavalry">🐎 Süvari +20</button><button data-mode="attack">🔥 Düşərgəyə hücum</button></nav>
  <div class="toast" id="toast"></div>
 </div>
 <div class="loading" id="loading"><div class="loadbox">KRALLIQLAR DÖVRÜ<small>Krallıq hazırlanır…</small></div></div>
@@ -88,18 +88,18 @@ const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
 // Small stylized troops make the kingdom feel alive; their number is illustrative, not the full army count.
 const troopActors=[];
 const armorMat=mat('#344b58'),leatherMat=mat('#6b4930'),enemyMat=mat('#8f3935'),skinMat=mat('#d4a77d');
-function makeTroop(isEnemy=false,isCavalry=false){
+function makeTroop(isEnemy=false,isCavalry=false,isArcher=false){
  const g=new THREE.Group();const tunic=isEnemy?enemyMat:armorMat;
  const body=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.42,3,6),tunic);body.position.y=.65;body.castShadow=true;g.add(body);
  const head=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),skinMat);head.position.y=1.02;head.castShadow=true;g.add(head);
  cone(g,.19,.22,goldmat,0,1.17,0,5);
  const shield=new THREE.Mesh(new THREE.BoxGeometry(.25,.34,.08),isEnemy?enemyMat:goldmat);shield.position.set(-.23,.63,.08);shield.castShadow=true;g.add(shield);
- const sword=new THREE.Mesh(new THREE.BoxGeometry(.045,.48,.045),stone);sword.position.set(.23,.72,.02);sword.rotation.z=-.35;g.add(sword);
+ const sword=new THREE.Mesh(new THREE.BoxGeometry(.045,.48,.045),stone);sword.position.set(.23,.72,.02);sword.rotation.z=-.35;g.add(sword);if(isArcher){sword.visible=false;const bow=new THREE.Mesh(new THREE.TorusGeometry(.19,.035,5,10,Math.PI),wood);bow.position.set(.27,.72,.04);bow.rotation.z=Math.PI/2;g.add(bow);const arrow=new THREE.Mesh(new THREE.BoxGeometry(.035,.48,.035),goldmat);arrow.position.set(.28,.72,.04);arrow.rotation.z=-.2;g.add(arrow)}
  if(isCavalry){const horse=new THREE.Mesh(new THREE.BoxGeometry(.34,.34,.62),leatherMat);horse.position.set(0,.35,-.28);horse.castShadow=true;g.add(horse);const neck=new THREE.Mesh(new THREE.BoxGeometry(.18,.4,.2),leatherMat);neck.position.set(0,.55,.03);neck.rotation.x=-.25;g.add(neck)}
  return g;
 }
 const troopDisplay=new THREE.Group();scene.add(troopDisplay);
-for(let i=0;i<12;i++){const cavalry=i>=9;const unit=makeTroop(false,cavalry);unit.position.set((i%4-1.5)*.8,.02,6+Math.floor(i/4)*.8);troopDisplay.add(unit);troopActors.push({unit,home:unit.position.clone(),phase:i*.7})}
+for(let i=0;i<12;i++){const cavalry=i>=9,archer=i>=6&&i<9;const unit=makeTroop(false,cavalry,archer);unit.position.set((i%4-1.5)*.8,.02,6+Math.floor(i/4)*.8);troopDisplay.add(unit);troopActors.push({unit,home:unit.position.clone(),phase:i*.7})}
 
 // Architectural detail pass: stone courses, narrow arrow slits, warm windows and battlements.
 const mortar=mat('#8e9692'),shadowStone=mat('#343d3d'),windowGlow=new THREE.MeshStandardMaterial({color:'#ffc96b',emissive:'#9b4d13',emissiveIntensity:1.1,roughness:.35});
@@ -137,11 +137,18 @@ function updateHud(){armyCount=troops.infantry+troops.archers+troops.cavalry;doc
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2300)}
 document.querySelector('#upgrade').addEventListener('click',()=>{const c=costs[level+1];if(!c)return;if(woodCount<c[0]||stoneCount<c[1]||goldCount<c[2])return toast('Resurslar kifayət etmir!');woodCount-=c[0];stoneCount-=c[1];goldCount-=c[2];level++;castle.scale.setScalar(1+(level-1)*.12);if(level>=3){box(castle,4.2,.35,4.2,goldmat,0,5.0,-.3)}if(level>=4){for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]])cone(castle,1.35,2.1,goldmat,x,5.2,z,8)}updateHud();saveGame();toast('Qala '+level+'-ci səviyyəyə yüksəldi!')});
 const places={barracks:[-9,-7],archery:[-10,-10],stable:[10,-7],farm:[12,-4]};
-function placeBuilding(type){if(type==='train'){if(armyCount>=1000)return toast('Ordu limiti dolub.');if(woodCount<100||goldCount<60)return toast('Əsgər hazırlamaq üçün resurs çatmır.');woodCount-=100;goldCount-=60;troops.infantry+=20;updateHud();saveGame();return toast('20 piyada əsgər orduya qoşuldu!')}
+function placeBuilding(type){if(type==='train'||type==='train_archer'||type==='train_cavalry'){
+ if(armyCount>=1000)return toast('Ordu limiti dolub.');
+ const kind=type==='train_archer'?'archers':type==='train_cavalry'?'cavalry':'infantry';
+ const cost=kind==='infantry'?[100,0,60]:kind==='archers'?[130,0,80]:[180,50,120];
+ if(woodCount<cost[0]||stoneCount<cost[1]||goldCount<cost[2])return toast('Əsgər hazırlamaq üçün resurs çatmır.');
+ woodCount-=cost[0];stoneCount-=cost[1];goldCount-=cost[2];troops[kind]+=20;updateHud();saveGame();
+ return toast(kind==='infantry'?'20 piyada əsgər hazırlandı!':kind==='archers'?'20 oxçu hazırlandı!':'20 süvari hazırlandı!');
+}
 if(type==='attack'){attackCamp();return}
-if(type==='select'){document.querySelector('#selectedTitle').textContent='Baş Qala';document.querySelector('#description').textContent='Krallığının ürəyi. Qalanı inkişaf etdir, ordunu gücləndir və yeni tikililər aç.';document.querySelector('#upgrade').style.display='block';return}
+if(type==='select'){document.querySelector('#selectedTitle').textContent='Baş Qala';document.querySelector('#description').textContent='Krallığının ürəyi. Piyada: '+troops.infantry+' · Oxçu: '+troops.archers+' · Süvari: '+troops.cavalry+'. Qalanı inkişaf etdir və düşmən düşərgəsinə hücum et.';document.querySelector('#upgrade').style.display='block';return}
 const cost=type==='farm'?[180,40,20]:[300,100,60];if(built[type])return toast('Bu tikili artıq qurulub.');if(woodCount<cost[0]||stoneCount<cost[1]||goldCount<cost[2])return toast('Tikinti üçün resurs çatmır.');woodCount-=cost[0];stoneCount-=cost[1];goldCount-=cost[2];built[type]++;const [x,z]=places[type];let g;if(type==='farm'){g=new THREE.Group();scene.add(g);for(let i=0;i<4;i++)box(g,2.4,.06,.7,mat(i%2?'#b0a05a':'#758b3e'),0,.05,i*1.0);g.position.set(x,0,z)}else{g=buildHouse(x,z);if(type==='archery'){for(let i=0;i<3;i++)box(g,.08,1.8,.08,wood,-.4+i*.4,1.7,1.1)}if(type==='stable')box(g,1.2,.3,1.2,wood,0,1.1,1.2)}document.querySelector('#selectedTitle').textContent=({barracks:'Kazarma',archery:'Oxçuluq meydanı',stable:'Tövlə',farm:'Ferma'})[type];document.querySelector('#description').textContent='Tikili hazırdır. Resurs və ordu inkişafı üçün istifadə et.';document.querySelector('#upgrade').style.display='none';updateHud();saveGame();toast('Tikili uğurla quruldu!')}
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));if(mode==='select')placeBuilding('select');else if(mode==='train'||mode==='attack')placeBuilding(mode);else placeBuilding(mode)}));
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));if(mode==='select')placeBuilding('select');else if(mode==='train'||mode==='train_archer'||mode==='train_cavalry'||mode==='attack')placeBuilding(mode);else placeBuilding(mode)}));
 let battleStartedAt=0,battleDuration=0;
 function attackCamp(){
  const total=troops.infantry+troops.archers+troops.cavalry;
