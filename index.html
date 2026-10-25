@@ -223,7 +223,8 @@ document.querySelector('#openQuests').addEventListener('click',()=>{refreshQuest
 document.querySelector('#closeQuests').addEventListener('click',()=>{questModal.classList.remove('open');questModal.setAttribute('aria-hidden','true')});
 questModal.addEventListener('click',e=>{if(e.target===questModal){questModal.classList.remove('open');questModal.setAttribute('aria-hidden','true')}});
 document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.claim;const s=questState();if(!s[k]||claimedQuests[k])return;claimedQuests[k]=true;if(k==='castle')woodCount+=500;if(k==='army')woodCount+=400;if(k==='land')goldCount+=300;try{localStorage.setItem('kd-quests-v1',JSON.stringify(claimedQuests))}catch(e){}updateHud();saveGame();refreshQuests();toast('Tapşırıq mükafatı götürüldü!')}));
-\n// Territory discovery and conquest
+
+// Territory discovery and conquest
 const territoryData={forest:{name:'Şimal meşəsi',def:80,x:18,z:-13,reward:'Taxta',wood:900,stone:120,gold:60},quarry:{name:'Daş dərəsi',def:130,x:20,z:10,reward:'Daş',wood:180,stone:800,gold:100},outpost:{name:'Köhnə forpost',def:180,x:-25,z:13,reward:'Qızıl',wood:250,stone:250,gold:500}};
 // Visible 3D landmarks for the frontier map
 const territoryLandmarks={};
