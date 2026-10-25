@@ -592,7 +592,7 @@ document.querySelectorAll('[data-quick]').forEach(button=>button.addEventListene
  else if(action==='focus')document.querySelector('#focusCastle').click();
  else if(action==='army')document.querySelector('[data-mode="train"]').click();
  else if(action==='attack')document.querySelector('[data-mode="attack"]').click();
- else if(action==='upgrade'){document.querySelector('#buildingCard').hidden=false;document.querySelector('#selectedTitle').textContent='Baş Qala';document.querySelector('#description').textContent='Krallığının ürəyi. Qalanı yüksəlt və yeni imkanlar aç.';document.querySelector('#upgrade').click();}
+ else if(action==='upgrade'){document.querySelector('#buildingCard').hidden=false;document.querySelector('#selectedTitle').textContent='Baş Qala';document.querySelector('#description').textContent='Krallığının ürəyi. Qalanı yüksəlt və yeni imkanlar aç.';updateHud();}
 }));
 
 document.querySelector('#closeBuildingCard').addEventListener('click',()=>{document.querySelector('#buildingCard').hidden=true});
