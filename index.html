@@ -180,7 +180,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
 function animate(){requestAnimationFrame(animate);
  if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);
  for(const a of troopActors){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+(-7+a.home.x*.08-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.8-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.sin(performance.now()*.018+a.phase)*.5}
- for(const a of enemyUnits){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+(a.home.x< -18?-18.8:-17.2-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.4-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.PI+Math.sin(performance.now()*.02+a.phase)*.45}
+ for(const a of enemyUnits){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+((a.home.x< -18?-18.8:-17.2)-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.4-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.PI+Math.sin(performance.now()*.02+a.phase)*.45}
  if(t>=1){battleStartedAt=0;document.querySelector('#battleStatus').classList.remove('show');for(const a of troopActors){a.unit.position.copy(a.home)}for(const a of enemyUnits){a.unit.position.copy(a.home)}}
 }
  else{for(const a of troopActors){a.unit.position.y=.02+Math.abs(Math.sin(performance.now()*.002+a.phase))*.035;a.unit.rotation.y=Math.sin(performance.now()*.001+a.phase)*.04}}
