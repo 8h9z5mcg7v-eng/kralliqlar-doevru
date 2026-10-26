@@ -137,6 +137,10 @@ const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,200);let t
 function placeCamera(){camera.position.set(target.x+dist*Math.sin(yaw)*Math.cos(pitch),target.y+dist*Math.sin(pitch),target.z+dist*Math.cos(yaw)*Math.cos(pitch));camera.lookAt(target)}placeCamera();
 scene.add(new THREE.HemisphereLight(0xd9efff,0x53603b,2.0));const sun=new THREE.DirectionalLight(0xffe1a4,3.0);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-38;sun.shadow.camera.right=38;sun.shadow.camera.top=38;sun.shadow.camera.bottom=-38;sun.shadow.bias=-0.00025;scene.add(sun);
 const mat=(c,rough=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:rough});
+// Village materials are declared early to avoid use-before-initialization errors.
+const villageWood=new THREE.MeshStandardMaterial({color:'#68472c',roughness:.9});
+const villageWoodLight=new THREE.MeshStandardMaterial({color:'#987044',roughness:.9});
+const villageFlameMat=new THREE.MeshStandardMaterial({color:'#ffb13b',emissive:'#ff6a12',emissiveIntensity:1.25,roughness:.4});
 const grass=mat('#587b43'),grass2=mat('#73934d'),stone=mat('#c2c4bd'),stoneDark=mat('#5b6263'),roof=mat('#8e3d30'),wood=mat('#69452a'),goldmat=mat('#e8c36e'),water=new THREE.MeshStandardMaterial({color:'#398fa6',roughness:.25,metalness:.12});
 function box(parent,w,h,d,m,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
 function cone(parent,r,h,m,x,y,z,n=6){const o=new THREE.Mesh(new THREE.ConeGeometry(r,h,n),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
@@ -467,10 +471,7 @@ function buildHouse(x,z){
 // A single well and market are built in the city district below; remove older duplicate props.
 // Keep the watchtower only in the organized city district below; remove the older duplicate tower.
 
-// Shared timber materials used by the windmill and cart outside the city-builder scope.
-const villageWood=new THREE.MeshStandardMaterial({color:'#68472c',roughness:.9});
-const villageWoodLight=new THREE.MeshStandardMaterial({color:'#987044',roughness:.9});
-const villageFlameMat=new THREE.MeshStandardMaterial({color:'#ffb13b',emissive:'#ff6a12',emissiveIntensity:1.25,roughness:.4});
+// Village materials are declared near the scene setup for safe initialization.
 // A small windmill with timber sails beside the farm.
 const mill=new THREE.Group();scene.add(mill);
 const millBase=new THREE.Mesh(new THREE.CylinderGeometry(.65,.95,3.2,8),mat('#c5b99c'));millBase.position.y=1.6;millBase.castShadow=true;mill.add(millBase);
