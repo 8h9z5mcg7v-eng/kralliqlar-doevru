@@ -1034,6 +1034,19 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  for(let k=0;k<7;k++)cityBox(cityExpansion,.42,.36,1.2,outerCap,-2.7+k*.9,3.38,25);
  // Paved entry lane leads from the gate into the settlement.
  const gateLane=new THREE.Mesh(new THREE.BoxGeometry(4.8,.09,8),roadMat);gateLane.position.set(0,.045,20.2);gateLane.receiveShadow=true;cityExpansion.add(gateLane);
+ // Layered approach paving, stone curbs and defensive braziers make the entrance read as a deliberate landmark.
+ for(let k=0;k<7;k++){
+  const paver=new THREE.Mesh(new THREE.BoxGeometry(3.55,.035,.72),k%2===0?roadEdgeMat:roadMat);
+  paver.position.set(0,.105,23.1-k*.95);paver.receiveShadow=true;cityExpansion.add(paver);
+ }
+ for(const side of [-1,1]){
+  cityBox(cityExpansion,.22,.24,7.8,outerCap,side*2.58,.08,20.15);
+  cityBox(cityExpansion,.42,.72,.42,outerStone,side*4.35,.08,23.2);
+  cityBox(cityExpansion,.68,.12,.68,outerCap,side*4.35,.78,23.2);
+  cityBox(cityExpansion,.16,.44,.16,outerDark,side*4.35,.86,23.2);
+  const brazier=new THREE.Mesh(new THREE.SphereGeometry(.2,10,8),new THREE.MeshStandardMaterial({color:'#ffb24a',emissive:'#ff6b18',emissiveIntensity:1.2,roughness:.3}));
+  brazier.position.set(side*4.35,1.17,23.2);cityExpansion.add(brazier);
+ }
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
