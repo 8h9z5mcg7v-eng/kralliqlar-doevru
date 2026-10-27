@@ -1240,6 +1240,54 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  cityBox(cityExpansion,.12,1.15,.12,lifeWoodMat,-1.3,.1,18.6);
  const guildNotice=new THREE.Mesh(new THREE.BoxGeometry(1.32,.72,.08),districtFlagGold);guildNotice.position.set(-2.1,1.15,18.48);cityExpansion.add(guildNotice);
 
+
+ // Distinct functional-looking building yards: training dummies, stable troughs and crop furrows.
+ const yardFenceMat=new THREE.MeshStandardMaterial({color:'#6b472d',roughness:1});
+ const yardTargetMat=new THREE.MeshStandardMaterial({color:'#c7a46b',roughness:1});
+ const yardStrawMat=new THREE.MeshStandardMaterial({color:'#c4a14f',roughness:1});
+ // Barracks drill yard: a bounded patch with target posts and a weapon rack.
+ cityBox(cityExpansion,5.3,.08,3.8,cityMats.fieldA,-12,.045,-8.1);
+ for(const edge of [-1,1]){
+  cityBox(cityExpansion,.09,.65,3.9,yardFenceMat,-12+edge*2.7,.08,-8.1);
+  cityBox(cityExpansion,5.4,.65,.09,yardFenceMat,-12,.08,-10+edge*1.9);
+ }
+ for(let n=0;n<3;n++){
+  const dx=-13.6+n*1.6;
+  cityBox(cityExpansion,.13,1.35,.13,yardFenceMat,dx,.08,-7.3);
+  const target=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.13,12),yardTargetMat);
+  target.rotation.x=Math.PI/2;target.position.set(dx,.98,-7.22);target.castShadow=true;cityExpansion.add(target);
+  const bull=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.145,12),districtFlagRed);
+  bull.rotation.x=Math.PI/2;bull.position.set(dx,.98,-7.13);cityExpansion.add(bull);
+ }
+ cityBox(cityExpansion,1.65,.12,.4,cityMats.timberLight,-9.5,.75,-9.5);
+ for(let n=0;n<3;n++)cityBox(cityExpansion,.12,.9,.12,cityMats.iron,-10+n*.5,.8,-9.5);
+ // Stable paddock: hay bales, a long feeding trough and simple fence rails.
+ cityBox(cityExpansion,4.2,.07,3.5,cityMats.fieldA,12,.045,9.1);
+ for(const edge of [-1,1]){
+  cityBox(cityExpansion,.1,.58,3.6,yardFenceMat,12+edge*2.15,.08,9.1);
+  cityBox(cityExpansion,4.3,.58,.1,yardFenceMat,12,.08,9.1+edge*1.8);
+ }
+ cityBox(cityExpansion,2.2,.22,.48,cityMats.timberLight,12,.32,10.2);
+ for(let n=0;n<3;n++){
+  const bale=new THREE.Mesh(new THREE.BoxGeometry(.58,.45,.48),yardStrawMat);
+  bale.position.set(10.8+n*.72,.34,8.3);bale.rotation.y=(n%2)*.12;bale.castShadow=true;cityExpansion.add(bale);
+ }
+ // Farm plot: raised parallel furrows and little crop tufts visible from the angled camera.
+ cityBox(cityExpansion,4.9,.08,3.8,cityMats.fieldA,10,.05,17.5);
+ for(let r=0;r<5;r++){
+  const rz=15.95+r*.76;
+  cityBox(cityExpansion,4.45,.06,.13,cityMats.fieldB,10,.13,rz);
+  for(let c=0;c<7;c++){
+   const crop=new THREE.Mesh(new THREE.ConeGeometry(.105,.38,5),yardFenceMat);
+   crop.position.set(8.15+c*.61,.34,rz+.12);crop.rotation.z=(c%2?.12:-.12);crop.castShadow=true;cityExpansion.add(crop);
+  }
+ }
+ // Stone plot corners and lane markers make building footprints legible without cluttering paths.
+ const plotStoneMat=new THREE.MeshStandardMaterial({color:'#9d9889',roughness:1});
+ for(const plot of [{x:-12,z:-13.2,w:6.5,d:5.2},{x:3,z:-15,w:5.4,d:5.2},{x:12,z:9,w:5.3,d:5.2},{x:10,z:15.5,w:5.8,d:5.5}]){
+  for(const sx of [-1,1])for(const sz of [-1,1])cityBox(cityExpansion,.24,.18,.24,plotStoneMat,plot.x+sx*plot.w/2,.04,plot.z+sz*plot.d/2);
+ }
+
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
