@@ -828,6 +828,24 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   wheel.rotation.y=Math.PI/2;wheel.position.set(cartX+wx,.35,cartZ+.42);cityExpansion.add(wheel);
  }
  cityBox(cityExpansion,.1,.12,1.5,cityMats.timberLight,cartX,.48,cartZ+1.02);
+ // Farm district: furrows, a scarecrow and a small harvest stack beside the crop beds.
+ for(let row=0;row<5;row++){
+  const furrow=new THREE.Mesh(new THREE.BoxGeometry(5.25,.025,.045),new THREE.MeshStandardMaterial({color:'#5a4930',roughness:1}));
+  furrow.position.set(10.15,.075,13.82+row*.65);cityExpansion.add(furrow);
+ }
+ const scarecrow=new THREE.Group();scarecrow.position.set(7.55,0,16.1);cityExpansion.add(scarecrow);
+ cityBox(scarecrow,.16,1.55,.16,cityMats.timber,0,.05,0);
+ cityBox(scarecrow,1.05,.13,.13,cityMats.timberLight,0,1.18,0);
+ const scareHead=new THREE.Mesh(new THREE.SphereGeometry(.22,8,7),cityMats.hay);scareHead.position.set(0,1.68,0);scarecrow.add(scareHead);
+ cityBox(scarecrow,.55,.12,.12,cityMats.timberLight,0,1.7,.02);
+ for(let j=0;j<3;j++){
+  const bundle=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.5,8),cityMats.hay);
+  bundle.rotation.z=Math.PI/2;bundle.position.set(13.5+j*.38,.27,16.1);bundle.castShadow=true;cityExpansion.add(bundle);
+ }
+ // Low stone border marks the cultivated plot without blocking the road or mill.
+ for(let j=0;j<8;j++){
+  cityBox(cityExpansion,.48,.22,.16,cityMats.stone,7.5+j*.72,.02,17.25);
+ }
  // Wells and lanterns make the town feel inhabited at a glance.
  const well=new THREE.Mesh(new THREE.CylinderGeometry(.72,.82,.65,12),cityMats.stone);well.position.set(3,.38,15);well.castShadow=true;cityExpansion.add(well);
  const wellWater=new THREE.Mesh(new THREE.CircleGeometry(.57,16),new THREE.MeshStandardMaterial({color:'#3d8290',roughness:.25,metalness:.1}));wellWater.rotation.x=-Math.PI/2;wellWater.position.set(3,.72,15);cityExpansion.add(wellWater);
