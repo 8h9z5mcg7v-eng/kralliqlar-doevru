@@ -948,6 +948,13 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   const lantern=new THREE.Mesh(new THREE.BoxGeometry(.16,.2,.16),new THREE.MeshStandardMaterial({color:'#ffc96a',emissive:'#a85c16',emissiveIntensity:.65,roughness:.35}));
   lantern.position.set(sx+.62,2.1,stableZ+2.03);cityExpansion.add(lantern);
  }
+ // Distinct stable sign: dark timber plaque, brass trim and a readable horseshoe emblem.
+ cityBox(cityExpansion,1.5,.72,.14,cityMats.timber,stableX,2.55,stableZ+2.12);
+ cityBox(cityExpansion,1.62,.08,.18,cityMats.gold,stableX,2.92,stableZ+2.12);
+ cityBox(cityExpansion,1.62,.08,.18,cityMats.gold,stableX,2.18,stableZ+2.12);
+ for(const sx of [-.73,.73])cityBox(cityExpansion,.07,.82,.16,cityMats.gold,stableX+sx,2.55,stableZ+2.12);
+ const stableHorseshoe=new THREE.Mesh(new THREE.TorusGeometry(.22,.055,8,16,Math.PI*1.65),cityMats.gold);
+ stableHorseshoe.rotation.z=Math.PI*.15;stableHorseshoe.position.set(stableX,2.57,stableZ+2.22);cityExpansion.add(stableHorseshoe);
  // Rough stone edging and timber rails distinguish the stable yard from the road.
  for(let j=0;j<8;j++){const postX=stableX-3.1+j*.88;cityBox(cityExpansion,.13,.72,.13,cityMats.timber,postX,.04,stableZ+3.65);if(j<7)cityBox(cityExpansion,.9,.1,.1,cityMats.timberLight,postX+.43,.48,stableZ+3.65);}
  for(let j=0;j<6;j++){
@@ -966,6 +973,15 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   cityBox(cityExpansion,.11,1.1,.11,cityMats.iron,barracksX-1.2+j*1.2,.3,barracksZ-2.02);
   const targetRing=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.08,16),new THREE.MeshStandardMaterial({color:j===1?'#b74637':'#d9c8a2',roughness:.85}));
   targetRing.rotation.x=Math.PI/2;targetRing.position.set(barracksX-1.2+j*1.2,1.18,barracksZ-2.08);cityExpansion.add(targetRing);
+ }
+ // Barracks crest: shield plaque with crossed practice blades makes the military district distinct.
+ cityBox(cityExpansion,1.18,.92,.13,cityMats.timberLight,barracksX,2.12,barracksZ+1.98);
+ cityBox(cityExpansion,.92,.68,.08,cityMats.roof,barracksX,2.14,barracksZ+2.07);
+ for(const dx of [-.23,.23]){
+  const blade=new THREE.Mesh(new THREE.BoxGeometry(.075,.62,.07),cityMats.iron);
+  blade.position.set(barracksX+dx,2.15,barracksZ+2.13);blade.rotation.z=dx<0?-.52:.52;cityExpansion.add(blade);
+  const hilt=new THREE.Mesh(new THREE.BoxGeometry(.25,.07,.09),cityMats.gold);
+  hilt.position.set(barracksX+dx,1.95,barracksZ+2.14);hilt.rotation.z=dx<0?-.52:.52;cityExpansion.add(hilt);
  }
  // Archery range: fenced lane, straw targets, bow rack and a covered instructor stand.
  const rangeX=3,rangeZ=-15;
