@@ -1329,6 +1329,45 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   for(const sx of [-.62,.62])cityBox(cityExpansion,.16,.28,.16,outerCap,post.x+sx,4.72,post.z);
  }
 
+
+ // Readable building identity markers and roofline upgrades for the main settlement.
+ const upgradeBronzeMat=new THREE.MeshStandardMaterial({color:'#8e6b38',metalness:.28,roughness:.55});
+ const upgradeCreamMat=new THREE.MeshStandardMaterial({color:'#e7d7b1',roughness:.9});
+ const upgradeInkMat=new THREE.MeshStandardMaterial({color:'#2f332d',roughness:1});
+ function buildingSign(x,z,labelMat,markCount=1){
+  // Small framed signboard on a post; visual landmark only, game economy is unchanged.
+  cityBox(cityExpansion,.86,.54,.09,upgradeBronzeMat,x,.92,z);
+  cityBox(cityExpansion,.68,.36,.055,labelMat,x,1.01,z+.055);
+  for(let n=0;n<markCount;n++){
+   const mark=new THREE.Mesh(new THREE.BoxGeometry(.09,.2,.035),upgradeInkMat);
+   mark.position.set(x+(n-(markCount-1)/2)*.17,1.01,z+.09);cityExpansion.add(mark);
+  }
+  cityBox(cityExpansion,.12,.72,.12,cityMats.timberLight,x,.08,z);
+ }
+ buildingSign(-8.5,-11.2,districtFlagRed,2);  // barracks district
+ buildingSign(5.9,-13.3,districtFlagBlue,1); // archery district
+ buildingSign(14.7,7.1,upgradeCreamMat,3);   // stable district
+ buildingSign(7.1,13.2,upgradeBronzeMat,2);  // farm district
+ // Roofline additions signal a more developed settlement: ridge caps, dormers and corner finials.
+ function roofFinial(x,y,z,material){
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(.12,.17,.18,6),upgradeBronzeMat);
+  base.position.set(x,y,z);cityExpansion.add(base);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(.14,.42,6),material);
+  tip.position.set(x,y+.27,z);tip.castShadow=true;cityExpansion.add(tip);
+ }
+ roofFinial(-12,3.15,-13.1,districtFlagRed);
+ roofFinial(3,3.05,-15,districtFlagBlue);
+ roofFinial(12,3.1,9.1,districtFlagGold);
+ // Warm windows give the residential lane depth in the evening palette.
+ const warmWindowMat=new THREE.MeshStandardMaterial({color:'#f5ca76',emissive:'#c77b26',emissiveIntensity:.35,roughness:.65});
+ for(const house of [{x:-13,z:9,w:2.8},{x:-10,z:10,w:2.4},{x:-18,z:12,w:2.3},{x:17,z:12,w:2.5}]){
+  for(const side of [-1,1]){
+   const windowPane=new THREE.Mesh(new THREE.BoxGeometry(.23,.3,.045),warmWindowMat);
+   windowPane.position.set(house.x+side*house.w*.25,1.02,house.z+1.19);cityExpansion.add(windowPane);
+   cityBox(cityExpansion,.04,.36,.07,upgradeBronzeMat,house.x+side*house.w*.25, .84,house.z+1.23);
+  }
+ }
+
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
