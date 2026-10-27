@@ -937,6 +937,39 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  // Tag the meshes in each building district so taps open the correct building panel.
  cityExpansion.traverse(o=>{if(!o.isMesh)return;const p=o.position;if(p.x>8&&p.x<16&&p.z>5&&p.z<13)o.userData.cityBuildingType='stable';else if(p.x>5&&p.x<14&&p.z>12)o.userData.cityBuildingType='farm';else if(p.x>-16&&p.x<-8&&p.z>-17&&p.z<-9)o.userData.cityBuildingType='barracks';else if(p.x>-3&&p.x<9&&p.z>-20&&p.z<-10)o.userData.cityBuildingType='archery';});
  // Register the actual city buildings for raycasting so taps select buildings, not just the woodland.
+ // Outer curtain wall: segmented stone ramparts and square towers enclose the town districts.
+ const outerStone=new THREE.MeshStandardMaterial({color:'#8e8b80',roughness:.96});
+ const outerCap=new THREE.MeshStandardMaterial({color:'#b8ad98',roughness:.92});
+ const outerDark=new THREE.MeshStandardMaterial({color:'#555b58',roughness:1});
+ function rampartSegment(w,d,x,z){
+  cityBox(cityExpansion,w,2.15,d,outerStone,x,0,z);
+  cityBox(cityExpansion,w+.18,.18,d+.18,outerCap,x,2.12,z);
+  const count=Math.max(2,Math.floor((w>d?w:d)/.72));
+  for(let k=0;k<count;k++){
+   if(w>=d)cityBox(cityExpansion,.34,.34,d+.12,outerCap,x-w/2+.32+k*(w-.64)/(count-1),2.34,z);
+   else cityBox(cityExpansion,w+.12,.34,.34,outerCap,x,2.34,z-d/2+.32+k*(d-.64)/(count-1));
+  }
+ }
+ // Walls remain outside the main building plots; a central opening forms the front gate.
+ rampartSegment(44,.8,0,-25);
+ rampartSegment(44,.8,0,25);
+ rampartSegment(.8,50,-22,0);
+ rampartSegment(.8,50,22,0);
+ // Reinforced corner towers with crenellated crowns.
+ for(const p of [{x:-22,z:-25},{x:22,z:-25},{x:-22,z:25},{x:22,z:25}]){
+  cityBox(cityExpansion,2.35,4.1,2.35,outerStone,p.x,0,p.z);
+  cityBox(cityExpansion,2.65,.3,2.65,outerCap,p.x,4.02,p.z);
+  for(let j=0;j<8;j++){
+   const a=j*Math.PI/4;
+   cityBox(cityExpansion,.38,.38,.38,outerCap,p.x+Math.cos(a)*1.05,4.32,p.z+Math.sin(a)*1.05);
+  }
+  cityBox(cityExpansion,.12,1.25,.12,outerDark,p.x,2.2,p.z+1.19);
+ }
+ // Broad timber gate leafs and gold braces at the front entrance.
+ for(const side of [-1,1]){
+  cityBox(cityExpansion,1.15,2.25,.22,cityMats.timber,side*.68,0,25);
+  for(let j=0;j<4;j++)cityBox(cityExpansion,.08,1.95,.08,cityMats.gold,side*.68-.38+j*.25,.12,25.13);
+ }
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
