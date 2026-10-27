@@ -808,6 +808,26 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
    cityBox(cityExpansion,.72,.06,.42,(row+col)%2?cityMats.fieldA:cityMats.fieldB,8+col*.85,.03,14+row*.65);
   }
  }
+ // Market life: stone paving, signboards, woven baskets and hanging produce.
+ for(let j=0;j<3;j++){
+  const mx=-8+j*2.8,mz=15;
+  cityBox(cityExpansion,2.55,.07,2.05,cityMats.stone,mx,.02,mz);
+  cityBox(cityExpansion,.08,.62,.08,cityMats.iron,mx,2.02,mz+.96);
+  cityBox(cityExpansion,.72,.48,.08,cityMats.timber,mx,2.05,mz+1.02);
+  cityBox(cityExpansion,.52,.1,.1,cityMats.gold,mx,2.05,mz+1.08);
+  for(let k=0;k<4;k++){
+   const produce=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),new THREE.MeshStandardMaterial({color:['#a94b37','#d2a342','#6c8c43','#b9a16b'][(j+k)%4],roughness:.85}));
+   produce.position.set(mx-.62+k*.4,.48,mz+.1);produce.castShadow=true;cityExpansion.add(produce);
+  }
+ }
+ // A small cart and sacks near the market make the square feel used rather than empty.
+ const cartX=-1.7,cartZ=15.2;
+ cityBox(cityExpansion,1.35,.22,.82,cityMats.timber,cartX,.55,cartZ);
+ for(const wx of [-.48,.48]){
+  const wheel=new THREE.Mesh(new THREE.TorusGeometry(.25,.055,6,14),cityMats.iron);
+  wheel.rotation.y=Math.PI/2;wheel.position.set(cartX+wx,.35,cartZ+.42);cityExpansion.add(wheel);
+ }
+ cityBox(cityExpansion,.1,.12,1.5,cityMats.timberLight,cartX,.48,cartZ+1.02);
  // Wells and lanterns make the town feel inhabited at a glance.
  const well=new THREE.Mesh(new THREE.CylinderGeometry(.72,.82,.65,12),cityMats.stone);well.position.set(3,.38,15);well.castShadow=true;cityExpansion.add(well);
  const wellWater=new THREE.Mesh(new THREE.CircleGeometry(.57,16),new THREE.MeshStandardMaterial({color:'#3d8290',roughness:.25,metalness:.1}));wellWater.rotation.x=-Math.PI/2;wellWater.position.set(3,.72,15);cityExpansion.add(wellWater);
