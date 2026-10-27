@@ -705,11 +705,11 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  // Keep the lower cross-town road outside the barracks and archery training plots.
  cityRoad(24,2.5,-1,-21);
  // Move the cross-town road beyond the stable and farm plots so it does not cut through buildings.
- cityRoad(25,2.5,-.5,20.2);
+ cityRoad(25,2.5,-.5,21.5);
  // Separate stone pads visually mark each building's own lot.
  function cityPlot(x,z,w,d){const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.09,d),new THREE.MeshStandardMaterial({color:'#77776c',roughness:1}));pad.position.set(x,.035,z);pad.receiveShadow=true;cityExpansion.add(pad);const borderMat=new THREE.MeshStandardMaterial({color:'#c1b69e',roughness:1});for(const xx of [-w/2,w/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,d),borderMat);edge.position.set(x+xx,.11,z);cityExpansion.add(edge)}for(const zz of [-d/2,d/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(w,.13,.13),borderMat);edge.position.set(x,.11,z+zz);cityExpansion.add(edge)}}
  // Spacious, separated building plots; widened where large structures need extra clearance.
- cityPlot(-12,-13,7.4,6.8);cityPlot(3,-15,9.6,10.4);cityPlot(12,9,8.8,7.4);cityPlot(10,16.5,8.8,5.8);cityPlot(-13,9,6.2,5.4);
+ cityPlot(-12,-13,7.4,6.8);cityPlot(3,-15,9.6,10.4);cityPlot(12,9,8.8,7.4);cityPlot(10,15,8.8,5.8);cityPlot(-13,9,6.2,5.4);
 // A proper stable with open stalls, hay loft, stall dividers, feeding trough and fenced paddock.
  const stableX=12,stableZ=9;
  cityBox(cityExpansion,6.2,.18,4.5,cityMats.stone,stableX,.04,stableZ);
