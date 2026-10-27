@@ -803,6 +803,8 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  const forestLeaves=[new THREE.MeshStandardMaterial({color:'#244a31',roughness:1}),new THREE.MeshStandardMaterial({color:'#37663a',roughness:1}),new THREE.MeshStandardMaterial({color:'#527d42',roughness:1})];
  for(let i=0;i<10;i++){const x=-22+(i%2)*1.1,z=11+Math.floor(i/2)*1.55,sc=.72+(i%3)*.13;const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.13*sc,.2*sc,1.25*sc,7),forestTrunk);trunk.position.set(x,.62*sc,z);trunk.castShadow=true;edgeForest.add(trunk);for(let j=0;j<3;j++){const crown=new THREE.Mesh(new THREE.ConeGeometry((.78-j*.14)*sc,(1.25-j*.12)*sc,7),forestLeaves[j]);crown.position.set(x,(1.35+j*.48)*sc,z);crown.castShadow=true;edgeForest.add(crown);}}
  scene.add(edgeForest);selectableCityRoots.push(edgeForest);
+ // Register the actual city buildings for raycasting so taps select buildings, not just the woodland.
+ selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
  // Keep the primary castle in the main settlement; do not load a second castle model over it.
