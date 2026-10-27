@@ -1128,6 +1128,21 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  rampartSegment(17.2,.8,13.4,25);
  rampartSegment(.8,50,-22,0);
  rampartSegment(.8,50,22,0);
+ // Heraldic wall banners make the perimeter readable from the isometric mobile camera.
+ const rampartBannerRed=new THREE.MeshStandardMaterial({color:'#9f302f',roughness:.84,side:THREE.DoubleSide});
+ const rampartBannerGold=new THREE.MeshStandardMaterial({color:'#d8b75f',roughness:.75,side:THREE.DoubleSide});
+ const rampartPoleMat=new THREE.MeshStandardMaterial({color:'#4b3424',roughness:.9});
+ for(const side of [-1,1]){
+  for(const z of [-15,0,15]){
+   const pole=new THREE.Mesh(new THREE.CylinderGeometry(.055,.075,1.75,7),rampartPoleMat);
+   pole.position.set(side*21.55,3.02,z);pole.castShadow=true;cityExpansion.add(pole);
+   const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.72,1.05),side===-1?rampartBannerRed:rampartBannerGold);
+   cloth.position.set(side*21.52,3.16,z+.02);cloth.rotation.y=Math.PI/2;cloth.castShadow=true;cityExpansion.add(cloth);
+   const badge=new THREE.Mesh(new THREE.CircleGeometry(.16,8),side===-1?rampartBannerGold:rampartBannerRed);
+   badge.position.set(side*21.50,3.18,z+.11);badge.rotation.y=Math.PI/2;cityExpansion.add(badge);
+  }
+ }
+
  // Reinforced corner towers with crenellated crowns.
  for(const p of [{x:-22,z:-25},{x:22,z:-25},{x:-22,z:25},{x:22,z:25}]){
   cityBox(cityExpansion,2.35,4.1,2.35,outerStone,p.x,0,p.z);
