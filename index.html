@@ -690,6 +690,10 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   cityBox(parent,.42,.86,.08,cityMats.timber,x,h*.25,z+d/2+.045);
   for(const wx of [-w*.25,w*.25])cityBox(parent,.32,.42,.07,cityMats.timber,x+wx,h*.57,z+d/2+.05);
   cityBox(parent,w*.78,.12,.12,cityMats.timber,x,h*.52,z+d/2+.08);
+  // Add visible window recesses, stone sills and roof ridge to give houses more depth.
+  for(const wx of [-w*.25,w*.25]){cityBox(parent,.42,.52,.055,cityMats.timber,x+wx,h*.56,z-d/2-.03);cityBox(parent,.5,.09,.1,cityMats.stone,x+wx,h*.31,z-d/2-.07);}
+  cityBox(parent,.12,.14,d*.78,cityMats.timber,x,h+1.02,z);
+  cityBox(parent,.09,.22,.09,cityMats.gold,x-w*.38,h*.3,z+d/2+.09);
  }
  // Organized Clash-of-Kings-inspired settlement layout: clear plots and connected stone lanes.
  // This uses original CC0-style fantasy assets/layout rather than copying proprietary Clash of Kings art.
