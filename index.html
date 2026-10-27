@@ -201,6 +201,32 @@ for(const side of [-1,1])for(let j=0;j<10;j++){
  if(Math.abs(z)>6.9)continue;
  const post=new THREE.Mesh(new THREE.BoxGeometry(.3,.48,.3),moatStone);post.position.set(side*8.35,.12,z);post.castShadow=true;scene.add(post);
 }
+// Rocky elevation around the citadel: layered cliff faces frame the playable settlement.
+const cliffRock=mat('#656b65'),cliffLight=mat('#85877c'),cliffShadow=mat('#484f4c');
+function cliffChunk(x,y,z,w,h,d,material,rot=0){
+ const m=new THREE.Mesh(new THREE.DodecahedronGeometry(1,0),material);
+ m.scale.set(w/2,h/2,d/2);m.position.set(x,y+h/2,z);m.rotation.y=rot;
+ m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;
+}
+for(let i=0;i<11;i++){
+ const x=-23+i*4.6;
+ const h=1.1+(i%4)*.42;
+ cliffChunk(x,-.15,-18.5,4.8,h,2.8,i%3===0?cliffLight:cliffRock,(i%3)*.16);
+ cliffChunk(x+.8,-.2,19.2,4.1,h*.8,3.1,i%2?cliffRock:cliffShadow,-.12+(i%4)*.08);
+}
+for(let side of [-1,1]){
+ for(let i=0;i<8;i++){
+  const z=-15+i*4.1,h=1.2+(i%3)*.5;
+  cliffChunk(side*22.5,-.2,z,3.4,h,4.4,i%2?cliffRock:cliffLight,side*.14);
+  const ledge=new THREE.Mesh(new THREE.BoxGeometry(3.6,.16,4.6),cliffShadow);
+  ledge.position.set(side*22.5,.02,z);ledge.receiveShadow=true;scene.add(ledge);
+ }
+}
+// Broken pale rock caps catch the sun and add readable terrain height from the isometric view.
+for(let i=0;i<12;i++){
+ const x=-21+(i*17%42),z=(i%2===0?-18:19)+(i%3)*.35;
+ cliffChunk(x,.65,z,2.1,.42,1.4,cliffLight,(i%5)*.22);
+}
 // Royal courtyard embellishments: carved paving, drainage, banners, statues and a central fountain.
 const pavingGold=mat('#c6a768'),pavingDark=mat('#5c625f'),fountainStone=mat('#a6aaa0'),fountainWater=new THREE.MeshStandardMaterial({color:'#3e98b0',roughness:.22,metalness:.12});
 for(let side of [-1,1]){
