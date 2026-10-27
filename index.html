@@ -397,6 +397,39 @@ function makeFallbackCastle(parent){
   const lip=new THREE.Mesh(new THREE.TorusGeometry(.78,.055,5,12),roofEdge);lip.rotation.x=Math.PI/2;lip.position.set(x,6.0,z);castle.add(lip);
  }
 
+
+ // Royal 3D pass: broad stone stairs, layered gate buttresses and a readable courtyard.
+ const royalApproachStone=mat('#a8a394'),royalApproachEdge=mat('#d0c5ae'),royalApproachShadow=mat('#4e514e');
+ for(let step=0;step<6;step++){
+  const depth=.48,width=3.15+step*.38;
+  box(castle,width,.18,depth,step%2?royalApproachStone:stone,0,.09+step*.15,5.45+step*.43);
+  box(castle,width+.12,.055,.09,royalApproachEdge,0,.18+step*.15,5.45+step*.43+depth*.42);
+ }
+ // Flanking stair rails with square stone posts and iron caps.
+ for(const side of [-1,1]){
+  box(castle,.28,.7,3.05,royalApproachStone,side*2.35,.38,6.85);
+  for(let post=0;post<4;post++){
+   box(castle,.38,.82,.38,royalApproachEdge,side*2.35,.42,5.65+post*.78);
+   box(castle,.44,.12,.44,royalApproachShadow,side*2.35,.89,5.65+post*.78);
+  }
+  // Additional stone pilasters strengthen the keep's silhouette.
+  for(const z of [-1.95,1.35]){
+   box(castle,.22,3.45,.22,royalApproachEdge,side*1.78,2.45,z-.3);
+   box(castle,.34,.18,.34,royalApproachShadow,side*1.78,4.16,z-.3);
+  }
+ }
+ // Paved courtyard slabs and fine joints catch the scene's directional light.
+ for(let row=0;row<5;row++)for(let col=0;col<7;col++){
+  const slab=box(castle,.92,.035,.62,(row+col)%3===0?royalApproachEdge:royalApproachStone,-2.8+col*.93,.69,-2.45+row*.78);
+  slab.material=slab.material;
+ }
+ // Narrow slit windows on the front curtain wall and gold-rimmed stone merlons.
+ for(const side of [-1,1])for(let k=0;k<4;k++){
+  const sx=side*(1.35+k*.75);
+  box(castle,.12,.52,.075,royalApproachShadow,sx,1.95,4.36);
+  box(castle,.035,.46,.085,royalApproachEdge,sx,1.95,4.41);
+ }
+
  return castle;
 }
 const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
