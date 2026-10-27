@@ -1140,6 +1140,55 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   const brazier=new THREE.Mesh(new THREE.SphereGeometry(.2,10,8),new THREE.MeshStandardMaterial({color:'#ffb24a',emissive:'#ff6b18',emissiveIntensity:1.2,roughness:.3}));
   brazier.position.set(side*4.35,1.17,23.2);cityExpansion.add(brazier);
  }
+
+ // Living-town dressing: market awnings, stacked goods, orchard trees, carts, fences and warm lanterns.
+ // All decorations are placed in open ground and kept clear of the main building plots.
+ const lifeWoodMat=new THREE.MeshStandardMaterial({color:'#543728',roughness:.96});
+ const lifeClothMat=new THREE.MeshStandardMaterial({color:'#b54f3c',roughness:.9});
+ const lifeClothGoldMat=new THREE.MeshStandardMaterial({color:'#d4b66c',roughness:.9});
+ const lifeLeafMats=['#4c7040','#66854a','#7d914f'].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:1}));
+ const lifeLanternMat=new THREE.MeshStandardMaterial({color:'#ffbd55',emissive:'#ff8a22',emissiveIntensity:1.15,roughness:.35});
+ function lifeTree(x,z,r=0.9){
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16,.24,1.35,7),lifeWoodMat);
+  trunk.position.set(x,.68,z);trunk.castShadow=true;cityExpansion.add(trunk);
+  for(let k=0;k<3;k++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(r*(1-k*.13),1),lifeLeafMats[(Math.abs(Math.round(x+z))+k)%lifeLeafMats.length]);crown.position.set(x+(k-1)*.22,1.45+k*.34,z+(k%2?.16:-.12));crown.castShadow=true;cityExpansion.add(crown)}
+ }
+ function lifeLantern(x,z){
+  cityBox(cityExpansion,.11,1.45,.11,lifeWoodMat,x,.08,z);
+  cityBox(cityExpansion,.36,.12,.36,cityMats.iron,x,1.42,z);
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),lifeLanternMat);glow.position.set(x,1.67,z);cityExpansion.add(glow);
+ }
+ function lifeMarketStall(x,z,cloth){
+  cityBox(cityExpansion,2.05,.14,1.45,lifeWoodMat,x,.78,z);
+  for(const dx of [-.88,.88])for(const dz of [-.57,.57])cityBox(cityExpansion,.1,1.45,.1,cityMats.timberLight,x+dx,.08,z+dz);
+  const canopy=new THREE.Mesh(new THREE.BoxGeometry(2.28,.14,1.68),cloth);canopy.position.set(x,1.62,z);canopy.rotation.z=-.025;cityExpansion.add(canopy);
+  for(let n=0;n<4;n++){const sack=new THREE.Mesh(new THREE.SphereGeometry(.2,7,6),n%2?cityMats.hay:cityMats.fieldB);sack.scale.set(1,.72,1);sack.position.set(x-.6+n*.4,.98,z+.18);sack.castShadow=true;cityExpansion.add(sack)}
+ }
+ // A compact market lane on the west side; distinct stall roofs make it read as a real town square.
+ lifeMarketStall(-11.2,16.2,lifeClothMat);
+ lifeMarketStall(-7.9,16.2,lifeClothGoldMat);
+ lifeMarketStall(-4.6,16.2,lifeClothMat);
+ // Small orchard and kitchen gardens along the outer residential lane.
+ for(const [tx,tz,tr] of [[-19,14,1.05],[-19,18,.88],[-17.2,20,.78],[18,14,.95],[19,18,.8],[18,20,.72]])lifeTree(tx,tz,tr);
+ // Low fenced garden beds with visible crop rows.
+ for(const garden of [{x:16,z:3},{x:-18,z:-2}]){
+  cityBox(cityExpansion,4.1,.09,3.1,cityMats.fieldA,garden.x,.07,garden.z);
+  for(let q=0;q<5;q++){const row=new THREE.Mesh(new THREE.BoxGeometry(3.45,.045,.12),cityMats.fieldB);row.position.set(garden.x,.14,garden.z-1.15+q*.57);cityExpansion.add(row)}
+  for(const side of [-1,1]){cityBox(cityExpansion,.09,.62,3.35,lifeWoodMat,garden.x+side*2.1,.08,garden.z);cityBox(cityExpansion,4.2,.62,.09,lifeWoodMat,garden.x,.08,garden.z+side*1.62)}
+ }
+ // Merchant cart, barrels and stacked timber add scale around the production district.
+ cityBox(cityExpansion,1.75,.16,1.12,lifeWoodMat,-17,.46,5.5);
+ for(const wx of [-.58,.58]){const wheel=new THREE.Mesh(new THREE.TorusGeometry(.34,.07,7,14),cityMats.iron);wheel.position.set(-17+wx,.42,5.5);wheel.rotation.y=Math.PI/2;cityExpansion.add(wheel)}
+ cityBox(cityExpansion,.95,.32,.82,cityMats.hay,-17,.68,5.5);
+ for(const [bx,bz] of [[-15.5,5.4],[-15,5.8],[14,-1],[14.55,-1]]){const barrel=new THREE.Mesh(new THREE.CylinderGeometry(.22,.26,.48,9),cityMats.timberLight);barrel.position.set(bx,.32,bz);barrel.castShadow=true;cityExpansion.add(barrel);cityBox(cityExpansion,.48,.055,.48,cityMats.iron,bx,.54,bz)}
+ // Lanterns line the road junctions and the castle approach.
+ for(const [lx,lz] of [[-9.2,1],[-5.8,1],[-9.2,11],[-5.8,11],[7.7,-5.8],[14,-5.8],[-12,-20],[10,-20]])lifeLantern(lx,lz);
+ // Small stone well and a timber hoist beside the market.
+ const lifeWell=new THREE.Mesh(new THREE.CylinderGeometry(.68,.82,.58,12),cityMats.stoneLight);lifeWell.position.set(-1.1, .34, 16.2);lifeWell.castShadow=true;cityExpansion.add(lifeWell);
+ const lifeWellWater=new THREE.Mesh(new THREE.CylinderGeometry(.48,.48,.035,12),new THREE.MeshStandardMaterial({color:'#416e7d',metalness:.18,roughness:.28}));lifeWellWater.position.set(-1.1,.65,16.2);cityExpansion.add(lifeWellWater);
+ cityBox(cityExpansion,.1,1.25,.1,lifeWoodMat,-1.85,.63,16.2);
+ cityBox(cityExpansion,.1,.1,1.4,lifeWoodMat,-1.5,1.75,16.2);
+
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
