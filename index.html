@@ -930,6 +930,37 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  cityRoad(24,2.5,-1,-21);
  // Move the cross-town road beyond the stable and farm plots so it does not cut through buildings.
  cityRoad(25,2.5,-.5,21.5);
+ // Defensive city perimeter: stone walls, crenellations, corner towers and a main gate.
+ const wallMat=cityMats.stone,wallCapMat=cityMats.stoneLight;
+ const perimeterX=20,perimeterZ=27,wallY=1.65,wallThick=1.05;
+ function cityWallSegment(x,z,w,d){
+  cityBox(cityExpansion,w,wallY,d,wallMat,x,0,z);
+  cityBox(cityExpansion,w+.18,.22,d+.18,wallCapMat,x,wallY-.08,z);
+  const count=Math.max(2,Math.floor(Math.max(w,d)/1.65));
+  for(let i=0;i<=count;i++){
+   const t=i/count,bx=w>=d?x-w/2+t*w:x,bz=d>w?z-d/2+t*d:z;
+   cityBox(cityExpansion,w>=d?.48:.34,.38,d>w?.48:.34,wallCapMat,bx,wallY+.12,bz);
+  }
+ }
+ cityWallSegment(-perimeterX,0,wallThick,perimeterZ*2);
+ cityWallSegment(perimeterX,0,wallThick,perimeterZ*2);
+ cityWallSegment(0,-perimeterZ,perimeterX*2,wallThick);
+ cityWallSegment(-13,perimeterZ,14,wallThick);
+ cityWallSegment(13,perimeterZ,14,wallThick);
+ // Gatehouse frames a clear central entrance on the south wall.
+ for(const gx of [-3.5,3.5]){
+  cityBox(cityExpansion,1.6,3.1,1.8,cityMats.stone,gx,.05,perimeterZ);
+  cityBox(cityExpansion,1.85,.3,2.05,cityMats.stoneLight,gx,3.0,perimeterZ);
+  cityRoof(cityExpansion,2.0,.95,2.2,gx,3.25,perimeterZ,cityMats.roof);
+ }
+ cityBox(cityExpansion,5.5,.22,1.1,cityMats.timber,0,1.05,perimeterZ);
+ // Four raised corner towers establish a readable defensive silhouette.
+ for(const [tx,tz] of [[-20,-27],[20,-27],[-20,27],[20,27]]){
+  cityBox(cityExpansion,3.0,2.7,3.0,cityMats.stone,tx,.05,tz);
+  cityBox(cityExpansion,3.25,.25,3.25,cityMats.stoneLight,tx,2.7,tz);
+  cityRoof(cityExpansion,3.5,1.75,3.5,tx,2.9,tz,cityMats.roof);
+  for(const [ox,oz] of [[-1,-1],[1,-1],[-1,1],[1,1]])cityBox(cityExpansion,.25,.48,.25,cityMats.stoneLight,tx+ox,2.92,tz+oz);
+ }
  // Separate stone pads visually mark each building's own lot.
  function cityPlot(x,z,w,d){const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.09,d),new THREE.MeshStandardMaterial({color:'#77776c',roughness:1}));pad.position.set(x,.035,z);pad.receiveShadow=true;cityExpansion.add(pad);const borderMat=new THREE.MeshStandardMaterial({color:'#c1b69e',roughness:1});for(const xx of [-w/2,w/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,d),borderMat);edge.position.set(x+xx,.11,z);cityExpansion.add(edge)}for(const zz of [-d/2,d/2]){const edge=new THREE.Mesh(new THREE.BoxGeometry(w,.13,.13),borderMat);edge.position.set(x,.11,z+zz);cityExpansion.add(edge)}}
  // Spacious, separated building plots; widened where large structures need extra clearance.
