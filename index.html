@@ -993,6 +993,29 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  for(const p of [{x:-10.1,z:-1.5},{x:-10.1,z:4.5},{x:-10.1,z:10.5},{x:-10.1,z:16.5},{x:-13,z:-7.6},{x:-4,z:-7.6},{x:5,z:-7.6},{x:13,z:-7.6}]){
   streetLamp(p.x,p.z);
  }
+ // Public well and gathering square give the settlement a recognizable civic heart.
+ const wellStone=new THREE.MeshStandardMaterial({color:'#9b9789',roughness:.96});
+ const wellWater=new THREE.MeshStandardMaterial({color:'#294f59',roughness:.28,metalness:.12});
+ const wellWood=new THREE.MeshStandardMaterial({color:'#573b29',roughness:.9});
+ const square=new THREE.Mesh(new THREE.BoxGeometry(6.4,.08,5.6),new THREE.MeshStandardMaterial({color:'#8a8577',roughness:1}));
+ square.position.set(-1.3,.035,10.5);square.receiveShadow=true;cityExpansion.add(square);
+ for(let k=0;k<7;k++){
+  const tile=new THREE.Mesh(new THREE.BoxGeometry(.82,.025,.62),k%2?roadMat:roadEdgeMat);
+  tile.position.set(-3.7+(k%4)*.95,.09,8.9+Math.floor(k/4)*.85);tile.receiveShadow=true;cityExpansion.add(tile);
+ }
+ const wellWaterDisk=new THREE.Mesh(new THREE.CylinderGeometry(.72,.72,.07,20),wellWater);
+ wellWaterDisk.position.set(-1.3,.24,10.5);wellWaterDisk.receiveShadow=true;cityExpansion.add(wellWaterDisk);
+ for(let k=0;k<12;k++){
+  const a=k*Math.PI/6;
+  const block=new THREE.Mesh(new THREE.BoxGeometry(.48,.62,.42),wellStone);
+  block.position.set(-1.3+Math.cos(a)*.78,.48,10.5+Math.sin(a)*.78);
+  block.rotation.y=-a;block.castShadow=true;block.receiveShadow=true;cityExpansion.add(block);
+ }
+ for(const side of [-1,1]){
+  cityBox(cityExpansion,.16,1.55,.16,wellWood,-1.3+side*.94,.7,10.5);
+  cityBox(cityExpansion,2.35,.16,.22,wellWood,-1.3,2.12,10.5);
+ }
+ cityBox(cityExpansion,.16,.35,.16,wellWood,-1.3,.92,10.5);
  // Outer curtain wall: segmented stone ramparts and square towers enclose the town districts.
  const outerStone=new THREE.MeshStandardMaterial({color:'#8e8b80',roughness:.96});
  const outerCap=new THREE.MeshStandardMaterial({color:'#b8ad98',roughness:.92});
