@@ -152,6 +152,29 @@ const roadmat=mat('#b4a27d');const road=new THREE.Mesh(new THREE.PlaneGeometry(5
 // Castle approach: a tiled stone forecourt, worn paving, and warm gate lanterns.
 const plazaBase=new THREE.Mesh(new THREE.CircleGeometry(10.2,48),mat('#777d73'));plazaBase.rotation.x=-Math.PI/2;plazaBase.position.set(0,-.055,0);plazaBase.receiveShadow=true;scene.add(plazaBase);
 const plazaRim=new THREE.Mesh(new THREE.TorusGeometry(9.9,.16,6,64),mat('#b2a27d'));plazaRim.rotation.x=-Math.PI/2;plazaRim.position.set(0,-.015,0);plazaRim.receiveShadow=true;scene.add(plazaRim);
+// Fortress-inspired water moat and stone bridge approaches, echoing the reference game's raised citadel.
+const moatWater=new THREE.MeshStandardMaterial({color:'#284e55',roughness:.3,metalness:.18});
+const moatStone=mat('#777d78'),bridgeStone=mat('#b7b09e');
+function moatSegment(w,d,x,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.22,d),moatWater);m.position.set(x,-.12,z);m.receiveShadow=true;scene.add(m);}
+// Four short canal runs frame the keep; leave a broad bridge opening at the front.
+moatSegment(1.05,12.5,-7.7,0);
+moatSegment(1.05,12.5,7.7,0);
+moatSegment(5.7,1.05,-4.85,-7.7);
+moatSegment(5.7,1.05,4.85,-7.7);
+moatSegment(5.1,1.05,-5.1,7.7);
+moatSegment(5.1,1.05,5.1,7.7);
+// Stone bridge spans with visible block joints.
+for(const z of [-7.7,7.7]){
+ const x=0, bridge=new THREE.Mesh(new THREE.BoxGeometry(4.5,.28,1.65),bridgeStone);
+ bridge.position.set(x,.02,z);bridge.castShadow=true;bridge.receiveShadow=true;scene.add(bridge);
+ for(let j=0;j<6;j++){const seam=new THREE.Mesh(new THREE.BoxGeometry(.035,.018,1.42),mat('#77766e'));seam.position.set(-1.8+j*.72,.17,z);scene.add(seam);}
+}
+// Low parapets make the moat edge read as fortified architecture, not a plain blue strip.
+for(const side of [-1,1])for(let j=0;j<10;j++){
+ const z=-5.8+j*1.28;
+ if(Math.abs(z)>6.9)continue;
+ const post=new THREE.Mesh(new THREE.BoxGeometry(.3,.48,.3),moatStone);post.position.set(side*8.35,.12,z);post.castShadow=true;scene.add(post);
+}
 // Royal courtyard embellishments: carved paving, drainage, banners, statues and a central fountain.
 const pavingGold=mat('#c6a768'),pavingDark=mat('#5c625f'),fountainStone=mat('#a6aaa0'),fountainWater=new THREE.MeshStandardMaterial({color:'#3e98b0',roughness:.22,metalness:.12});
 for(let side of [-1,1]){
