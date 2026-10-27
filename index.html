@@ -131,7 +131,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const canvas=document.querySelector('#world');
 let renderer;
 try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});}catch(err){const n=document.querySelector('#loading .loadbox small');if(n)n.textContent='3D qrafika açıla bilmədi. Səhifəni yenilə və ya başqa brauzerdə yoxla.';throw err;}
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.35));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.toneMapping = THREE.ACESFilmicToneMapping;renderer.toneMappingExposure = 1.05;
 const scene=new THREE.Scene();scene.background=new THREE.Color('#9ab9c2');scene.fog=new THREE.Fog('#9ab9c2',28,90);
 const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,200);let target=new THREE.Vector3(0,0,0),yaw=Math.PI/4,pitch=.82,dist=20;
 function placeCamera(){camera.position.set(target.x+dist*Math.sin(yaw)*Math.cos(pitch),target.y+dist*Math.sin(pitch),target.z+dist*Math.cos(yaw)*Math.cos(pitch));camera.lookAt(target)}placeCamera();
