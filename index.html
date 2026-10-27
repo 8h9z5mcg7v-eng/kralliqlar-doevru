@@ -149,6 +149,7 @@ const canvas=document.querySelector('#world');
 let renderer;
 try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});}catch(err){const n=document.querySelector('#loading .loadbox small');if(n)n.textContent='3D qrafika açıla bilmədi. Səhifəni yenilə və ya başqa brauzerdə yoxla.';throw err;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=true;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
+const citySmokePuffs=[];
 const scene=new THREE.Scene();scene.background=new THREE.Color('#9ab9c2');scene.fog=new THREE.Fog('#9ab9c2',28,90);
 const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,200);let target=new THREE.Vector3(0,0,0),yaw=Math.PI/4,pitch=.82,dist=20;
 function placeCamera(){camera.position.set(target.x+dist*Math.sin(yaw)*Math.cos(pitch),target.y+dist*Math.sin(pitch),target.z+dist*Math.cos(yaw)*Math.cos(pitch));camera.lookAt(target)}placeCamera();
@@ -875,8 +876,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   cityBox(parent,.14,.14,d*1.12,cityMats.timberLight,x,y+h-.07,z);
   return m;
  }
- const citySmokePuffs=[];
-  function cityHouse(parent,x,z,w=2.8,d=2.3,h=1.7){
+ function cityHouse(parent,x,z,w=2.8,d=2.3,h=1.7){
   cityBox(parent,w,h,d,cityMats.stoneLight,x,h/2,z);
   cityRoof(parent,w*1.08,1.2,d*1.1,x,h,z,cityMats.roof);
   cityBox(parent,.42,.86,.08,cityMats.timber,x,h*.25,z+d/2+.045);
