@@ -1189,6 +1189,57 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  cityBox(cityExpansion,.1,1.25,.1,lifeWoodMat,-1.85,.63,16.2);
  cityBox(cityExpansion,.1,.1,1.4,lifeWoodMat,-1.5,1.75,16.2);
 
+
+ // District identity and architectural silhouettes: guild signs, chimneys, stairways and pennants.
+ const districtFlagRed=new THREE.MeshStandardMaterial({color:'#a93232',roughness:.85,side:THREE.DoubleSide});
+ const districtFlagBlue=new THREE.MeshStandardMaterial({color:'#315b86',roughness:.85,side:THREE.DoubleSide});
+ const districtFlagGold=new THREE.MeshStandardMaterial({color:'#e0bd67',roughness:.8,side:THREE.DoubleSide});
+ const districtStoneStep=new THREE.MeshStandardMaterial({color:'#c0b5a0',roughness:1});
+ function districtPennant(x,z,h,flagMat){
+  cityBox(cityExpansion,.09,h,.09,cityMats.timberLight,x,.08,z);
+  const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.92,.58),flagMat);
+  cloth.position.set(x+.48,.08+h-.28,z);cloth.rotation.y=.12;cityExpansion.add(cloth);
+  const emblem=new THREE.Mesh(new THREE.CircleGeometry(.13,8),districtFlagGold);
+  emblem.position.set(x+.48,.08+h-.28,z+.012);cityExpansion.add(emblem);
+  cityBox(cityExpansion,.28,.1,.28,cityMats.gold,x,.08+h,z);
+ }
+ function districtStair(x,z,w=1.5,steps=4,dir=1){
+  for(let n=0;n<steps;n++){
+   const step=new THREE.Mesh(new THREE.BoxGeometry(w,.13,.38),districtStoneStep);
+   step.position.set(x,.08+n*.13,z+dir*n*.34);step.receiveShadow=true;cityExpansion.add(step);
+  }
+ }
+ function districtChimney(x,z,h=2.1){
+  cityBox(cityExpansion,.46,h,.46,cityMats.stone,x,1.45,z);
+  cityBox(cityExpansion,.68,.16,.68,cityMats.stoneLight,x,1.45+h,z);
+  for(let n=0;n<3;n++){
+   const smoke=new THREE.Mesh(new THREE.SphereGeometry(.17+n*.045,7,6),new THREE.MeshStandardMaterial({color:'#b7b7b1',transparent:true,opacity:.26,roughness:1}));
+   smoke.position.set(x+(n%2?.13:-.08),1.45+h+.24+n*.26,z);cityExpansion.add(smoke);
+  }
+ }
+ // Stairs face the lanes so the major buildings feel accessible, not like objects dropped on pads.
+ districtStair(-12,-9.15,1.6,4,1);
+ districtStair(3,-9.7,1.8,4,1);
+ districtStair(12,13.0,1.7,3,1);
+ districtStair(10,18.1,1.5,3,1);
+ districtStair(-13,12.0,1.4,3,1);
+ // Tall pennants mark the military and civic districts from the game's elevated camera.
+ districtPennant(-16.2,-13.2,3.1,districtFlagRed);
+ districtPennant(7.8,-15.8,3.25,districtFlagBlue);
+ districtPennant(-4.8,11.6,2.8,districtFlagGold);
+ districtPennant(16.6,8.2,3.0,districtFlagRed);
+ districtPennant(3.6,18.2,2.7,districtFlagBlue);
+ // Chimneys and roof vents create a stronger medieval skyline around the residential quarter.
+ districtChimney(-14.0,8.4,1.8);
+ districtChimney(-11.8,8.3,1.55);
+ districtChimney(-18.0,10.8,1.5);
+ // Timber stacks and a covered guild notice board bring extra scale to the market entrance.
+ for(let n=0;n<3;n++)cityBox(cityExpansion,1.05,.22,.3,cityMats.timberLight,-2.7+n*.04,.14+n*.23,18.6);
+ cityBox(cityExpansion,1.7,.14,.18,lifeWoodMat,-2.1,.92,18.6);
+ cityBox(cityExpansion,.12,1.15,.12,lifeWoodMat,-2.9,.1,18.6);
+ cityBox(cityExpansion,.12,1.15,.12,lifeWoodMat,-1.3,.1,18.6);
+ const guildNotice=new THREE.Mesh(new THREE.BoxGeometry(1.32,.72,.08),districtFlagGold);guildNotice.position.set(-2.1,1.15,18.48);cityExpansion.add(guildNotice);
+
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
