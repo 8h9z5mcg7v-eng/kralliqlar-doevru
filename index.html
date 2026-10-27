@@ -1288,6 +1288,47 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   for(const sx of [-1,1])for(const sz of [-1,1])cityBox(cityExpansion,.24,.18,.24,plotStoneMat,plot.x+sx*plot.w/2,.04,plot.z+sz*plot.d/2);
  }
 
+
+ // Defensive skyline pass: wall-walk ledges, stone buttresses, gate torches and watch posts.
+ const defenseWalkMat=new THREE.MeshStandardMaterial({color:'#77766e',roughness:1});
+ const defenseTorchMetal=new THREE.MeshStandardMaterial({color:'#403a34',metalness:.18,roughness:.72});
+ const defenseTorchGlow=new THREE.MeshStandardMaterial({color:'#ff9a35',emissive:'#ff6b1a',emissiveIntensity:1.45,roughness:.35});
+ // Continuous narrow walkway strips along the inner side of each curtain wall.
+ cityBox(cityExpansion,42,.14,.66,defenseWalkMat,0,2.19,-23.85);
+ cityBox(cityExpansion,42,.14,.66,defenseWalkMat,0,2.19,23.85);
+ cityBox(cityExpansion,.66,.14,47,defenseWalkMat,-20.85,2.19,0);
+ cityBox(cityExpansion,.66,.14,47,defenseWalkMat,20.85,2.19,0);
+ // Repeating masonry buttresses give the perimeter weight and regular medieval rhythm.
+ for(let k=0;k<11;k++){
+  const wx=-19.5+k*3.9;
+  if(Math.abs(wx)>4.2){
+   cityBox(cityExpansion,.34,2.45,1.05,outerDark,wx,.02,-24.1);
+   cityBox(cityExpansion,.34,2.45,1.05,outerDark,wx,.02,24.1);
+  }
+ }
+ for(let k=0;k<12;k++){
+  const wz=-21+k*3.8;
+  cityBox(cityExpansion,1.05,2.45,.34,outerDark,-21.1,.02,wz);
+  cityBox(cityExpansion,1.05,2.45,.34,outerDark,21.1,.02,wz);
+ }
+ // Torch brackets on the gateposts and warm fire bowls at the approach.
+ for(const side of [-1,1]){
+  cityBox(cityExpansion,.12,.68,.12,defenseTorchMetal,side*3.05,2.05,24.05);
+  cityBox(cityExpansion,.3,.12,.3,defenseTorchMetal,side*3.05,2.39,24.05);
+  const gateFlame=new THREE.Mesh(new THREE.SphereGeometry(.19,8,7),defenseTorchGlow);
+  gateFlame.position.set(side*3.05,2.66,24.05);gateFlame.scale.set(.78,1.35,.78);cityExpansion.add(gateFlame);
+  const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.3,.22,.22,8),defenseTorchMetal);
+  bowl.position.set(side*4.35,.9,22.8);cityExpansion.add(bowl);
+  const bowlFire=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),defenseTorchGlow);
+  bowlFire.position.set(side*4.35,1.15,22.8);bowlFire.scale.set(.8,1.25,.8);cityExpansion.add(bowlFire);
+ }
+ // Small slit windows and cap stones articulate the watchtowers from the overhead camera.
+ for(const post of [{x:-22,z:-25},{x:22,z:-25},{x:-22,z:25},{x:22,z:25}]){
+  cityBox(cityExpansion,.16,.82,.055,defenseTorchMetal,post.x,2.0,post.z+1.205);
+  cityBox(cityExpansion,.18,.18,2.5,outerCap,post.x,4.58,post.z);
+  for(const sx of [-.62,.62])cityBox(cityExpansion,.16,.28,.16,outerCap,post.x+sx,4.72,post.z);
+ }
+
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
