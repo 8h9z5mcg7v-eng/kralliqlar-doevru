@@ -885,6 +885,17 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   for(const wx of [-w*.25,w*.25]){cityBox(parent,.42,.52,.055,cityMats.timber,x+wx,h*.56,z-d/2-.03);cityBox(parent,.5,.09,.1,cityMats.stone,x+wx,h*.31,z-d/2-.07);}
   cityBox(parent,.12,.14,d*.78,cityMats.timber,x,h+1.02,z);
   cityBox(parent,.09,.22,.09,cityMats.gold,x-w*.38,h*.3,z+d/2+.09);
+  // Masonry chimney, dark cap and soft smoke puffs help small houses read at isometric zoom.
+  const chimneyX=x+w*.27,chimneyZ=z-d*.12;
+  cityBox(parent,.34,.92,.34,cityMats.stone,chimneyX,h+.48,chimneyZ);
+  cityBox(parent,.43,.12,.43,cityMats.stoneLight,chimneyX,h+.92,chimneyZ);
+  cityBox(parent,.23,.09,.23,cityMats.iron,chimneyX,h+1.01,chimneyZ);
+  const smokeMat=new THREE.MeshStandardMaterial({color:'#d7d1c3',transparent:true,opacity:.34,roughness:1,depthWrite:false});
+  for(let puff=0;puff<3;puff++){
+   const smoke=new THREE.Mesh(new THREE.SphereGeometry(.16+puff*.045,7,6),smokeMat);
+   smoke.position.set(chimneyX+.05*Math.sin(puff*1.4),h+1.22+puff*.24,chimneyZ);
+   smoke.userData.smokePuff=true;parent.add(smoke);
+  }
  }
  // Roof detailing: individually raised tile rows and ridge caps make district roofs read clearly from the isometric camera.
  const roofTileMat=new THREE.MeshStandardMaterial({color:'#a85d43',roughness:.94});
