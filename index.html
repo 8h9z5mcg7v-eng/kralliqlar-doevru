@@ -1012,7 +1012,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  }
  // Wells and lanterns make the town feel inhabited at a glance.
  const well=new THREE.Mesh(new THREE.CylinderGeometry(.72,.82,.65,12),cityMats.stone);well.position.set(3,.38,15);well.castShadow=true;cityExpansion.add(well);
- const wellWater=new THREE.Mesh(new THREE.CircleGeometry(.57,16),new THREE.MeshStandardMaterial({color:'#3d8290',roughness:.25,metalness:.1}));wellWater.rotation.x=-Math.PI/2;wellWater.position.set(3,.72,15);cityExpansion.add(wellWater);
+ const cityWellWaterSurface=new THREE.Mesh(new THREE.CircleGeometry(.57,16),new THREE.MeshStandardMaterial({color:'#3d8290',roughness:.25,metalness:.1}));cityWellWaterSurface.rotation.x=-Math.PI/2;cityWellWaterSurface.position.set(3,.72,15);cityExpansion.add(cityWellWaterSurface);
  for(const p of [{x:-7,z:14},{x:4,z:17},{x:15,z:3},{x:-12,z:-18}]){
   cityBox(cityExpansion,.09,1.6,.09,cityMats.timber,p.x,.05,p.z);
   const lamp=new THREE.Mesh(new THREE.SphereGeometry(.17,8,6),new THREE.MeshStandardMaterial({color:'#ffcf77',emissive:'#b76c22',emissiveIntensity:1.1}));lamp.position.set(p.x,1.65,p.z);cityExpansion.add(lamp);
