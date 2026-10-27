@@ -1373,6 +1373,45 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
+
+ // Royal keep finishing pass: layered battlements, corner turrets, royal crest and a readable entry.
+ const keepGoldMat=new THREE.MeshStandardMaterial({color:'#d8b35d',metalness:.3,roughness:.48});
+ const keepIvoryMat=new THREE.MeshStandardMaterial({color:'#d7cfb9',roughness:.93});
+ const keepWineMat=new THREE.MeshStandardMaterial({color:'#7d2e35',roughness:.86});
+ // Raised corner turrets around the existing central keep; all parts remain on the current citadel.
+ for(const corner of [{x:-4.15,z:-4.1},{x:4.15,z:-4.1},{x:-4.15,z:4.1},{x:4.15,z:4.1}]){
+  const turret=new THREE.Mesh(new THREE.CylinderGeometry(.88,1.02,3.45,8),keepIvoryMat);
+  turret.position.set(corner.x,2.02,corner.z);turret.castShadow=true;turret.receiveShadow=true;scene.add(turret);
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(1.02,1.02,.2,8),keepGoldMat);cap.position.set(corner.x,3.82,corner.z);cap.castShadow=true;scene.add(cap);
+  const roof=new THREE.Mesh(new THREE.ConeGeometry(1.08,1.55,8),keepWineMat);roof.position.set(corner.x,4.65,corner.z);roof.castShadow=true;scene.add(roof);
+  const finial=new THREE.Mesh(new THREE.SphereGeometry(.13,8,6),keepGoldMat);finial.position.set(corner.x,5.48,corner.z);scene.add(finial);
+  for(let slit=-1;slit<=1;slit++){
+   const window=new THREE.Mesh(new THREE.BoxGeometry(.13,.54,.07),upgradeInkMat);
+   window.position.set(corner.x+slit*.34,2.3,corner.z+1.0);scene.add(window);
+  }
+ }
+ // Heraldic crest above the keep-facing entrance: shield silhouette and gold cross motif.
+ const crestPlate=new THREE.Mesh(new THREE.BoxGeometry(1.55,1.7,.18),keepWineMat);
+ crestPlate.position.set(0,3.05,5.28);crestPlate.rotation.z=Math.PI;crestPlate.castShadow=true;scene.add(crestPlate);
+ cityBox(scene,.16,1.1,.08,keepGoldMat,0,2.52,5.42);
+ cityBox(scene,.78,.16,.08,keepGoldMat,0,3.03,5.42);
+ // Gold edge stones around the keep platform add a tiered, upgraded citadel silhouette.
+ for(let n=0;n<24;n++){
+  const a=n*Math.PI*2/24;
+  const edge=new THREE.Mesh(new THREE.BoxGeometry(.68,.16,.22),n%3===0?keepGoldMat:keepIvoryMat);
+  edge.position.set(Math.cos(a)*8.95,.15,Math.sin(a)*8.95);
+  edge.rotation.y=-a;edge.castShadow=true;scene.add(edge);
+ }
+ // Four royal braziers mark the citadel approaches.
+ const keepFireMat=new THREE.MeshStandardMaterial({color:'#ff9b39',emissive:'#ff741e',emissiveIntensity:1.4,roughness:.35});
+ const keepFires=[];
+ for(const side of [-1,1])for(const forward of [-1,1]){
+  const x=side*6.15,z=forward*6.15;
+  const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.32,.44,.62,8),keepIvoryMat);pedestal.position.set(x,.32,z);pedestal.castShadow=true;scene.add(pedestal);
+  const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.42,.28,.2,8),keepGoldMat);bowl.position.set(x,.72,z);scene.add(bowl);
+  const fire=new THREE.Mesh(new THREE.SphereGeometry(.2,8,7),keepFireMat);fire.position.set(x,.98,z);fire.scale.set(.8,1.3,.8);scene.add(fire);keepFires.push(fire);
+ }
+
  // Keep the primary castle in the main settlement; do not load a second castle model over it.
 
  target.set(0,2.4,0);pitch=.88;dist=innerWidth/innerHeight<.72?48:innerWidth/innerHeight<1?43:38;placeCamera();
