@@ -770,6 +770,23 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   cityBox(parent,.12,.14,d*.78,cityMats.timber,x,h+1.02,z);
   cityBox(parent,.09,.22,.09,cityMats.gold,x-w*.38,h*.3,z+d/2+.09);
  }
+ // Roof detailing: individually raised tile rows and ridge caps make district roofs read clearly from the isometric camera.
+ const roofTileMat=new THREE.MeshStandardMaterial({color:'#a85d43',roughness:.94});
+ const roofShadowMat=new THREE.MeshStandardMaterial({color:'#59352f',roughness:1});
+ function tiledRoof(parent,x,z,w,d,y,rows=5){
+  for(let r=0;r<rows;r++){
+   const rowZ=z-d/2+.22+r*(d-.44)/Math.max(1,rows-1);
+   const tileCount=Math.max(3,Math.floor(w/.38));
+   for(let c=0;c<tileCount;c++){
+    const tileW=(w-.18)/tileCount;
+    const tile=new THREE.Mesh(new THREE.BoxGeometry(tileW*.88,.055,.24),((r+c)%4===0)?roofShadowMat:roofTileMat);
+    tile.position.set(x-w/2+.09+tileW*(c+.5),y+Math.sin((r/(rows-1||1))*Math.PI)*.38,rowZ);
+    tile.rotation.x=(r%2===0?-.08:.08);
+    tile.castShadow=true;parent.add(tile);
+   }
+  }
+  cityBox(parent,.13,.12,d+.18,cityMats.timberLight,x,y+.34,z);
+ }
  // Organized Clash-of-Kings-inspired settlement layout: clear plots and connected stone lanes.
  // This uses original CC0-style fantasy assets/layout rather than copying proprietary Clash of Kings art.
  const roadMat=new THREE.MeshStandardMaterial({color:'#827d70',roughness:1});
