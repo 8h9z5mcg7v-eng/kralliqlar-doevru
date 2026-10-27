@@ -702,7 +702,8 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  cityRoad(3.2,20,-7.5,8);
  cityRoad(3.2,8,-7.5,-6);
  cityRoad(27,2.8,0,-5.8);
- cityRoad(24,2.5,-1,-10.2);
+ // Keep the lower cross-town road outside the barracks and archery training plots.
+ cityRoad(24,2.5,-1,-21);
  // Move the cross-town road beyond the stable and farm plots so it does not cut through buildings.
  cityRoad(25,2.5,-.5,20.2);
  // Separate stone pads visually mark each building's own lot.
