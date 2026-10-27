@@ -335,12 +335,10 @@ function updateCastleAppearance(){
   }
  }
  if(level>=3){
-  for(const [x,z] of [[-7,-5],[7,-5],[-7,5],[7,5]]){
-   const tower=new THREE.Mesh(new THREE.CylinderGeometry(.52,.65,2.6,8),stone);tower.position.set(x,1.3,z);tower.castShadow=true;tower.receiveShadow=true;levelDecor.add(tower);
-   cone(levelDecor,.78,1.25,roof,x,3.2,z,8);
-   for(let a=0;a<8;a++){const an=a*Math.PI/4;box(levelDecor,.15,.22,.15,stone,x+Math.cos(an)*.5,2.6,z+Math.sin(an)*.5)}
-  }
-  box(levelDecor,14,.24,.55,stoneDark,0,2.2,5.2);box(levelDecor,14,.24,.55,stoneDark,0,2.2,-5.2);
+  // The base castle already has four corner towers; avoid adding a second ring of towers
+  // at higher levels, which visually overlaps the original roofs and walls.
+  box(levelDecor,9,.24,.42,stoneDark,0,2.2,4.0);
+  box(levelDecor,9,.24,.42,stoneDark,0,2.2,-4.0);
  }
  if(level>=4){
   for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]]){
