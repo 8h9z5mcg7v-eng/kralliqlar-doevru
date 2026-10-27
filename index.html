@@ -151,7 +151,7 @@ try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});}catch
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=true;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
 const citySmokePuffs=[];
 const scene=new THREE.Scene();scene.background=new THREE.Color('#9ab9c2');scene.fog=new THREE.Fog('#9ab9c2',28,90);
-const camera=new THREE.PerspectiveCamera(44,innerWidth/innerHeight,.1,220);let target=new THREE.Vector3(0,2.4,0),yaw=Math.PI/4,pitch=.88,dist=innerWidth/innerHeight<.72?48:innerWidth/innerHeight<1?43:38;
+const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,260);let target=new THREE.Vector3(0,1.8,0),yaw=Math.PI/4,pitch=.82,dist=innerWidth/innerHeight<.72?62:innerWidth/innerHeight<1?55:45;
 function placeCamera(){camera.position.set(target.x+dist*Math.sin(yaw)*Math.cos(pitch),target.y+dist*Math.sin(pitch),target.z+dist*Math.cos(yaw)*Math.cos(pitch));camera.lookAt(target)}placeCamera();
 scene.add(new THREE.HemisphereLight(0xd9efff,0x53603b,2.0));const sun=new THREE.DirectionalLight(0xffe1a4,3.0);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-38;sun.shadow.camera.right=38;sun.shadow.camera.top=38;sun.shadow.camera.bottom=-38;sun.shadow.bias=-0.00025;scene.add(sun);
 const mat=(c,rough=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:rough});
