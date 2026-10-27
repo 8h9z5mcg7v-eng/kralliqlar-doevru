@@ -893,7 +893,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   cityBox(parent,.23,.09,.23,cityMats.iron,chimneyX,h+1.01,chimneyZ);
   const smokeMat=new THREE.MeshStandardMaterial({color:'#d7d1c3',transparent:true,opacity:.34,roughness:1,depthWrite:false});
   for(let puff=0;puff<3;puff++){
-   const smoke=new THREE.Mesh(new THREE.SphereGeometry(.16+puff*.045,7,6),smokeMat);
+   const smoke=new THREE.Mesh(new THREE.SphereGeometry(.16+puff*.045,7,6),smokeMat.clone());
    smoke.position.set(chimneyX+.05*Math.sin(puff*1.4),h+1.22+puff*.24,chimneyZ);
    smoke.userData.smokePuff=true;smoke.userData.smokeBaseY=smoke.position.y;smoke.userData.smokeBaseX=smoke.position.x;smoke.userData.smokePhase=puff*.9;parent.add(smoke);citySmokePuffs.push(smoke);
   }
