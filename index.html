@@ -169,6 +169,32 @@ for(const z of [-7.7,7.7]){
  bridge.position.set(x,.02,z);bridge.castShadow=true;bridge.receiveShadow=true;scene.add(bridge);
  for(let j=0;j<6;j++){const seam=new THREE.Mesh(new THREE.BoxGeometry(.035,.018,1.42),mat('#77766e'));seam.position.set(-1.8+j*.72,.17,z);scene.add(seam);}
 }
+// Broad approach stairs connect the lower plaza to the bridge and raised citadel.
+const stairStone=mat('#8d9189'),stairEdge=mat('#c1b9a5');
+for(let i=0;i<5;i++){
+ const depth=.42,width=4.65,y=.045+i*.085,z=9.05-i*.43;
+ const step=new THREE.Mesh(new THREE.BoxGeometry(width,.13,depth),stairStone);
+ step.position.set(0,y,z);step.receiveShadow=true;step.castShadow=true;scene.add(step);
+ const lip=new THREE.Mesh(new THREE.BoxGeometry(width,.045,.07),stairEdge);
+ lip.position.set(0,y+.075,z+depth*.42);scene.add(lip);
+}
+// Corner bastion details: narrow arrow slits and warm wall torches.
+for(const side of [-1,1]){
+ for(const z of [-4.2,4.2]){
+  const slit=new THREE.Mesh(new THREE.BoxGeometry(.08,.62,.16),mat('#343a38'));
+  slit.position.set(side*5.34,2.05,z);scene.add(slit);
+  const sconce=new THREE.Mesh(new THREE.BoxGeometry(.16,.34,.16),mat('#e4ad53'));
+  sconce.position.set(side*5.43,1.2,z+.7);scene.add(sconce);
+ }
+}
+// Stone coping on the two inner canal edges creates a raised, layered fortress silhouette.
+for(const side of [-1,1]){
+ for(let j=0;j<12;j++){
+  const z=-5.7+j*1.02;
+  const coping=new THREE.Mesh(new THREE.BoxGeometry(.22,.18,.82),stairEdge);
+  coping.position.set(side*7.05,.04,z);coping.castShadow=true;scene.add(coping);
+ }
+}
 // Low parapets make the moat edge read as fortified architecture, not a plain blue strip.
 for(const side of [-1,1])for(let j=0;j<10;j++){
  const z=-5.8+j*1.28;
