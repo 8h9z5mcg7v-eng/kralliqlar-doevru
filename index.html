@@ -732,6 +732,16 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   const head=new THREE.Mesh(new THREE.BoxGeometry(.22,.32,.22),body.material);head.position.set(sx+.47,1.53,stableZ+.8);cityExpansion.add(head);
   for(const lx of [-.18,.18])for(const lz of [-.13,.13])cityBox(cityExpansion,.09,.48,.09,body.material,sx+lx,.28,stableZ+.85+lz);
  }
+ // Stable tack: visible horseshoes, lanterns and separate stall name plaques.
+ for(let j=0;j<3;j++){
+  const sx=stableX-1.85+j*1.85;
+  cityBox(cityExpansion,.34,.28,.07,cityMats.iron,sx,1.55,stableZ+2.04);
+  cityBox(cityExpansion,.16,.5,.12,cityMats.gold,sx-.62,2.05,stableZ+2.02);
+  const lantern=new THREE.Mesh(new THREE.BoxGeometry(.16,.2,.16),new THREE.MeshStandardMaterial({color:'#ffc96a',emissive:'#a85c16',emissiveIntensity:.65,roughness:.35}));
+  lantern.position.set(sx+.62,2.1,stableZ+2.03);cityExpansion.add(lantern);
+ }
+ // Rough stone edging and timber rails distinguish the stable yard from the road.
+ for(let j=0;j<8;j++){const postX=stableX-3.1+j*.88;cityBox(cityExpansion,.13,.72,.13,cityMats.timber,postX,.04,stableZ+3.65);if(j<7)cityBox(cityExpansion,.9,.1,.1,cityMats.timberLight,postX+.43,.48,stableZ+3.65);}
  for(let j=0;j<6;j++){
   const fx=stableX-3+j*1.2;
   cityBox(cityExpansion,.09,.8,.09,cityMats.timberLight,fx,.05,stableZ+3.25);
