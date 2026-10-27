@@ -1450,6 +1450,26 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
 
  // Keep the primary castle in the main settlement; do not load a second castle model over it.
 
+ // Premium scene polish: warm street lanterns and subtle stone edging along the royal approach.
+ const royalLanternIron=new THREE.MeshStandardMaterial({color:'#343b38',metalness:.45,roughness:.52});
+ const royalLanternGlow=new THREE.MeshStandardMaterial({color:'#ffcf73',emissive:'#ff9b32',emissiveIntensity:2.1,roughness:.3});
+ for(const side of [-1,1]){
+  for(const z of [7,14,21]){
+   const lx=side*(3.9+(z>18?.35:0));
+   const foot=new THREE.Mesh(new THREE.CylinderGeometry(.22,.3,.16,8),royalLanternIron);foot.position.set(lx,.08,z);cityExpansion.add(foot);
+   const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.055,.09,2.15,7),royalLanternIron);shaft.position.set(lx,1.18,z);shaft.castShadow=true;cityExpansion.add(shaft);
+   const crossbar=new THREE.Mesh(new THREE.BoxGeometry(.52,.08,.08),royalLanternIron);crossbar.position.set(lx,2.16,z);cityExpansion.add(crossbar);
+   const glass=new THREE.Mesh(new THREE.OctahedronGeometry(.19,0),royalLanternGlow);glass.position.set(lx,2.0,z);glass.scale.y=1.3;cityExpansion.add(glass);
+   const cap=new THREE.Mesh(new THREE.ConeGeometry(.29,.24,6),royalLanternIron);cap.position.set(lx,2.3,z);cityExpansion.add(cap);
+   if(z===7||z===21){const glow=new THREE.PointLight(0xffad54,.42,6,2);glow.position.set(lx,2.05,z);cityExpansion.add(glow)}
+  }
+ }
+ // Small inset paving marks add scale to the main gate road without obstructing the path.
+ const royalPavingMat=new THREE.MeshStandardMaterial({color:'#c5b99d',roughness:1});
+ for(let p=0;p<7;p++){
+  const tile=new THREE.Mesh(new THREE.BoxGeometry(2.7,.055,.22),royalPavingMat);
+  tile.position.set(0,-.025,5.5+p*2.35);tile.receiveShadow=true;cityExpansion.add(tile);
+ }
  target.set(0,2.4,0);pitch=.88;dist=innerWidth/innerHeight<.72?48:innerWidth/innerHeight<1?43:38;placeCamera();
  console.info('Əsas şəhər səhnəsi və əlavə rayon hazırdır.');
 })();
