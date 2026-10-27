@@ -1008,7 +1008,8 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  }
  // Walls remain outside the main building plots; a central opening forms the front gate.
  rampartSegment(44,.8,0,-25);
- rampartSegment(44,.8,0,25);
+ rampartSegment(17.2,.8,-13.4,25);
+ rampartSegment(17.2,.8,13.4,25);
  rampartSegment(.8,50,-22,0);
  rampartSegment(.8,50,22,0);
  // Reinforced corner towers with crenellated crowns.
@@ -1023,9 +1024,16 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  }
  // Broad timber gate leafs and gold braces at the front entrance.
  for(const side of [-1,1]){
-  cityBox(cityExpansion,1.15,2.25,.22,cityMats.timber,side*.68,0,25);
-  for(let j=0;j<4;j++)cityBox(cityExpansion,.08,1.95,.08,cityMats.gold,side*.68-.38+j*.25,.12,25.13);
+  cityBox(cityExpansion,1.15,2.25,.22,cityMats.timber,side*1.35,0,25);
+  for(let j=0;j<4;j++)cityBox(cityExpansion,.08,1.95,.08,cityMats.gold,side*1.35-.38+j*.25,.12,25.13);
  }
+ // Stone gateposts and a lintel frame the real opening in the curtain wall.
+ cityBox(cityExpansion,.72,3.05,1.05,outerStone,-3.25,0,25);
+ cityBox(cityExpansion,.72,3.05,1.05,outerStone,3.25,0,25);
+ cityBox(cityExpansion,7.1,.62,1.12,outerCap,0,3.02,25);
+ for(let k=0;k<7;k++)cityBox(cityExpansion,.42,.36,1.2,outerCap,-2.7+k*.9,3.38,25);
+ // Paved entry lane leads from the gate into the settlement.
+ const gateLane=new THREE.Mesh(new THREE.BoxGeometry(4.8,.09,8),roadMat);gateLane.position.set(0,.045,20.2);gateLane.receiveShadow=true;cityExpansion.add(gateLane);
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
