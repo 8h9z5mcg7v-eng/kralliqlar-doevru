@@ -867,8 +867,13 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
    0,3,4, 0,4,1
   ]);
   g.computeVertexNormals();
-  const m=new THREE.Mesh(g,material);
-  m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+  // Double-sided roof planes avoid disappearing faces from the mobile isometric camera.
+  const roofMaterial=material.clone();roofMaterial.side=THREE.DoubleSide;
+  const m=new THREE.Mesh(g,roofMaterial);
+  m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);
+  // Timber ridge cap makes the roof silhouette readable at the game's default zoom.
+  cityBox(parent,.14,.14,d*1.12,cityMats.timberLight,x,y+h-.07,z);
+  return m;
  }
  function cityHouse(parent,x,z,w=2.8,d=2.3,h=1.7){
   cityBox(parent,w,h,d,cityMats.stoneLight,x,h/2,z);
