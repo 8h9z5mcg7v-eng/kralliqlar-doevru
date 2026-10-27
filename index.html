@@ -250,6 +250,8 @@ for(let i=0;i<8;i++){const a=i*Math.PI/4;const post=new THREE.Mesh(new THREE.Cyl
 fountain.position.set(0,0,-6.2);
 // Stone royal banners on either side of the main approach.
 const bannerCloths=[];
+const cityPennantCloths=[];
+const cityGateFlames=[];
 for(const side of [-1,1]){
  const bannerPole=new THREE.Group();scene.add(bannerPole);
  const base=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.2,8),stoneDark);base.position.y=.1;bannerPole.add(base);
@@ -1198,7 +1200,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  function districtPennant(x,z,h,flagMat){
   cityBox(cityExpansion,.09,h,.09,cityMats.timberLight,x,.08,z);
   const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.92,.58),flagMat);
-  cloth.position.set(x+.48,.08+h-.28,z);cloth.rotation.y=.12;cityExpansion.add(cloth);
+  cloth.position.set(x+.48,.08+h-.28,z);cloth.rotation.y=.12;cityExpansion.add(cloth);cityPennantCloths.push(cloth);
   const emblem=new THREE.Mesh(new THREE.CircleGeometry(.13,8),districtFlagGold);
   emblem.position.set(x+.48,.08+h-.28,z+.012);cityExpansion.add(emblem);
   cityBox(cityExpansion,.28,.1,.28,cityMats.gold,x,.08+h,z);
@@ -1316,11 +1318,11 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   cityBox(cityExpansion,.12,.68,.12,defenseTorchMetal,side*3.05,2.05,24.05);
   cityBox(cityExpansion,.3,.12,.3,defenseTorchMetal,side*3.05,2.39,24.05);
   const gateFlame=new THREE.Mesh(new THREE.SphereGeometry(.19,8,7),defenseTorchGlow);
-  gateFlame.position.set(side*3.05,2.66,24.05);gateFlame.scale.set(.78,1.35,.78);cityExpansion.add(gateFlame);
+  gateFlame.position.set(side*3.05,2.66,24.05);gateFlame.scale.set(.78,1.35,.78);cityExpansion.add(gateFlame);cityGateFlames.push(gateFlame);
   const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.3,.22,.22,8),defenseTorchMetal);
   bowl.position.set(side*4.35,.9,22.8);cityExpansion.add(bowl);
   const bowlFire=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),defenseTorchGlow);
-  bowlFire.position.set(side*4.35,1.15,22.8);bowlFire.scale.set(.8,1.25,.8);cityExpansion.add(bowlFire);
+  bowlFire.position.set(side*4.35,1.15,22.8);bowlFire.scale.set(.8,1.25,.8);cityExpansion.add(bowlFire);cityGateFlames.push(bowlFire);
  }
  // Small slit windows and cap stones articulate the watchtowers from the overhead camera.
  for(const post of [{x:-22,z:-25},{x:22,z:-25},{x:-22,z:25},{x:22,z:25}]){
@@ -1378,7 +1380,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
 })();
 
 function animate(){requestAnimationFrame(animate);
- const ambience=performance.now()*.001;sails.rotation.z=ambience*.32;bannerCloths.forEach((cloth,i)=>{cloth.rotation.y=Math.sin(ambience*1.7+i*Math.PI)*.11;cloth.rotation.z=Math.sin(ambience*1.25+i)*.035});waterSurface.position.y=.41+Math.sin(ambience*2.4)*.018;upperWater.position.y=1.32+Math.sin(ambience*2.8)*.012;fountainJet.scale.y=.85+Math.sin(ambience*3.2)*.12;flame.scale.set(.82+Math.sin(ambience*11)*.12, .82+Math.sin(ambience*14)*.2, .82+Math.sin(ambience*9)*.12);fireLight.intensity=1.0+Math.sin(ambience*12)*.28;
+ const ambience=performance.now()*.001;sails.rotation.z=ambience*.32;bannerCloths.forEach((cloth,i)=>{cloth.rotation.y=Math.sin(ambience*1.7+i*Math.PI)*.11;cloth.rotation.z=Math.sin(ambience*1.25+i)*.035});cityPennantCloths.forEach((cloth,i)=>{cloth.rotation.y=.12+Math.sin(ambience*1.55+i*.8)*.16;cloth.rotation.z=Math.sin(ambience*1.9+i*.7)*.045});cityGateFlames.forEach((fire,i)=>{const flicker=1+Math.sin(ambience*10+i*2.1)*.13;fire.scale.set(.78*flicker,1.35*flicker,.78*flicker)});waterSurface.position.y=.41+Math.sin(ambience*2.4)*.018;upperWater.position.y=1.32+Math.sin(ambience*2.8)*.012;fountainJet.scale.y=.85+Math.sin(ambience*3.2)*.12;flame.scale.set(.82+Math.sin(ambience*11)*.12, .82+Math.sin(ambience*14)*.2, .82+Math.sin(ambience*9)*.12);fireLight.intensity=1.0+Math.sin(ambience*12)*.28;
  if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);
  for(const a of troopActors){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+(-7+a.home.x*.08-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.8-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.sin(performance.now()*.018+a.phase)*.5}
  for(const a of enemyUnits){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+((a.home.x< -18?-18.8:-17.2)-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.4-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.PI+Math.sin(performance.now()*.02+a.phase)*.45}
