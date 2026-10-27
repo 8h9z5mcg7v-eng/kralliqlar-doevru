@@ -851,7 +851,25 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   gold:new THREE.MeshStandardMaterial({color:'#d7b76b',metalness:.35,roughness:.5})
  };
  function cityBox(parent,w,h,d,material,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y+h/2,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
- function cityRoof(parent,w,h,d,x,y,z,material){const m=new THREE.Mesh(new THREE.ConeGeometry(w*.76,h,4),material);m.rotation.y=Math.PI/4;m.scale.z=d/w;m.position.set(x,y+h/2,z);m.castShadow=true;parent.add(m);return m;}
+ // Real gable-roof geometry: two sloping roof planes and triangular end faces.
+ // This replaces the old pyramid-shaped roof so houses, barracks and stables read as medieval buildings.
+ function cityRoof(parent,w,h,d,x,y,z,material){
+  const g=new THREE.BufferGeometry();
+  const v=[
+   -w/2,0,-d/2,  w/2,0,-d/2,  0,h,-d/2,
+   -w/2,0,d/2,   w/2,0,d/2,   0,h,d/2
+  ];
+  g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
+  g.setIndex([
+   0,1,2, 3,5,4,
+   0,2,5, 0,5,3,
+   2,1,4, 2,4,5,
+   0,3,4, 0,4,1
+  ]);
+  g.computeVertexNormals();
+  const m=new THREE.Mesh(g,material);
+  m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+ }
  function cityHouse(parent,x,z,w=2.8,d=2.3,h=1.7){
   cityBox(parent,w,h,d,cityMats.stoneLight,x,h/2,z);
   cityRoof(parent,w*1.08,1.2,d*1.1,x,h,z,cityMats.roof);
