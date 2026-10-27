@@ -1014,7 +1014,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  
  // Keep the primary castle in the main settlement; do not load a second castle model over it.
 
- target.set(0,1.8,0);pitch=.9;dist=38;placeCamera();
+ target.set(0,2.4,0);pitch=.88;dist=innerWidth/innerHeight<.72?48:innerWidth/innerHeight<1?43:38;placeCamera();
  console.info('Əsas şəhər səhnəsi və əlavə rayon hazırdır.');
 })();
 
@@ -1026,7 +1026,7 @@ function animate(){requestAnimationFrame(animate);
  if(t>=1){battleStartedAt=0;document.querySelector('#battleStatus').classList.remove('show');for(const a of troopActors){a.unit.position.copy(a.home)}for(const a of enemyUnits){a.unit.position.copy(a.home)}}
 }
  else{for(const a of troopActors){a.unit.position.y=.02+Math.abs(Math.sin(performance.now()*.002+a.phase))*.035;a.unit.rotation.y=Math.sin(performance.now()*.001+a.phase)*.04}}
- renderer.render(scene,camera)}animate();updateHud();addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});setTimeout(()=>document.querySelector('#loading').classList.add('hide'),500);
+ renderer.render(scene,camera)}animate();updateHud();addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;dist=innerWidth/innerHeight<.72?48:innerWidth/innerHeight<1?43:38;placeCamera();camera.updateProjectionMatrix()});setTimeout(()=>document.querySelector('#loading').classList.add('hide'),500);
 </script>
 </body>
 </html>
