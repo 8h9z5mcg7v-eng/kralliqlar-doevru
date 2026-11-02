@@ -483,7 +483,7 @@ const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
 // Kenney Fantasy Town Kit (CC0): first imported GLB prop at the castle entrance.
 // The procedural castle remains as a safe fallback if the model request fails.
 const townKitLoader=new GLTFLoader();
-townKitLoader.load('assets/kenney/stairs-stone.glb',(gltf)=>{
+townKitLoader.load('https://raw.githubusercontent.com/shorepine/kenney/main/3d/fantasy-town/stairs-stone.glb',(gltf)=>{
  const stairModel=gltf.scene;
  const bounds=new THREE.Box3().setFromObject(stairModel);
  const size=bounds.getSize(new THREE.Vector3());
