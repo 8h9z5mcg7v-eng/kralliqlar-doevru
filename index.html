@@ -720,14 +720,14 @@ if(levelNow>=3){
  box(g,.82,.5,.07,tierFlagMat,x+.42,1.76,z-1.72);
  box(g,.12,.12,.09,goldMat,x+.42,1.76,z-1.67);
 }
-if(levelNow>=4){
+if(levelNow>=3){
  const cornerGold=mat('#d8b45d');
  for(const side of [-1,1])for(const front of [-1,1]){
   const pillar=box(g,.2,1.15,.2,cornerGold,x+side*1.42,.58,z+front*1.42);
   pillar.castShadow=true;
  }
 }
-if(levelNow>=5){
+if(levelNow>=3){
  const crownMat=mat('#e4c36e');
  box(g,2.9,.16,.18,crownMat,x,2.12,z-1.53);
  box(g,.18,.58,.18,crownMat,x-1.25,2.42,z-1.53);
