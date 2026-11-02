@@ -1564,6 +1564,42 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
 
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
+
+ // Imported Kenney Fantasy Town Kit props: real GLB stalls, cart, banners and lanterns.
+ // The original plots and gameplay buildings stay intact; these assets enrich the market quarter.
+ const kenneyTownBase='https://raw.githubusercontent.com/shorepine/kenney/main/3d/fantasy-town/';
+ const kenneyPropLoader=new GLTFLoader();
+ const kenneyPropCache=new Map();
+ function loadKenneyProp(file,{x=0,z=0,width=2,rotation=0,y=0}={}){
+  if(kenneyPropCache.has(file)){
+   const cached=kenneyPropCache.get(file);
+   const clone=cached.clone(true);clone.position.set(x,y,z);clone.rotation.y=rotation;cityExpansion.add(clone);return;
+  }
+  kenneyPropLoader.load(kenneyTownBase+file,(gltf)=>{
+   const source=gltf.scene;
+   const bounds=new THREE.Box3().setFromObject(source);
+   const size=bounds.getSize(new THREE.Vector3());
+   const center=bounds.getCenter(new THREE.Vector3());
+   const scale=width/Math.max(size.x,size.z,size.y*.72,.001);
+   source.scale.setScalar(scale);
+   source.position.set(-center.x*scale,-bounds.min.y*scale+y,-center.z*scale);
+   source.traverse(node=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true}});
+   kenneyPropCache.set(file,source);
+   const model=source.clone(true);model.position.set(x,y,z);model.rotation.y=rotation;cityExpansion.add(model);
+   renderer.shadowMap.needsUpdate=true;
+  },undefined,error=>console.warn('Kenney prop failed:',file,error));
+ }
+ // A second, model-based market row adds authentic stalls without covering existing buildings.
+ loadKenneyProp('stall-red.glb',{x:-8,z:18.2,width:2.55});
+ loadKenneyProp('stall-green.glb',{x:-5.2,z:18.2,width:2.55});
+ loadKenneyProp('stall.glb',{x:-2.4,z:18.2,width:2.55});
+ // A handcart, street lanterns and royal banners give the market avenue more life.
+ loadKenneyProp('cart.glb',{x:1.3,z:16.6,width:1.65,rotation:-.28});
+ loadKenneyProp('lantern.glb',{x:-10.3,z:17.3,width:.72});
+ loadKenneyProp('lantern.glb',{x:.2,z:17.3,width:.72});
+ loadKenneyProp('banner-red.glb',{x:-11.2,z:12.2,width:1.15});
+ loadKenneyProp('banner-green.glb',{x:1.2,z:12.2,width:1.15});
+
  
 
  // Royal keep finishing pass: layered battlements, corner turrets, royal crest and a readable entry.
