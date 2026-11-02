@@ -1518,6 +1518,34 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
   }
  }
 
+
+ // Road junctions and district wayfinding: small signposts make the settlement feel planned.
+ const wayfindWoodMat=new THREE.MeshStandardMaterial({color:'#62442d',roughness:.95});
+ const wayfindBoardMat=new THREE.MeshStandardMaterial({color:'#b38a54',roughness:.9});
+ const wayfindLetterMat=new THREE.MeshStandardMaterial({color:'#f0d99d',roughness:.9});
+ function cityWayfinder(x,z,turn=1){
+  cityBox(cityExpansion,.14,1.75,.14,wayfindWoodMat,x,.08,z);
+  cityBox(cityExpansion,1.05,.38,.12,wayfindBoardMat,x+turn*.43,1.2,z);
+  cityBox(cityExpansion,.08,.19,.035,wayfindLetterMat,x+turn*.43,1.2,z+.075);
+  cityBox(cityExpansion,.08,.19,.035,wayfindLetterMat,x+turn*.25,1.2,z+.075);
+  const arrow=new THREE.Mesh(new THREE.ConeGeometry(.16,.34,4),wayfindBoardMat);
+  arrow.rotation.z=turn===1?-Math.PI/2:Math.PI/2;arrow.position.set(x+turn*.98,1.2,z);cityExpansion.add(arrow);
+  cityBox(cityExpansion,.38,.12,.38,cityMats.stone,x,.08,z);
+ }
+ cityWayfinder(-5.3,-5.5,1);
+ cityWayfinder(-8.8,5.4,-1);
+ cityWayfinder(7.8,-5.6,1);
+ // Roadside planters soften the stone avenues without taking space from building plots.
+ const roadsidePlanterMat=new THREE.MeshStandardMaterial({color:'#766b56',roughness:1});
+ const roadsideLeafMat=new THREE.MeshStandardMaterial({color:'#426b43',roughness:1});
+ for(const bed of [{x:-5.35,z:1.7},{x:-5.35,z:7.2},{x:-5.35,z:12.7},{x:5.1,z:-4.1},{x:11.8,z:-4.1}]){
+  cityBox(cityExpansion,1.25,.18,.92,roadsidePlanterMat,bed.x,.08,bed.z);
+  for(let n=0;n<3;n++){
+   const shrub=new THREE.Mesh(new THREE.SphereGeometry(.25,7,6),roadsideLeafMat);
+   shrub.position.set(bed.x-.34+n*.34,.34,bed.z);shrub.scale.set(1,.8,1);shrub.castShadow=true;cityExpansion.add(shrub);
+  }
+ }
+
  selectableCityRoots.push(cityExpansion);
  scene.add(cityExpansion);
  
