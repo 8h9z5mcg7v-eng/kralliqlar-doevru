@@ -480,6 +480,22 @@ function makeFallbackCastle(parent){
  return castle;
 }
 const castle=makeFallbackCastle(world);castle.position.set(0,0,0);
+// Kenney Fantasy Town Kit (CC0): first imported GLB prop at the castle entrance.
+// The procedural castle remains as a safe fallback if the model request fails.
+const townKitLoader=new GLTFLoader();
+townKitLoader.load('assets/kenney/stairs-stone.glb',(gltf)=>{
+ const stairModel=gltf.scene;
+ const bounds=new THREE.Box3().setFromObject(stairModel);
+ const size=bounds.getSize(new THREE.Vector3());
+ const center=bounds.getCenter(new THREE.Vector3());
+ const fitScale=4.2/Math.max(size.x,size.z,0.001);
+ stairModel.scale.setScalar(fitScale);
+ stairModel.position.set(-center.x*fitScale,-bounds.min.y*fitScale+.035,6.35-center.z*fitScale);
+ stairModel.traverse((node)=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true}});
+ castle.add(stairModel);
+ renderer.shadowMap.needsUpdate=true;
+},undefined,(error)=>{console.warn('Kenney stair model unavailable; keeping built-in castle entrance.',error)});
+
 let levelDecor=new THREE.Group();castle.add(levelDecor);
 let loadedCastleModel=false;
 function updateCastleAppearance(){
