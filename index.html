@@ -1600,6 +1600,41 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  loadKenneyProp('banner-red.glb',{x:-11.2,z:12.2,width:1.15});
  loadKenneyProp('banner-green.glb',{x:1.2,z:12.2,width:1.15});
 
+ // Kenney modular stone fortifications: replace the plain silhouette with repeated imported GLB wall pieces.
+ // Models are normalized to each wall bay so they align with the existing defensive perimeter.
+ function loadKenneyWallKit(){
+  const wallUrl=kenneyTownBase+'wall-block.glb';
+  kenneyPropLoader.load(wallUrl,(gltf)=>{
+   const source=gltf.scene;
+   const bounds=new THREE.Box3().setFromObject(source);
+   const size=bounds.getSize(new THREE.Vector3());
+   source.traverse(node=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true}});
+   function wallPiece(x,z,rot=0){
+    const piece=source.clone(true);
+    piece.scale.set(1.72/Math.max(size.x,.001),1.72/Math.max(size.y,.001),1.08/Math.max(size.z,.001));
+    piece.rotation.y=rot;
+    piece.position.set(x,.08,z);
+    cityExpansion.add(piece);
+   }
+   // North and west/east runs.
+   for(let z=-25.3;z<=25.31;z+=1.72){wallPiece(-20,z,0);wallPiece(20,z,0)}
+   for(let x=-18.3;x<=18.31;x+=1.72){wallPiece(x,-27,Math.PI/2);wallPiece(x,27,Math.PI/2)}
+   // Leave the main southern gate clear; its two stone gate towers remain visible.
+   for(let x=-18.3;x<=-4.2;x+=1.72)wallPiece(x,27,Math.PI/2);
+   for(let x=4.2;x<=18.31;x+=1.72)wallPiece(x,27,Math.PI/2);
+   renderer.shadowMap.needsUpdate=true;
+  },undefined,error=>console.warn('Kenney wall kit failed to load; built-in walls remain.',error));
+ }
+ loadKenneyWallKit();
+ // Imported stone gate arch adds a recognizable entrance silhouette over the existing gate opening.
+ kenneyPropLoader.load(kenneyTownBase+'wall-arch.glb',(gltf)=>{
+  const gate=gltf.scene;const b=new THREE.Box3().setFromObject(gate);const s=b.getSize(new THREE.Vector3());const c=b.getCenter(new THREE.Vector3());
+  const scale=7/Math.max(s.x,s.y,.001);gate.scale.setScalar(scale);gate.position.set(-c.x*scale,-b.min.y*scale+.12,27-c.z*scale);
+  gate.traverse(node=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true}});
+  cityExpansion.add(gate);renderer.shadowMap.needsUpdate=true;
+ },undefined,error=>console.warn('Kenney gate arch unavailable; built-in gate remains.',error));
+
+
  
 
  // Royal keep finishing pass: layered battlements, corner turrets, royal crest and a readable entry.
