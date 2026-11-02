@@ -264,6 +264,7 @@ for(let i=0;i<8;i++){const a=i*Math.PI/4;const post=new THREE.Mesh(new THREE.Cyl
 fountain.position.set(0,0,-6.2);
 // Stone royal banners on either side of the main approach.
 const bannerCloths=[];
+const royalKeepFires=[];
 const cityPennantCloths=[];
 const cityGateFlames=[];
 for(const side of [-1,1]){
@@ -1523,12 +1524,12 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
  }
  // Four royal braziers mark the citadel approaches.
  const keepFireMat=new THREE.MeshStandardMaterial({color:'#ff9b39',emissive:'#ff741e',emissiveIntensity:1.4,roughness:.35});
- const keepFires=[];
+
  for(const side of [-1,1])for(const forward of [-1,1]){
   const x=side*6.15,z=forward*6.15;
   const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.32,.44,.62,8),keepIvoryMat);pedestal.position.set(x,.32,z);pedestal.castShadow=true;scene.add(pedestal);
   const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.42,.28,.2,8),keepGoldMat);bowl.position.set(x,.72,z);scene.add(bowl);
-  const fire=new THREE.Mesh(new THREE.SphereGeometry(.2,8,7),keepFireMat);fire.position.set(x,.98,z);fire.scale.set(.8,1.3,.8);scene.add(fire);keepFires.push(fire);
+  const fire=new THREE.Mesh(new THREE.SphereGeometry(.2,8,7),keepFireMat);fire.position.set(x,.98,z);fire.scale.set(.8,1.3,.8);scene.add(fire);royalKeepFires.push(fire);
  }
 
  // Keep the primary castle in the main settlement; do not load a second castle model over it.
@@ -1558,7 +1559,7 @@ let pinch=0;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){con
 })();
 
 function animate(){requestAnimationFrame(animate);
- const ambience=performance.now()*.001;for(const puff of citySmokePuffs){const drift=(ambience+puff.userData.smokePhase)%2.4;puff.position.y=puff.userData.smokeBaseY+drift*.22;puff.position.x=puff.userData.smokeBaseX+Math.sin(ambience*1.1+puff.userData.smokePhase)*.045;puff.material.opacity=.34*(1-drift/2.4);puff.scale.setScalar(1+drift*.22)}sails.rotation.z=ambience*.32;bannerCloths.forEach((cloth,i)=>{cloth.rotation.y=Math.sin(ambience*1.7+i*Math.PI)*.11;cloth.rotation.z=Math.sin(ambience*1.25+i)*.035});cityPennantCloths.forEach((cloth,i)=>{cloth.rotation.y=.12+Math.sin(ambience*1.55+i*.8)*.16;cloth.rotation.z=Math.sin(ambience*1.9+i*.7)*.045});cityGateFlames.forEach((fire,i)=>{const flicker=1+Math.sin(ambience*10+i*2.1)*.13;fire.scale.set(.78*flicker,1.35*flicker,.78*flicker)});waterSurface.position.y=.41+Math.sin(ambience*2.4)*.018;upperWater.position.y=1.32+Math.sin(ambience*2.8)*.012;fountainJet.scale.y=.85+Math.sin(ambience*3.2)*.12;flame.scale.set(.82+Math.sin(ambience*11)*.12, .82+Math.sin(ambience*14)*.2, .82+Math.sin(ambience*9)*.12);fireLight.intensity=1.0+Math.sin(ambience*12)*.28;
+ const ambience=performance.now()*.001;royalKeepFires.forEach((fire,i)=>{const pulse=1+Math.sin(ambience*9+i*1.7)*.14;fire.scale.set(.8*pulse,1.3*(1+Math.sin(ambience*12+i)*.12),.8*pulse);fire.material.emissiveIntensity=1.15+Math.sin(ambience*11+i*2)*.35});for(const puff of citySmokePuffs){const drift=(ambience+puff.userData.smokePhase)%2.4;puff.position.y=puff.userData.smokeBaseY+drift*.22;puff.position.x=puff.userData.smokeBaseX+Math.sin(ambience*1.1+puff.userData.smokePhase)*.045;puff.material.opacity=.34*(1-drift/2.4);puff.scale.setScalar(1+drift*.22)}sails.rotation.z=ambience*.32;bannerCloths.forEach((cloth,i)=>{cloth.rotation.y=Math.sin(ambience*1.7+i*Math.PI)*.11;cloth.rotation.z=Math.sin(ambience*1.25+i)*.035});cityPennantCloths.forEach((cloth,i)=>{cloth.rotation.y=.12+Math.sin(ambience*1.55+i*.8)*.16;cloth.rotation.z=Math.sin(ambience*1.9+i*.7)*.045});cityGateFlames.forEach((fire,i)=>{const flicker=1+Math.sin(ambience*10+i*2.1)*.13;fire.scale.set(.78*flicker,1.35*flicker,.78*flicker)});waterSurface.position.y=.41+Math.sin(ambience*2.4)*.018;upperWater.position.y=1.32+Math.sin(ambience*2.8)*.012;fountainJet.scale.y=.85+Math.sin(ambience*3.2)*.12;flame.scale.set(.82+Math.sin(ambience*11)*.12, .82+Math.sin(ambience*14)*.2, .82+Math.sin(ambience*9)*.12);fireLight.intensity=1.0+Math.sin(ambience*12)*.28;
  if(battleStartedAt){const t=Math.min(1,(performance.now()-battleStartedAt)/battleDuration);
  for(const a of troopActors){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+(-7+a.home.x*.08-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.8-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.sin(performance.now()*.018+a.phase)*.5}
  for(const a of enemyUnits){const forward=t<.45?t/.45:t<.72?1:(1-t)/.28;a.unit.position.x=a.home.x+((a.home.x< -18?-18.8:-17.2)-a.home.x)*Math.max(0,Math.min(1,forward));a.unit.position.z=a.home.z+(-8.4-a.home.z)*Math.max(0,Math.min(1,forward));a.unit.rotation.y=Math.PI+Math.sin(performance.now()*.02+a.phase)*.45}
