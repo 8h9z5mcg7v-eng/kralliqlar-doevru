@@ -1,64 +1,71 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="az">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#17251f">
-<title>Krallıqlar Dövrü</title>
-<style>
-:root{color-scheme:dark;--gold:#e7c47b;--panel:#17231f;--edge:#786442;--cream:#f3e7c9}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17251f;color:var(--cream);font-family:Georgia,serif}
-#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
-.hud{position:fixed;z-index:2;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
-.brand,.resources{background:#101a17eF;border:1px solid #9d8050;border-radius:9px;padding:9px 12px;box-shadow:0 4px 18px #0008}
-.brand{font-weight:bold;color:var(--gold);letter-spacing:1px}.resources{display:flex;gap:12px;font:600 12px system-ui}
-#notice{position:fixed;z-index:3;left:50%;top:76px;transform:translateX(-50%);padding:8px 13px;border:1px solid var(--edge);border-radius:8px;background:#101a17eF;font:13px system-ui;opacity:0;transition:opacity .2s;pointer-events:none}
-.bottom{position:fixed;z-index:2;left:10px;right:10px;bottom:10px;display:flex;justify-content:center;gap:7px}
-.bottom button{flex:1;max-width:150px;min-height:48px;border:1px solid #9b8053;border-radius:8px;background:linear-gradient(#34443a,#17231f);color:var(--cream);font:600 12px system-ui;box-shadow:0 4px 14px #0008}
-.bottom button:active{background:#675334}
-@media(max-width:520px){.resources{gap:7px;padding:8px;font-size:10px}.brand{font-size:12px}.bottom button{font-size:10px;padding:5px 2px}}
-</style>
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
-</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a2530" />
+  <meta name="description" content="Krallıqlar Dövrü — 3D orta əsr krallıq quruculuğu və strategiya oyunu." />
+  <title>Krallıqlar Dövrü</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,2 29,9.5 29,22.5 16,30 3,22.5 3,9.5' fill='%238fb35a' stroke='%235a3d26' stroke-width='2'/%3E%3Crect x='11' y='14' width='10' height='9' fill='%23e8dcc0'/%3E%3Cpolygon points='9,15 16,8 23,15' fill='%23b0523a'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
-<div id="game"></div>
-<div class="hud"><div class="brand">KRALLIQLAR DÖVRÜ</div><div class="resources"><span>🪵 0</span><span>🪨 0</span><span>🪙 0</span><span>🍞 0</span></div></div>
-<div id="notice"></div>
-<nav class="bottom">
-<button data-tab="şəhər">🏰 Şəhər</button><button data-tab="ordu">⚔️ Ordu</button><button data-tab="xəritə">🗺️ Dünya</button><button data-tab="ittifaq">🛡️ İttifaq</button><button data-tab="daha">☰ Daha</button>
-</nav>
-<script type="module">
-import * as THREE from 'three';
-const host=document.querySelector('#game');
-const scene=new THREE.Scene();scene.background=new THREE.Color('#8ea6a0');scene.fog=new THREE.Fog('#8ea6a0',35,100);
-const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,200);
-camera.position.set(24,28,32);camera.lookAt(0,0,0);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;host.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight('#e7f0e2','#59634b',2));
-const sun=new THREE.DirectionalLight('#fff0d2',3);sun.position.set(-18,32,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(120,120),new THREE.MeshStandardMaterial({color:'#687b51',roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
-const city=new THREE.Group();scene.add(city);
-function mat(color,roughness=.9){return new THREE.MeshStandardMaterial({color,roughness});}
-const stone=mat('#8e8978'),stoneDark=mat('#625f55'),roof=mat('#74463b'),wood=mat('#76543a'),gold=mat('#c3a15c'),grass=mat('#778b59');
-function box(w,h,d,material,x,y,z,parent=city){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y+h/2,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
-function roofPiece(x,z,w,d,h=2){const m=new THREE.Mesh(new THREE.ConeGeometry(Math.max(w,d)*.78,h,4),roof);m.position.set(x,4+h/2,z);m.rotation.y=Math.PI/4;m.castShadow=true;city.add(m);}
-function tower(x,z){box(3.2,5,3.2,stone,x,0,z);const cap=new THREE.Mesh(new THREE.ConeGeometry(2.35,3,4),roof);cap.position.set(x,6.5,z);cap.rotation.y=Math.PI/4;cap.castShadow=true;city.add(cap);box(.5,1.5,.12,gold,x,5.2,z-1.62);}
-function house(x,z,w=4,d=3){box(w,2.8,d,wood,x,0,z);box(w+.35,.35,d+.35,stoneDark,x,2.8,z);roofPiece(x,z,w,d,1.8);box(.75,1.5,.12,stoneDark,x,0,z-d/2-.07);}
-function keep(){box(10,7,9,stone,-1,0,-2);box(11,1,10,stoneDark,-1,7,-2);for(const [x,z] of [[-6,-7],[4,-7],[-6,3],[4,3]])tower(x,z);box(2.1,3.5,.2,wood,-1,0,-6.62);roofPiece(-1,-2,10,9,3.3);}
-function wall(x1,z1,x2,z2){const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz),angle=Math.atan2(-dz,dx);const g=new THREE.Group();box(len,3,1,stoneDark,0,0,0,g);for(let x=-len/2+.8;x<len/2;x+=2.2)box(.65,.9,1.25,stone,x,3,0,g);g.position.set((x1+x2)/2,0,(z1+z2)/2);g.rotation.y=angle;city.add(g);}
-keep();wall(-17,-15,15,-15);wall(-17,-15,-17,14);wall(15,-15,15,14);wall(-17,14,-5,14);wall(5,14,15,14);
-house(-11,-8,4,3);house(10,-8,4,3);house(-11,1,4,3);house(10,2,4,3);
-house(-9,9,5,4);house(9,9,5,4);
-for(const [x,z] of [[-13,-2],[13,-2],[-5,9],[5,9]]){const trunk=box(.5,2,.5,wood,x,0,z);const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.7,1),grass);crown.position.set(x,3,z);crown.castShadow=true;city.add(crown);}
-const road= new THREE.Mesh(new THREE.PlaneGeometry(8,34),mat('#b1a184'));road.rotation.x=-Math.PI/2;road.position.set(-1,.025,4);city.add(road);
-const plaza=new THREE.Mesh(new THREE.CircleGeometry(5,8),mat('#b7aa8e'));plaza.rotation.x=-Math.PI/2;plaza.position.set(-1,.04,9);city.add(plaza);
-let drag=false,px=0,py=0;renderer.domElement.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;});addEventListener('pointerup',()=>drag=false);addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-px,dy=e.clientY-py;px=e.clientX;py=e.clientY;city.rotation.y+=dx*.005;camera.position.y=Math.max(14,Math.min(42,camera.position.y+dy*.04));camera.lookAt(0,0,0);});
-renderer.domElement.addEventListener('wheel',e=>{camera.position.multiplyScalar(e.deltaY>0?1.06:.94);camera.position.y=Math.max(15,Math.min(55,camera.position.y));camera.lookAt(0,0,0);},{passive:true});
-document.querySelectorAll('.bottom button').forEach(b=>b.addEventListener('click',()=>{const n=document.querySelector('#notice');n.textContent=b.dataset.tab+' bölməsi növbəti mərhələdə qurulacaq';n.style.opacity=1;clearTimeout(window.noticeTimer);window.noticeTimer=setTimeout(()=>n.style.opacity=0,1700);}));
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
-function animate(){requestAnimationFrame(animate);renderer.render(scene,camera);}animate();
-</script>
+  <canvas id="game-canvas" aria-label="Krallıqlar Dövrü 3D oyun dünyası"></canvas>
+
+  <header id="hud-top" class="ui-panel">
+    <h1 id="game-title">KRALLIQLAR DÖVRÜ</h1>
+    <section id="score-panel" aria-live="polite">
+      <span id="score-label">NÜFUZ</span>
+      <span id="score-value">0</span>
+      <span id="score-popup" class="hidden"></span>
+    </section>
+  </header>
+
+  <aside id="hud-right" class="ui-panel">
+    <section id="next-tile-panel">
+      <h2 class="panel-title">ƏRAZİ AL</h2>
+      <p id="tile-cap" class="tile-meta">Ərazilər: 0 / 14</p>
+      <div id="tile-shop-tabs" class="tile-shop-tabs" role="tablist" aria-label="Ərazi kateqoriyaları"></div>
+      <div id="tile-shop" class="tile-shop" role="tabpanel" aria-label="Ərazi kataloqu"></div>
+      <canvas id="tile-preview" width="220" height="220" aria-label="Seçilmiş ərazinin görünüşü"></canvas>
+      <p id="tile-name">—</p>
+      <div id="tile-cost-breakdown" class="tile-cost-breakdown" aria-label="Ərazi yerləşdirmə xərci"></div>
+      <p id="tile-prod" class="tile-prod"></p>
+      <div class="tile-actions">
+        <button id="reroll-btn" class="ui-btn ui-btn--sm" type="button" aria-label="Ərazi kənarlarını dəyiş">⇄ Dəyiş</button>
+        <button id="rotate-btn" class="ui-btn ui-btn--sm" type="button" aria-label="Ərazini döndər">⟳ Döndər</button>
+      </div>
+      <p id="hint-text">Ərazi seç · xəritəyə toxun · R döndər · V dəyiş</p>
+    </section>
+  </aside>
+
+  <footer id="hud-bottom" class="ui-panel">
+    <button id="restart-btn" class="ui-btn danger" aria-label="Krallığı yenidən başlat">↺ Yenidən başla</button>
+    <button id="debug-btn" class="ui-btn" aria-label="Texniki göstəriciləri aç">⚙ Texniki</button>
+    <span id="tiles-placed-label">Ərazilər: <b id="tiles-placed">0</b></span>
+    <span id="fps-label" class="hidden">FPS: <b id="fps-value">60</b></span>
+  </footer>
+
+  <div id="toast" class="hidden" role="status"></div>
+
+  <div id="loading-screen">
+    <div id="loading-inner">
+      <h1>KRALLIQLAR DÖVRÜ</h1>
+      <p>Krallıq hazırlanır…</p>
+      <div id="loading-bar"><div id="loading-fill"></div></div>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>
