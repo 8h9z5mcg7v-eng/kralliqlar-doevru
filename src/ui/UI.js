@@ -78,7 +78,7 @@ export class UI {
     this.el.rotateBtn.addEventListener('click', () => this.game.rotateHand());
     this.el.rerollBtn.addEventListener('click', () => this.game.rollHandVariant());
     this.el.restartBtn.addEventListener('click', () => {
-      if (confirm('Start a new kingdom? Current progress will be lost.')) {
+      if (confirm('Yeni krallıq yaradılsın? Hazırkı irəliləyiş itəcək.')) {
         this.game.restart();
       }
     });
@@ -214,10 +214,10 @@ export class UI {
 
       const costStr = fmtCost(cost);
       const tip = !unlocked
-        ? `Unlocks at ${tileUnlockTierName(type)}`
+        ? `${tileUnlockTierName(type)} səviyyəsində açılır`
         : atCap
-          ? 'Tile cap — upgrade kingdom'
-          : `<b>${def.name}</b><br>${costStr}${affordable ? '' : '<br><i class="tip-bad">Not enough resources</i>'}` +
+          ? 'Ərazi limiti dolub — krallığı inkişaf etdir'
+          : `<b>${def.name}</b><br>${costStr}${affordable ? '' : '<br><i class="tip-bad">Resurs kifayət etmir</i>'}` +
             (fmtProduction(type) ? `<br>${fmtProduction(type)}` : '');
       btn.setAttribute('data-tip', tip);
     }
