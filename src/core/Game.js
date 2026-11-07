@@ -140,6 +140,9 @@ export class Game {
 
   _initSystems() {
     this.controls = new CameraController(this.camera, this.canvas);
+    // Start with a wider kingdom view so the full settlement is visible.
+    this.controls.zoom = 17;
+    this.controls.zoomGoal = 17;
     this.tileFactory = new TileFactory(this.scene);
     const natureAssets = buildNatureAssets();
     this.pool = new InstancePool(this.scene, natureAssets);
@@ -517,6 +520,9 @@ export class Game {
         this.deco.decorate(cell);
       }
 
+      // Expand older one-tile saves into the new starter settlement.
+      if (cells.length === 1) this._seedStarterDistrict();
+
       this.roadSystem.rebuild();
       this.connectorSystem.syncAllRivers();
       this.autoMesh.refreshAll();
@@ -548,6 +554,28 @@ export class Game {
     }
   }
 
+  _seedStarterDistrict() {
+    // Six surrounding terrain plots create a fuller medieval settlement
+    // around the central village while keeping the existing game systems.
+    const plots = [
+      [1, 0, 'field', 0, 2101],
+      [0, 1, 'forest', 1, 2102],
+      [-1, 1, 'meadow', 0, 2103],
+      [-1, 0, 'field', 1, 2104],
+      [0, -1, 'forest', 0, 2105],
+      [1, -1, 'hills', 0, 2106],
+    ];
+    for (const [q, r, type, variant, seed] of plots) {
+      if (this.grid.has(q, r)) continue;
+      const cell = this.tileFactory.makeCell(q, r, type, variant, 0, seed);
+      this.grid.set(cell);
+      this.tileFactory.placeCell(cell, { animate: true });
+      this.evolution.register(cell);
+      this.deco.decorate(cell);
+      this.tilesPlaced += 1;
+    }
+  }
+
   _newGame() {
     // starter village tile at origin
     const cell = this.tileFactory.makeCell(0, 0, 'village', 1, 0);
@@ -556,7 +584,8 @@ export class Game {
     this.evolution.register(cell);
     this.deco.decorate(cell);
     this.tilesPlaced = 1;
-    this.ui.setTilesPlaced(1);
+    this._seedStarterDistrict();
+    this.ui.setTilesPlaced(this.tilesPlaced);
     this.roadSystem.rebuild();
     this.autoMesh.onTileChanged(0, 0);
     this.factionSystem.generate(this.worldSeed);
