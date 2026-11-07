@@ -25,7 +25,7 @@ function boot() {
       const inner = document.getElementById('loading-inner');
       if (inner) {
         inner.innerHTML =
-          '<h1>Hexkingdom</h1><p style="color:#e08a7a">Failed to start: ' +
+          '<h1>Hexkingdom</h1><p style="color:#e08a7a">Başlatma xətası: ' +
           String(err && err.message ? err.message : err) +
           '</p>';
       }
@@ -48,7 +48,7 @@ function boot() {
         const size = bounds.getSize(new THREE.Vector3());
         const center = bounds.getCenter(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        castle.scale.setScalar(5.5 / maxDim);
+        castle.scale.setScalar(3.0 / maxDim);
         castle.position.set(-center.x * castle.scale.x, 0.28 - bounds.min.y * castle.scale.y, -center.z * castle.scale.z);
         castle.traverse((object) => {
           if (object.isMesh) {
