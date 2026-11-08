@@ -517,6 +517,7 @@ function dbuild(k){VB=[];pk=[];pkr=[];lbl=[];const lab=(t,p)=>{const el=document
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300,y=hh(x,z),s=(id==='castle'?1.05:1)*(1+Math.min(l,8)*.02);TR={x,y,z,s};const a0=VB.length/12;if(l){GM[id](l);if(id!=='castle'&&l>=2){const fh=l>=6?10:7,fc=l>=6?'#d9a521':'#a83232';gB(21,-19,22,1.8,1.8,20,'#6b4a2a',1);gB(22,-19,34,8,1.4,fh,fc,0);gB(20,-19,32,5,1.2,1.8,'#d9a521',0);gK(21.9,-18.1,54,2.4,0,3,'#d9a521',8,3)}}else GM.site();pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});pk.push({k:'b',id,min:[x-30*s,y,z-30*s],max:[x+30*s,y+(id==='castle'?90:50)*s,z+30*s]});lab((bu?'\ud83d\udd28 ':'')+(l>=5?'\u2605':'')+(l||(bu?'':'+')),[x,y+(id==='castle'?100:58)*s,z])})}
  // Yol kənarlarında məşəllər
   [[150,91],[209,150],[150,209],[91,150]].forEach(([x,z])=>{TR={x,y:hh(x,z),z,s:1};gB(-1,-1,0,2,2,11,'#59391f',1);gB(-2,-2,10,4,4,2,'#8b6a3e',1);gK(0,0,12,2.8,0,7,'#f07820',8,4);gK(0,0,14,1.5,0,4,'#ffd45a',8,4)});
+ }
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
   E.forEach((e,i)=>{const x=CP[i][0],z=CP[i][1],y=hh(x,z);TR={x,y,z,s:1};const a0=VB.length/12;GC[i]();pkr.push({k:'c',id:i,a:a0,n:VB.length/12-a0});pk.push({k:'c',id:i,min:[x-26,y,z-26],max:[x+26,y+60,z+26]});lab(ePow(i),[x,y+70,z])});
   const bo=board(),KC=['#2e86c1','#8e44ad','#16a085','#d35400'];
