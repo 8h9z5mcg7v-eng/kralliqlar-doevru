@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "Krallıq — Orta əsr strategiyası",
+  "short_name": "Krallıq",
+  "description": "Qalanı qur, ordunu gücləndir və düşmən krallıqlara yürüş et.",
+  "lang": "az",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2a1d12",
+  "theme_color": "#6a4727",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
