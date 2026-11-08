@@ -154,6 +154,15 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .alliance-create{display:flex;gap:7px;margin:10px 0;flex-wrap:wrap}
 .alliance-create input{flex:1;min-width:130px}
 .world-note{font-size:12px;color:#e0d2ad;line-height:1.5;margin-top:8px}
+.world-pin{font-family:inherit;cursor:pointer;appearance:none}
+.world-pin.selected{outline:3px solid #ffe08a;outline-offset:3px;transform:translate(-50%,-50%) scale(1.12);z-index:5}
+.world-detail{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;padding:10px 12px;border:1px solid #9b8655;border-radius:10px;background:#182b20;color:#f5e7c8;font-size:12px}
+.world-detail b{font-size:14px;color:#ffdb8a}
+.world-detail span{opacity:.9}
+.world-detail.muted-detail{color:#d5c7a6}
+.world-landmarks{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.world-landmarks span{padding:6px 8px;border-radius:8px;background:#293e2a;border:1px solid #617449;color:#e8dfbf;font-size:11px}
+
 
 </style>
 </head>
@@ -309,7 +318,7 @@ function paintMu(){document.getElementById("mu").textContent=muted?"🔇":"🔊"
 document.getElementById("mu").addEventListener("click",()=>{muted=!muted;try{localStorage.setItem("krallig_mute",muted?"1":"0")}catch(e){}paintMu();sfx("ok")});
 paintMu();
 const lvx=id=>S.lv[id]+(S.build&&S.build.id===id?1:0);
-let rstArm=false;
+let rstArm=false,worldSelected=-1;
 const resetHtml=()=>`<div style="text-align:center;margin:18px 0"><button data-a="rst" style="background:transparent;color:var(--mut);border:1px solid var(--line)">${rstArm?"Əminsən? Yenidən toxun":"Oyunu sıfırla"}</button></div>`;
 function showWelcome(){
  const d=document.createElement("div");
@@ -628,9 +637,11 @@ function worldMapHtml(){
   {x:84,y:75,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️",kind:"npc"},
   {x:39,y:49,name:"Sənin krallığın",power:0,icon:"🏰",kind:"mine"}
  ];
- const pins=rulers.map(k=>`<div class="world-pin ${k.kind}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
+ const pins=rulers.map((k,i)=>`<button type="button" class="world-pin ${k.kind} ${worldSelected===i?"selected":""}" data-world="${i}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
   <span class="pin-castle">${k.icon}</span><b>${escHtml(k.name.replace("İmperator ","").replace("Kraliça ","").replace("Kral ",""))}</b>
- </div>`).join("");
+ </button>`).join("");
+ const selected=worldSelected>=0?rulers[worldSelected]:null;
+ const detail=selected?`<div class="world-detail"><b>${escHtml(selected.name)}</b><span>${selected.kind==="mine"?"Sənin əsas qalan":"Dünya hökmdarı · NPC"}</span><span>${selected.power?"Güc: "+selected.power:"Sənin krallığın"}</span></div>`:`<div class="world-detail muted-detail">Xəritədə qalalardan birinə toxun — hökmdar haqqında məlumat görünsün.</div>`;
  return `<section class="world-panel world-atlas">
   <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>5 krallıq · 1 000 qala yeri</b></div>
   <div class="mut world-subtitle">Vahid dünya xəritəsi · Dağlar, meşələr, çaylar və krallıqlar</div>
@@ -663,6 +674,8 @@ function worldMapHtml(){
    <div class="world-compass">N<br>✥</div>
   </div>
   <div class="world-legend"><span><i class="legend-gold"></i> Sənin qalan</span><span><i class="legend-blue"></i> NPC hökmdar qalaları</span><span>〰 Çay</span><span>━ Ticarət yolları</span></div>
+  ${detail}
+  <div class="world-landmarks"><span>⛰ Şimal dağ keçidi</span><span>🌲 Şərq meşə qalası</span><span>🏚 Qədim xarabalıqlar</span><span>⚓ Cənub ticarət limanı</span></div>
   <div class="world-note">Bu, vahid dünya xəritəsinin ilkin görünüşüdür. Hazırda 4 hökmdar NPC-dir; real oyunçuların qalalarının burada görünməsi üçün multiplayer server bağlantısı tamamlanmalıdır. Dünya limiti 1 000 krallıq olaraq nəzərdə tutulub.</div>
  </section>`;
 }
@@ -753,6 +766,8 @@ function attack(i){
  else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin.`}
 }
 document.getElementById("main").addEventListener("click",e=>{
+ const wp=e.target.closest("[data-world]");
+ if(wp){worldSelected=Number(wp.dataset.world);render();return}
  const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
  const kb=e.target.closest(".b3[data-king]");if(kb){selK=+kb.dataset.king;render();return}
  const bd=e.target.closest(".bd[data-id],.b3[data-id]");if(bd){sel=bd.dataset.id;render();return}
