@@ -344,8 +344,12 @@ function skyCss(){
  return h+`</div></div>`;
 }
 function skyOld3(){
- let h=`<div class="sky"><div class="world"><div class="slab"></div><div class="plot"></div>`;
- [[.02,.3],[.3,.02],[.98,.7],[.06,.06]].forEach(t=>{const [x,y]=iso(t[0],t[1]);h+=`<div class="bd" style="left:${x}%;top:${y}%;z-index:${Math.round(y)}">${bsv("tree",28)}</div>`});
+ let h=`<div class="sky"><div class="world"><div class="slab"></div><div class="plot"></div>
+ <svg aria-hidden="true" style="position:absolute;inset:5% 3%;width:94%;height:88%;pointer-events:none;overflow:visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+ <path d="M4 34 L50 50 L96 66 M4 66 L50 50 L96 34" fill="none" stroke="#684522" stroke-width="8" stroke-linecap="round" opacity=".75"/>
+ <path d="M4 34 L50 50 L96 66 M4 66 L50 50 L96 34" fill="none" stroke="#d6b77d" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 1"/>
+ </svg>`;
+ [[.02,.3],[.3,.02],[.98,.7],[.06,.06],[.94,.06],[.04,.94],[.96,.94],[.5,.015],[.015,.7],[.985,.3],[.28,.98],[.72,.98]].forEach((t,i)=>{const [x,y]=iso(t[0],t[1]);const size=i%3===0?34:26;h+=`<div class="bd" style="left:${x}%;top:${y}%;z-index:${Math.round(y)}">${bsv("tree",size)}</div>`});
  Object.keys(SLOT).forEach(id=>{
   const [x,y]=iso(SLOT[id][0],SLOT[id][1]),bu=S.build&&S.build.id===id,w=Math.round(((id==="castle"?92:50)+Math.min(S.lv[id],8)*3)*(.85+y/300));
   h+=`<div class="bd${!S.lv[id]&&!bu?" ghost":""}" data-id="${id}" style="left:${x}%;top:${y}%;z-index:${Math.round(y)+1}">${bsv(!S.lv[id]?"site":vis(id),w)}<i>${bu?"🔨":""}${S.lv[id]>=5?"★":""}${S.lv[id]||(bu?"":"+")}</i></div>`});
