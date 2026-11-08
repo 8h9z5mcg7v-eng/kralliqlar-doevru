@@ -4,12 +4,6 @@
 <meta charset="utf-8">
 <title>Krallıq</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#6a4727">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Krallıq">
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <style>
 :root{--bg:#2a1d12;--card:#4a3321;--ink:#f6e7c8;--mut:#c9ae83;--acc:#c8871f;--ok:#7bd66f;--bad:#ff7b6b;--line:#8a6330;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:none){:root:not([data-theme="light"]){--bg:#1d1812;--card:#2a231a;--ink:#f1e6cf;--mut:#b3a283;--acc:#e08a4a;--ok:#6fcf74;--bad:#ff8a80;--line:#44392a;color-scheme:dark}}
@@ -283,7 +277,7 @@ document.getElementById("mu").addEventListener("click",()=>{muted=!muted;try{loc
 paintMu();
 const lvx=id=>S.lv[id]+(S.build&&S.build.id===id?1:0);
 let rstArm=false;
-const resetHtml=()=>`<div style="margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:12px"><b>💾 Yaddaşın qorunması</b><p class="mut" style="font-size:12px;margin:6px 0 10px">Oyun avtomatik yadda saxlanılır. İstəsən, əl ilə də saxlaya və başqa telefona köçürə bilərsən.</p><div class="row"><button data-a="sv">İndi yadda saxla</button></div><div class="row" style="margin-top:8px"><button data-a="exp">Ehtiyat nüsxə yarat</button><button data-a="imp">Nüsxəni bərpa et</button></div><div style="text-align:center;margin-top:14px"><button data-a="rst" style="background:transparent;color:var(--mut);border:1px solid var(--line)">${rstArm?"Əminsən? Yenidən toxun":"Oyunu sıfırla"}</button></div></div>`;
+const resetHtml=()=>`<div style="text-align:center;margin:18px 0"><button data-a="rst" style="background:transparent;color:var(--mut);border:1px solid var(--line)">${rstArm?"Əminsən? Yenidən toxun":"Oyunu sıfırla"}</button></div>`;
 function showWelcome(){
  const d=document.createElement("div");
  d.style.cssText="position:fixed;inset:0;background:var(--bg);color:var(--ink);z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))";
@@ -507,16 +501,14 @@ function terr(){const N=72,a=-70,st=440/N,ent=(x,z)=>{const h=hh(x,z),e=2,n=v3.n
   const pl=1-sst(18,34,d);c=[c[0]+(.74-c[0])*pl,c[1]+(.61-c[1])*pl,c[2]+(.40-c[2])*pl];return{h,n,c}};
  for(let i=0;i<N;i++)for(let j=0;j<N;j++){const q=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]].map(([p,r])=>{const x=a+p*st,z=a+r*st;return{x,z,...ent(x,z)}});[[0,1,2],[0,2,3]].forEach(t=>t.forEach(k=>{const p=q[k];pv(p.x,p.h,p.z,p.n,p.c,p.x/22,p.z/22,3)}))}}
 function water(){const n=[0,1,0],c=[1,1,1],s=1600,y=-.8;[[-s,-s],[s,-s],[s,s],[-s,-s],[s,s],[-s,s]].forEach(([x,z])=>pv(x,y,z,n,c,0,0,5))}
-function road(x0,z0,x1,z1,w,y){const dx=x1-x0,dz=z1-z0,l=Math.hypot(dx,dz),nx=-dz/l,nz=dx/l,n=[0,1,0];const strip=(off,width,col)=>{const c=hx(col),a=off-width/2,b=off+width/2,P=[[x0+nx*a,z0+nz*a],[x1+nx*a,z1+nz*a],[x1+nx*b,z1+nz*b],[x0+nx*b,z0+nz*b]];[[0,1,2],[0,2,3]].forEach(t=>t.forEach(k=>pv(P[k][0],y+.12,P[k][1],n,c,P[k][0]/20,P[k][1]/20,3)))};strip(0,w,'#b89a62');strip(-w*.39,Math.max(.8,w*.13),'#766044');strip(w*.39,Math.max(.8,w*.13),'#766044');}
+function road(x0,z0,x1,z1,w,y){const dx=x1-x0,dz=z1-z0,l=Math.hypot(dx,dz),nx=-dz/l*w/2,nz=dx/l*w/2,c=hx('#b89a62'),n=[0,1,0],P=[[x0+nx,z0+nz],[x1+nx,z1+nz],[x1-nx,z1-nz],[x0-nx,z0-nz]];[[0,1,2],[0,2,3]].forEach(t=>t.forEach(k=>pv(P[k][0],y,P[k][1],n,c,P[k][0]/20,P[k][1]/20,3)))}
 function tree(x,z,s,pine){TR={x,y:hh(x,z),z,s};gK(0,0,0,1.5,1.2,6,'#6b4423',6,1);if(pine){gK(0,0,5,7,0,12,'#2f6b34',9,3);gK(0,0,11,5.5,0,11,'#357a3a',9,3);gK(0,0,17,4,0,9,'#3b8a41',9,3)}else{gK(0,0,5,7.5,6,7,'#3f8f3a',9,3);gK(0,0,11,6.5,3,7,'#4a9e42',9,3);gK(0,0,16,4,0,6,'#55ae4c',9,3)}}
 function mkBuf(a){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(a),gl.STATIC_DRAW);return{b,n:a.length/12}}
 function sbuild(){VB=[];terr();water();for(let i=0;i<90;i++){const a=grn()*6.283,r=140+grn()*45,x=150+Math.cos(a)*r,z=150+Math.sin(a)*r;if(hh(x,z)<1.2)continue;tree(x,z,.8+grn()*.7,grn()<.55)}SB=mkBuf(VB)}
 function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4,'#2e86c1'],[6,-3,'#c0392b']].forEach(([x,y,c])=>{gK(x,y,0,2.2,2.2,9,c,8,3);gK(x,y,9,2,0,2,'#e8c9a0',8,3)});gB(10,0,0,1.2,1.2,22,'#6b4a2a');gB(11,0,14,9,.8,6,'#f1c40f');MB=mkBuf(VB);VB=sv}
 function dbuild(k){VB=[];pk=[];pkr=[];lbl=[];const lab=(t,p)=>{const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:p})};
  if(k==='city'){Object.keys(SLOT).forEach(id=>{if(id!=='castle')road(150,150,SLOT[id][0]*300,SLOT[id][1]*300,7,7.25)});
-  Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300,y=hh(x,z),s=(id==='castle'?1.05:1)*(1+Math.min(l,8)*.02);TR={x,y,z,s};const a0=VB.length/12;if(l){GM[id](l);if(id!=='castle'&&l>=2){const fh=l>=6?10:7,fc=l>=6?'#d9a521':'#a83232';gB(21,-19,22,1.8,1.8,20,'#6b4a2a',1);gB(22,-19,34,8,1.4,fh,fc,0);gB(20,-19,32,5,1.2,1.8,'#d9a521',0);gK(21.9,-18.1,54,2.4,0,3,'#d9a521',8,3)}}else GM.site();pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});pk.push({k:'b',id,min:[x-30*s,y,z-30*s],max:[x+30*s,y+(id==='castle'?90:50)*s,z+30*s]});lab((bu?'\ud83d\udd28 ':'')+(l>=5?'\u2605':'')+(l||(bu?'':'+')),[x,y+(id==='castle'?100:58)*s,z])})}
-
- }
+  Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300,y=hh(x,z),s=(id==='castle'?1.05:1)*(1+Math.min(l,8)*.02);TR={x,y,z,s};const a0=VB.length/12;if(l)GM[id](l);else GM.site();pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});pk.push({k:'b',id,min:[x-30*s,y,z-30*s],max:[x+30*s,y+(id==='castle'?90:50)*s,z+30*s]});lab((bu?'\ud83d\udd28 ':'')+(l>=5?'\u2605':'')+(l||(bu?'':'+')),[x,y+(id==='castle'?100:58)*s,z])})}
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
   E.forEach((e,i)=>{const x=CP[i][0],z=CP[i][1],y=hh(x,z);TR={x,y,z,s:1};const a0=VB.length/12;GC[i]();pkr.push({k:'c',id:i,a:a0,n:VB.length/12-a0});pk.push({k:'c',id:i,min:[x-26,y,z-26],max:[x+26,y+60,z+26]});lab(ePow(i),[x,y+70,z])});
   const bo=board(),KC=['#2e86c1','#8e44ad','#16a085','#d35400'];
@@ -533,7 +525,7 @@ float unp(vec4 c){return dot(c,vec4(1.,1./255.,1./65025.,1./16581375.));}
 float shd(){vec3 p=vL.xyz/vL.w*.5+.5;if(p.x<0.||p.x>1.||p.y<0.||p.y>1.||p.z>1.)return 1.;float s=0.;for(int i=-1;i<=1;i++)for(int j=-1;j<=1;j++){float d=unp(texture2D(uSM,p.xy+vec2(float(i),float(j))/1024.));s+=(p.z-.004>d)?0.:1.;}return s/9.;}
 void main(){vec3 n=normalize(vN),v=normalize(uEye-vW);float nl=max(dot(n,-uSun),0.),s=shd();vec3 col;
 if(vT>4.5){float fr=pow(1.-max(v.y,0.),3.);vec3 b=mix(vec3(.10,.34,.46),vec3(.55,.76,.9),fr);vec3 nn=normalize(vec3(sin(vW.x*.15+uTime)*.06,1.,cos(vW.z*.13+uTime*1.1)*.06));float sp=pow(max(dot(reflect(uSun,nn),v),0.),260.);col=b*(.62+.38*s)+sp*.3*s;}
-else if(vT>3.5){float flick=.78+.22*sin(uTime*13.+vW.x*1.7+vW.z);col=vC*(1.05+flick*.85);col+=vec3(1.,.28,.035)*flick*.42;}else{float t=floor(vT+.5);vec2 off=vec2(mod(t,2.),floor(t/2.))*.5;vec3 tx=texture2D(uTex,fract(vU)*.46+.02+off).rgb;vec3 amb=mix(vec3(.30,.26,.23),vec3(.47,.57,.72),n.y*.5+.5);col=tx*vC*(amb+vec3(1.,.93,.8)*nl*s*1.05);col+=pow(max(dot(n,normalize(v-uSun)),0.),24.)*.06*s*nl;}
+else{float t=floor(vT+.5);vec2 off=vec2(mod(t,2.),floor(t/2.))*.5;vec3 tx=texture2D(uTex,fract(vU)*.46+.02+off).rgb;vec3 amb=mix(vec3(.30,.26,.23),vec3(.47,.57,.72),n.y*.5+.5);col=tx*vC*(amb+vec3(1.,.93,.8)*nl*s*1.05);col+=pow(max(dot(n,normalize(v-uSun)),0.),24.)*.06*s*nl;}
 float f=clamp((length(uEye-vW)-480.)/800.,0.,1.);col=mix(col,vec3(.78,.87,.95),f);gl_FragColor=vec4(pow(col,vec3(.92)),1.);}`;
 const SVS=`attribute vec3 aP;uniform mat4 uLV;uniform vec3 uOff;void main(){gl_Position=uLV*vec4(aP+uOff,1.);}`;
 const SFS=`precision highp float;vec4 pk(float d){vec4 e=fract(d*vec4(1.,255.,65025.,16581375.));e-=e.yzww*vec4(1./255.,1./255.,1./255.,0.);return e;}void main(){gl_FragColor=pk(gl_FragCoord.z);}`;
@@ -545,7 +537,6 @@ function draw(){const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.round(cv
  const U=n=>gl.getUniformLocation(PM,n);gl.uniformMatrix4fv(U('uVP'),false,VP);gl.uniformMatrix4fv(U('uLV'),false,LV);gl.uniform3fv(U('uSun'),SUN);gl.uniform3fv(U('uEye'),c.e);gl.uniform1f(U('uTime'),performance.now()/1000);gl.uniform1i(U('uTex'),0);gl.uniform1i(U('uSM'),1);
  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,atl);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,smT);gl.uniform3f(U('uOff'),0,0,0);[SB,DB].forEach(b=>b&&drawB(b));
  if(S.march&&MB&&document.querySelector('.sky.gl[data-k=map]')){const m=S.march,f=Math.min(1,Math.max(0,1-(m.end-Date.now())/(marchSec(m.i)*1000))),x=150+(CP[m.i][0]-150)*f,z=150+(CP[m.i][1]-150)*f;gl.uniform3f(U('uOff'),x,hh(x,z),z);drawB(MB)}
- if(MB&&document.querySelector('.sky.gl[data-k=city]')){const t=performance.now()/1000;for(let i=0;i<3;i++){const a=[-.35,1.75,3.85][i],d=42+((t*13+i*67)%190),x=150+Math.cos(a)*d,z=150+Math.sin(a)*d;gl.uniform3f(U('uOff'),x,hh(x,z)+.5,z);drawB(MB)}}
  const cw=cv.clientWidth,ch=cv.clientHeight;lbl.forEach(l=>{const p=l.pos,q=[VP[0]*p[0]+VP[4]*p[1]+VP[8]*p[2]+VP[12],VP[1]*p[0]+VP[5]*p[1]+VP[9]*p[2]+VP[13],VP[3]*p[0]+VP[7]*p[1]+VP[11]*p[2]+VP[15]];l.el.style.transform='translate('+((q[0]/q[2]*.5+.5)*cw)+'px,'+((1-(q[1]/q[2]*.5+.5))*ch)+'px) translate(-50%,-100%)'})}
 function loop(){requestAnimationFrame(loop);if(!GLOK||!cv.isConnected||document.hidden)return;draw()}
 function rayBox(o,d,mn,mx){let t0=0,t1=1e9;for(let i=0;i<3;i++){if(Math.abs(d[i])<1e-6){if(o[i]<mn[i]||o[i]>mx[i])return null}else{let a=(mn[i]-o[i])/d[i],b=(mx[i]-o[i])/d[i];if(a>b){const t=a;a=b;b=t}t0=Math.max(t0,a);t1=Math.min(t1,b);if(t0>t1)return null}}return t0}
@@ -558,7 +549,7 @@ function pickAt(e){if(!lastVP||!DB)return null;const r=cv.getBoundingClientRect(
 function onPick(e){const o=pickAt(e);if(!o)return;if(o.k==='b')sel=o.id;else if(o.k==='c')selC=o.id;else selK=o.id;render()}
 function onPickOld(e){const r=cv.getBoundingClientRect(),nx=(e.clientX-r.left)/r.width*2-1,ny=1-(e.clientY-r.top)/r.height*2,c=cam(r.width/r.height),t=Math.tan(c.fov/2),dir=v3.nz([0,1,2].map(i=>c.f[i]+c.r[i]*nx*c.a*t+c.u[i]*ny*t));let best=null,bd=1e9;pk.forEach(o=>{const d=rayBox(c.e,dir,o.min,o.max);if(d!==null&&d<bd){bd=d;best=o}});if(!best)return;if(best.k==='b')sel=best.id;else if(best.k==='c')selC=best.id;else selK=best.id;render()}
 function attachGL(){if(!GLOK)return;const ph=document.querySelector('.sky.gl');if(!ph)return;if(DB)gl.deleteBuffer(DB.b);dbuild(ph.dataset.k);DB=mkBuf(VB);if(!MB)mbuild();shadowPass();ph.appendChild(cv);const lo=document.createElement('div');lo.className='glo';lbl.forEach(l=>lo.appendChild(l.el));ph.appendChild(lo)}
-function GLinit(){try{cv=document.createElement('canvas');cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;display:block';cv.addEventListener('webglcontextlost',e=>{e.preventDefault();GLOK=false;console.warn('WebGL konteksti itdi; CSS görüntüsünə keçilir');render()});gl=cv.getContext('webgl',{antialias:true,alpha:false});if(!gl)return;
+function GLinit(){try{cv=document.createElement('canvas');cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;display:block';gl=cv.getContext('webgl',{antialias:true,alpha:false});if(!gl)return;
  const mkP=(v,f)=>{const p=gl.createProgram();gl.attachShader(p,glsh(gl.VERTEX_SHADER,v));gl.attachShader(p,glsh(gl.FRAGMENT_SHADER,f));['aP','aN','aC','aU','aT'].forEach((n,i)=>gl.bindAttribLocation(p,i,n));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw 'link';return p};
  PM=mkP(VS,FS);PS=mkP(SVS,SFS);PI=mkP('attribute vec3 aP;uniform mat4 uVP;uniform vec3 uOff;void main(){gl_Position=uVP*vec4(aP+uOff,1.);}','precision mediump float;uniform vec3 uCol;void main(){gl_FragColor=vec4(uCol,1.);}');
  const tp=(t,f)=>{gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,f);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,f);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE)};
@@ -680,9 +671,6 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="up"){if(S.build)return;const c=cost(id);if(!afford(c)||capped(id))return;for(const k in c)S.res[k]-=c[k];S.build={id,end:Date.now()+buildSec(id)*1000};sel=null}
  if(a==="tr"){const n=+b.dataset.n,c=trCost(id,n);if(!afford(c)||armyN()+n>armyCap())return;for(const k in c)S.res[k]-=c[k];S.army[id]+=n;S.stats.trained+=n;popId=id;popN=n}
  if(a==="rs"){const c=tCost(id);if(S.tech[id]>=MAXT||!afford(c))return;for(const k in c)S.res[k]-=c[k];S.tech[id]++}
- if(a==="sv"){save();toast("💾 Oyun yadda saxlanıldı");return}
- if(a==="exp"){save();const payload={app:"Krallıq",version:1,exportedAt:new Date().toISOString(),game:S};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="kralliq-ehtiyat-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Ehtiyat nüsxəsi hazırlandı");return}
- if(a==="imp"){const input=document.createElement("input");input.type="file";input.accept=".json,application/json";input.onchange=()=>{const file=input.files&&input.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(String(reader.result));const d=data&&data.game?data.game:data;if(!d||!d.res||!d.lv||!d.army||![d.res.food,d.res.wood,d.res.stone,d.res.gold].every(v=>Number.isFinite(Number(v)))||!["inf","arc","cav"].every(k=>Number.isFinite(Number(d.army[k]))))throw new Error("invalid");if(!confirm("Cari oyunun yaddaşı ehtiyat nüsxə ilə əvəz edilsin?"))return;localStorage.setItem(KEY,JSON.stringify(d));location.reload()}catch(err){alert("Fayl oxunmadı. Düzgün Krallıq ehtiyat nüsxəsini seç.")}};reader.readAsText(file)};input.click();return}
  if(a==="rst"){if(!rstArm){rstArm=true;render();return}nosave=true;try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}
  if(a==="sk"&&SK[id]&&skPts()>0)S.hero.sk[id]++;
  if(a==="pn"){panel=panel===id?null:id;render();return}
@@ -703,13 +691,6 @@ setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(co
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 if(!S.seen)showWelcome();
-</script>
-<script>
-if ("serviceWorker" in navigator && location.protocol === "https:") {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(error => console.warn("Offline rejim aktivləşmədi:", error));
-  });
-}
 </script>
 </body>
 </html>
