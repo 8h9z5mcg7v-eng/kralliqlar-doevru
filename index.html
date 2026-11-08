@@ -333,7 +333,7 @@ const M={
  site:()=>bx(-14,-14,0,28,28,3,'#c9a56a')+bx(-14,-14,0,3,3,22,'#8b5a2b')+bx(11,-14,0,3,3,22,'#8b5a2b')+bx(-14,11,0,3,3,22,'#8b5a2b')+bx(11,11,0,3,3,22,'#8b5a2b')
 };
 function glPh(k){return `<div class="sky gl" data-k="${k}"></div>`}
-function skyHtml(){return skyOld3()}
+function skyHtml(){return GLOK?glPh('city'):skyCss()}
 function skyCss(){
  const H={castle:96,farm:34,saw:30,quarry:34,mine:46,barracks:42,warehouse:36,wall:44,stable:34,range:44,drill:42};
  let h=`<div class='sky s3'><div class='w3'><i class='sl' style='left:0;top:300px;width:300px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:300px;top:0;width:300px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
@@ -344,12 +344,8 @@ function skyCss(){
  return h+`</div></div>`;
 }
 function skyOld3(){
- let h=`<div class="sky"><div class="world"><div class="slab"></div><div class="plot"></div>
- <svg aria-hidden="true" style="position:absolute;inset:5% 3%;width:94%;height:88%;pointer-events:none;overflow:visible" viewBox="0 0 100 100" preserveAspectRatio="none">
- <path d="M4 34 L50 50 L96 66 M4 66 L50 50 L96 34" fill="none" stroke="#684522" stroke-width="8" stroke-linecap="round" opacity=".75"/>
- <path d="M4 34 L50 50 L96 66 M4 66 L50 50 L96 34" fill="none" stroke="#d6b77d" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 1"/>
- </svg>`;
- [[.02,.3],[.3,.02],[.98,.7],[.06,.06],[.94,.06],[.04,.94],[.96,.94],[.5,.015],[.015,.7],[.985,.3],[.28,.98],[.72,.98]].forEach((t,i)=>{const [x,y]=iso(t[0],t[1]);const size=i%3===0?34:26;h+=`<div class="bd" style="left:${x}%;top:${y}%;z-index:${Math.round(y)}">${bsv("tree",size)}</div>`});
+ let h=`<div class="sky"><div class="world"><div class="slab"></div><div class="plot"></div>`;
+ [[.02,.3],[.3,.02],[.98,.7],[.06,.06]].forEach(t=>{const [x,y]=iso(t[0],t[1]);h+=`<div class="bd" style="left:${x}%;top:${y}%;z-index:${Math.round(y)}">${bsv("tree",28)}</div>`});
  Object.keys(SLOT).forEach(id=>{
   const [x,y]=iso(SLOT[id][0],SLOT[id][1]),bu=S.build&&S.build.id===id,w=Math.round(((id==="castle"?92:50)+Math.min(S.lv[id],8)*3)*(.85+y/300));
   h+=`<div class="bd${!S.lv[id]&&!bu?" ghost":""}" data-id="${id}" style="left:${x}%;top:${y}%;z-index:${Math.round(y)+1}">${bsv(!S.lv[id]?"site":vis(id),w)}<i>${bu?"🔨":""}${S.lv[id]>=5?"★":""}${S.lv[id]||(bu?"":"+")}</i></div>`});
