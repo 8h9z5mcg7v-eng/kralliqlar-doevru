@@ -230,7 +230,7 @@ let S={res:{food:300,wood:300,stone:150,gold:60},lv:{castle:1,farm:1,saw:1,quarr
 let tab="city",lastMsg="";
 
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
-S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.playerAlliance=S.playerAlliance||null;
+S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0},S.tech||{});
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
 S.march=S.march||null;
@@ -343,9 +343,10 @@ function board(){
 }
 function rank(){return board().findIndex(r=>r[2])+1}
 function rankHtml(){
- return `<h2>🏆 Krallar reytinqi</h2>`+board().map((r,i)=>`<div class="card" style="${r[2]?"border-color:var(--acc)":""}"><div class="ic">${i+1}</div><div class="in"><b>${r[0]}</b><div class="mut">${r[2]?"Güc "+r[1]:T[KT[r[3]]].i+" "+r[1]+" · Sənin: "+effPower(KT[r[3]])}</div></div>${r[2]?"":`<button data-a="ak" data-id="${r[3]}" ${(S.kcd[r[3]]||0)>Date.now()?"disabled":""}>Hücum</button>`}</div>`).join("");
+ return `<h2>🏆 Krallar reytinqi</h2>`+board().map((r,i)=>{const captured=!r[2]&&!!S.territories[r[3]];return `<div class="card" style="${r[2]?"border-color:var(--acc)":captured?"border-color:#58b889":""}"><div class="ic">${i+1}</div><div class="in"><b>${r[0]}</b><div class="mut">${r[2]?"Güc "+r[1]:T[KT[r[3]]].i+" "+r[1]+" · Sənin: "+effPower(KT[r[3]])}</div></div>${r[2]?"":captured?`<span class="badge">Fəth edildi</span>`:`<button data-a="ak" data-id="${r[3]}" ${(S.kcd[r[3]]||0)>Date.now()?"disabled":""}>Hücum</button>`}</div>`}).join("");
 }
 function attackKing(i){
+ if(S.territories[i]){lastMsg="Bu krallığın ərazisini artıq fəth etmisən.";return}
  if((S.kcd[i]||0)>Date.now())return;
  const my=power();
  if(!my){lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";return}
@@ -354,7 +355,7 @@ function attackKing(i){
  let lost=0;for(const k in S.army){const l=Math.round(S.army[k]*rate);S.army[k]-=l;lost+=l}
  S.kcd[i]=Date.now()+120000;
  const up=gainXp(win?25+Math.round(kp/20):5),upT=up?" 👑 Sərkərdə "+S.hero.lv+". səviyyəyə yüksəldi!":"";
- if(win){S.stats.wins++;const m=1+.2*S.tech.loot+.05*S.hero.sk.loot,loot={food:Math.round(kp*.75*m),wood:Math.round(kp*.75*m),stone:Math.round(kp*.5*m),gold:Math.round(kp*.2*m)};for(const k in loot)S.res[k]+=loot[k];
+ if(win){S.stats.wins++;S.territories[i]={capturedAt:Date.now(),name:KINGS[i][0]};const m=1+.2*S.tech.loot+.05*S.hero.sk.loot,loot={food:Math.round(kp*.75*m),wood:Math.round(kp*.75*m),stone:Math.round(kp*.5*m),gold:Math.round(kp*.2*m)};for(const k in loot)S.res[k]+=loot[k];
   lastMsg=`<span class="win">Qələbə!</span> ${KINGS[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər.${upT}`;sfx("win")}
  else{lastMsg=`<span class="lose">Məğlubiyyət.</span> ${KINGS[i][0]} çox güclü idi. İtki: ${lost} əsgər.${upT}`;sfx("lose")}
  fx(win);toast(win?"⚔️ Qələbə!":"⚔️ Məğlubiyyət");
@@ -647,7 +648,7 @@ function escHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 
 function mapHtml(){return GLOK?glPh('map')+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":''):mapCss()}
 function mapCss(){
- let s=`<div class='sky s3' style='height:410px'><div class='w3'><svg class='territory-layer' viewBox='0 0 300 300' aria-hidden='true'><path d='M0 0H150L137 62 150 150 70 137 0 150Z' fill='#398ac0' fill-opacity='.25'/><path d='M150 0H300V150L226 137 150 150 163 62Z' fill='#9a63b5' fill-opacity='.24'/><path d='M0 150L70 137 150 150 137 226 150 300H0Z' fill='#3a9a78' fill-opacity='.25'/><path d='M150 150L226 137 300 150V300H150L163 226Z' fill='#c47b36' fill-opacity='.24'/><path d='M150 0L137 62 150 150 163 62Z M0 150L70 137 150 150 226 137 300 150 M150 150L137 226 150 300 M150 150L163 226 150 300' fill='none' stroke='#f1dfae' stroke-width='2' stroke-dasharray='5 4' stroke-opacity='.9'/><circle cx='150' cy='150' r='24' fill='#e9bd57' fill-opacity='.15' stroke='#f5d47b' stroke-width='2' stroke-dasharray='3 3'/></svg><i class='sl' style='left:0;top:300px;width:300px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:300px;top:0;width:300px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
+ let s=`<div class='sky s3' style='height:410px'><div class='w3'><svg class='territory-layer' viewBox='0 0 300 300' aria-hidden='true'><path d='M0 0H150L137 62 150 150 70 137 0 150Z' fill='${S.territories[0]?"#d8bd62":"#398ac0"}' fill-opacity='${S.territories[0]?".42":".25"}'/><path d='M150 0H300V150L226 137 150 150 163 62Z' fill='${S.territories[1]?"#d8bd62":"#9a63b5"}' fill-opacity='${S.territories[1]?".42":".24"}'/><path d='M0 150L70 137 150 150 137 226 150 300H0Z' fill='${S.territories[2]?"#d8bd62":"#3a9a78"}' fill-opacity='${S.territories[2]?".42":".25"}'/><path d='M150 150L226 137 300 150V300H150L163 226Z' fill='${S.territories[3]?"#d8bd62":"#c47b36"}' fill-opacity='${S.territories[3]?".42":".24"}'/><path d='M150 0L137 62 150 150 163 62Z M0 150L70 137 150 150 226 137 300 150 M150 150L137 226 150 300 M150 150L163 226 150 300' fill='none' stroke='#f1dfae' stroke-width='2' stroke-dasharray='5 4' stroke-opacity='.9'/><circle cx='150' cy='150' r='24' fill='#e9bd57' fill-opacity='.15' stroke='#f5d47b' stroke-width='2' stroke-dasharray='3 3'/></svg><i class='sl' style='left:0;top:300px;width:300px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:300px;top:0;width:300px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
  CP.forEach(p=>{const dx=p[0]-150,dy=p[1]-150,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;s+=`<i style='left:150px;top:146px;width:${len}px;height:8px;transform-origin:0 50%;transform:translateZ(.6px) rotate(${ang}deg);background:repeating-linear-gradient(90deg,#d9b87a 0 9px,transparent 9px 16px)'></i>`});
  s+=`<div class='b3' style='transform:translate3d(150px,150px,0) scale3d(.85,.85,.85)'>${M.castle(S.lv.castle)}</div>`;
  E.forEach((e,i)=>{s+=`<div class='b3' data-camp='${i}' style='transform:translate3d(${CP[i][0]}px,${CP[i][1]}px,0)'>${CM[i]()}<div class='lab' style='transform:translate3d(0,0,64px) rotateZ(-45deg) rotateX(-58deg)'><span>${ePow(i)}</span></div></div>`});
