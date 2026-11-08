@@ -129,15 +129,6 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .world-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
 .world-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
 .world-atlas{overflow:hidden}
-.world-map-inner{position:absolute;inset:0;transform-origin:50% 50%;transition:transform .22s ease;width:100%;height:100%}
-.world-map-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:8px 0}
-.world-map-controls button,.world-selected button{padding:7px 12px;border-radius:8px}
-.world-selected{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px;margin:8px 0;border:1px solid #bca66d;border-radius:10px;background:#2d3c2c;color:#f5e7c4;font-size:12px}
-.world-selected span{flex:1}
-.world-pin{cursor:pointer;touch-action:manipulation}
-.world-pin.chosen{outline:3px solid #ffe08a;z-index:5;transform:translate(-50%,-50%) scale(1.12)}
-.world-map-inner:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 35px #18281c55}
-
 .world-subtitle{margin:4px 0 10px}
 .world-land{height:clamp(340px,68vw,590px);position:relative;overflow:hidden;border:2px solid #9a8655;border-radius:14px;background:#587b3c;box-shadow:inset 0 0 35px #172c1b99}
 .world-terrain{position:absolute;inset:0;width:100%;height:100%}
@@ -319,7 +310,6 @@ document.getElementById("mu").addEventListener("click",()=>{muted=!muted;try{loc
 paintMu();
 const lvx=id=>S.lv[id]+(S.build&&S.build.id===id?1:0);
 let rstArm=false;
-let worldSelected=null,worldZoom=1;
 const resetHtml=()=>`<div style="text-align:center;margin:18px 0"><button data-a="rst" style="background:transparent;color:var(--mut);border:1px solid var(--line)">${rstArm?"Əminsən? Yenidən toxun":"Oyunu sıfırla"}</button></div>`;
 function showWelcome(){
  const d=document.createElement("div");
@@ -632,20 +622,19 @@ function armyModel(){return `<div class='p3 hop'>${bx(-9,-6,0,5,5,10,'#c0392b')+
 function worldMapHtml(){
  // Vahid dünya xəritəsi: qalalar coğrafi ərazilərdə yerləşir, xana cədvəli deyil.
  const rulers=[
-  {id:"arslan",x:18,y:31,name:KINGS[0][0],power:KINGS[0][1],icon:"👑",kind:"npc"},
-  {id:"zarife",x:75,y:23,name:KINGS[1][0],power:KINGS[1][1],icon:"👸",kind:"npc"},
-  {id:"qara",x:58,y:68,name:KINGS[2][0],power:KINGS[2][1],icon:"👑",kind:"npc"},
-  {id:"demir",x:84,y:75,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️",kind:"npc"},
-  {id:"mine",x:39,y:49,name:"Sənin krallığın",power:0,icon:"🏰",kind:"mine"}
+  {x:18,y:31,name:KINGS[0][0],power:KINGS[0][1],icon:"👑",kind:"npc"},
+  {x:75,y:23,name:KINGS[1][0],power:KINGS[1][1],icon:"👸",kind:"npc"},
+  {x:58,y:68,name:KINGS[2][0],power:KINGS[2][1],icon:"👑",kind:"npc"},
+  {x:84,y:75,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️",kind:"npc"},
+  {x:39,y:49,name:"Sənin krallığın",power:0,icon:"🏰",kind:"mine"}
  ];
- const selected=rulers.find(k=>k.id===worldSelected);
- const pins=rulers.map((k,i)=>`<button class="world-pin ${k.kind} ${selected&&selected.id===k.id?"chosen":""}" data-world="${k.id}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
+ const pins=rulers.map(k=>`<div class="world-pin ${k.kind}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
   <span class="pin-castle">${k.icon}</span><b>${escHtml(k.name.replace("İmperator ","").replace("Kraliça ","").replace("Kral ",""))}</b>
- </button>`).join("");
+ </div>`).join("");
  return `<section class="world-panel world-atlas">
   <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>5 krallıq · 1 000 qala yeri</b></div>
   <div class="mut world-subtitle">Vahid dünya xəritəsi · Dağlar, meşələr, çaylar və krallıqlar</div>
-  <div class="world-land"><div class="world-map-inner" style="transform:scale(${worldZoom})">
+  <div class="world-land">
    <svg class="world-terrain" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
     <defs>
      <linearGradient id="landBase" x2="0" y2="1"><stop stop-color="#78934d"/><stop offset=".52" stop-color="#587b3c"/><stop offset="1" stop-color="#385d32"/></linearGradient>
@@ -672,9 +661,9 @@ function worldMapHtml(){
    <div class="world-region region-north">ŞİMAL DAĞLARI</div><div class="world-region region-east">ŞƏRQ MEŞƏLƏRİ</div><div class="world-region region-south">CƏNUB DÜZƏNLİYİ</div>
    ${pins}
    <div class="world-compass">N<br>✥</div>
-  </div></div>
-  <div class="world-map-controls"><button data-a="wzoom" data-n="-1">−</button><span>Miqyas ${Math.round(worldZoom*100)}%</span><button data-a="wzoom" data-n="1">+</button><button data-a="wzoom" data-n="0">Sıfırla</button></div>\n  <div class="world-legend"><span><i class="legend-gold"></i> Sənin qalan</span><span><i class="legend-blue"></i> NPC hökmdar qalaları</span><span>〰 Çay</span><span>━ Ticarət yolları</span></div>
-  ${selected?`<div class="world-selected"><b>🏰 ${escHtml(selected.name)}</b><span>${selected.kind==="mine"?"Bu sənin əsas qalandır.": "NPC hökmdarı · Döyüş gücü: "+selected.power}</span><button data-a="wclose">Bağla</button></div>`:""}\n  <div class="world-note">Bu, vahid dünya xəritəsinin ilkin görünüşüdür. Hazırda 4 hökmdar NPC-dir; real oyunçuların qalalarının burada görünməsi üçün multiplayer server bağlantısı tamamlanmalıdır. Dünya limiti 1 000 krallıq olaraq nəzərdə tutulub.</div>
+  </div>
+  <div class="world-legend"><span><i class="legend-gold"></i> Sənin qalan</span><span><i class="legend-blue"></i> NPC hökmdar qalaları</span><span>〰 Çay</span><span>━ Ticarət yolları</span></div>
+  <div class="world-note">Bu, vahid dünya xəritəsinin ilkin görünüşüdür. Hazırda 4 hökmdar NPC-dir; real oyunçuların qalalarının burada görünməsi üçün multiplayer server bağlantısı tamamlanmalıdır. Dünya limiti 1 000 krallıq olaraq nəzərdə tutulub.</div>
  </section>`;
 }
 function playerAllianceHtml(){
@@ -764,8 +753,7 @@ function attack(i){
  else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin.`}
 }
 document.getElementById("main").addEventListener("click",e=>{
- const wp=e.target.closest(".world-pin[data-world]");if(wp){worldSelected=wp.dataset.world;render();return}
-  const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
+ const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
  const kb=e.target.closest(".b3[data-king]");if(kb){selK=+kb.dataset.king;render();return}
  const bd=e.target.closest(".bd[data-id],.b3[data-id]");if(bd){sel=bd.dataset.id;render();return}
  const bk=e.target.closest(".bk");if(bk){sel=null;selC=null;selK=null;render();return}
@@ -779,9 +767,7 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="pn"){panel=panel===id?null:id;render();return}
  if(a==="x"){sel=null;selC=null;selK=null;render();return}
  if(a==="jn"){S.ally=+id;toast("🛡️ İttifaqa qoşuldun: "+AL[+id][0])}
- if(a==="wclose"){worldSelected=null;render();return}
-  if(a==="wzoom"){worldZoom=+b.dataset.n===0?1:Math.max(1,Math.min(1.8,worldZoom+(+b.dataset.n)*.2));render();return}
-  if(a==="wpage"){S.worldPage=Math.max(1,Math.min(10,+id||1));save();render();return}
+ if(a==="wpage"){S.worldPage=Math.max(1,Math.min(10,+id||1));save();render();return}
  if(a==="mkalliance"){const input=document.getElementById("allianceName"),name=(input?.value||"").trim();if(name.length<3){toast("İttifaq adı ən azı 3 hərf olmalıdır");return}if(S.playerAlliance){toast("Artıq ittifaqın var");return}S.playerAlliance={name:name.slice(0,24),code:"KR"+Math.random().toString(36).slice(2,7).toUpperCase(),created:Date.now()};toast("🛡️ İttifaq yaradıldı");}
  if(a==="ak"){attackKing(+id);selK=null}
  if(a==="sp"&&S.build){const g=speedCost();if(S.res.gold>=g){S.res.gold-=g;S.build.end=Date.now()}}
