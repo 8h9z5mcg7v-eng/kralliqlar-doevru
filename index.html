@@ -131,6 +131,7 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .world-cell{min-width:0;aspect-ratio:1;border:1px solid #66814f;border-radius:7px;background:linear-gradient(145deg,#456c3c,#29462b);color:#d9e7c8;font-size:clamp(10px,2.5vw,15px);display:flex;align-items:center;justify-content:center;position:relative;padding:0}
 .world-cell.empty{background:linear-gradient(145deg,#344c32,#233923);opacity:.82}
 .world-cell.mine{background:linear-gradient(145deg,#b77a27,#69451d);border:2px solid #f3ca72;box-shadow:0 0 10px #e9b44c88}
+.world-cell.king{background:linear-gradient(145deg,#4d6680,#263b55);border:2px solid #9fc6e8;box-shadow:0 0 8px #7eb5e988;flex-direction:column;gap:1px}.world-cell.king b{font-size:clamp(8px,2vw,11px);line-height:1.05;white-space:nowrap}.world-cell.king .crown{font-size:clamp(13px,3vw,18px);line-height:1}
 .world-pages{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
 .world-pages button{padding:7px 9px;min-width:34px}
 .world-pages button.on{background:var(--acc);color:#241708}
@@ -604,18 +605,33 @@ function armyModel(){return `<div class='p3 hop'>${bx(-9,-6,0,5,5,10,'#c0392b')+
 
 function worldMapHtml(){
  const page=Math.max(1,Math.min(10,Number(S.worldPage)||1)),start=(page-1)*100;
+ // Bu dördü oyunun hazır süni hökmdarlarıdır; real oyunçular serverdən gələcək.
+ const rulers=[
+  {slot:8,name:KINGS[0][0],power:KINGS[0][1],icon:"👑"},
+  {slot:22,name:KINGS[1][0],power:KINGS[1][1],icon:"👸"},
+  {slot:37,name:KINGS[2][0],power:KINGS[2][1],icon:"👑"},
+  {slot:71,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️"}
+ ];
+ const mineSlot=54;
  let cells="";
  for(let i=0;i<100;i++){
-  const slot=start+i,isMine=slot===54;
-  cells+=`<div class="world-cell ${isMine?"mine":"empty"}" title="${isMine?"Sənin krallığın":"Boş qala sahəsi"}">${isMine?"🏰":"·"}<small style="position:absolute;bottom:2px;right:3px;font-size:8px;opacity:.75">${slot+1}</small></div>`;
+  const slot=start+i,isMine=slot===mineSlot,ruler=rulers.find(k=>k.slot===slot);
+  const cls=isMine?"mine":ruler?"king":"empty";
+  const label=isMine?"Sən":ruler?ruler.name:"Boş qala sahəsi";
+  cells+=`<div class="world-cell ${cls}" title="${escHtml(label+(ruler?" · Süni hökmdar · Güc "+ruler.power:""))}">
+   ${isMine?"🏰":ruler?`<span class="crown">${ruler.icon}</span><b>${escHtml(ruler.name.replace("İmperator ","").replace("Kraliça ","").replace("Kral ",""))}</b>`:"·"}
+   <small style="position:absolute;bottom:2px;right:3px;font-size:8px;opacity:.75">${slot+1}</small>
+  </div>`;
  }
- const used=1;
+ const used=1+rulers.length;
+ const rulerList=rulers.map(k=>`<span style="display:inline-block;margin:3px 5px 3px 0;padding:4px 7px;border:1px solid #9fc6e8;border-radius:8px;background:#263b55;font-size:11px">🏰 ${escHtml(k.name)} · ${k.power} güc</span>`).join("");
  return `<section class="world-panel">
   <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>${used.toLocaleString("az-AZ")} / 1 000</b></div>
-  <div class="mut" style="margin-bottom:9px">Sahə ${start+1}–${start+100} · 10 × 10 qala mövqeyi</div>
+  <div class="mut" style="margin-bottom:9px">Sahə ${start+1}–${start+100} · Hər xana bir qala mövqeyidir</div>
   <div class="world-grid">${cells}</div>
   <div class="world-pages">${Array.from({length:10},(_,i)=>`<button data-a="wpage" data-id="${i+1}" class="${page===i+1?"on":""}">${i+1}</button>`).join("")}</div>
-  <div class="world-note">🏰 Qızılı xana sənin krallığındır. Digər xanalar yeni krallıqlar üçün boş mövqelərdir. Həqiqi oyunçuların burada görünməsi üçün server bağlantısı tələb olunur.</div>
+  <div style="margin-top:10px"><b style="font-size:12px">Xəritədəki hökmdarlar</b><div>${rulerList}</div></div>
+  <div class="world-note">🟨 Sənin krallığın · 🟦 Süni hökmdarların qalaları. Şah Dəmir, İmperator Qara və digər hökmdarlar xəritədə göstərilir. Bunlar hələ NPC-dir; real oyunçular qoşulduqda serverdən gələn krallıqlar da burada görünəcək.</div>
  </section>`;
 }
 function playerAllianceHtml(){
