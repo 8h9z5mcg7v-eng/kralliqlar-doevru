@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <title>Krallıq</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6a4727">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Krallıq">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <style>
 :root{--bg:#2a1d12;--card:#4a3321;--ink:#f6e7c8;--mut:#c9ae83;--acc:#c8871f;--ok:#7bd66f;--bad:#ff7b6b;--line:#8a6330;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:none){:root:not([data-theme="light"]){--bg:#1d1812;--card:#2a231a;--ink:#f1e6cf;--mut:#b3a283;--acc:#e08a4a;--ok:#6fcf74;--bad:#ff8a80;--line:#44392a;color-scheme:dark}}
@@ -691,6 +697,13 @@ setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(co
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 if(!S.seen)showWelcome();
+</script>
+<script>
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(error => console.warn("Offline rejim aktivləşmədi:", error));
+  });
+}
 </script>
 </body>
 </html>
