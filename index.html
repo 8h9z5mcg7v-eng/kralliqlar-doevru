@@ -637,9 +637,10 @@ function worldMapHtml(){
   {id:"demir",x:84,y:75,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️",kind:"npc"},
   {id:"mine",x:39,y:49,name:"Sənin krallığın",power:0,icon:"🏰",kind:"mine"}
  ];
- const selected=rulers.find(k=>k.id===worldSelected);\n const pins=rulers.map((k,i)=>`<button class="world-pin ${k.kind} ${selected&&selected.id===k.id?"chosen":""}" data-world="${k.id}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
+ const selected=rulers.find(k=>k.id===worldSelected);
+ const pins=rulers.map((k,i)=>`<button class="world-pin ${k.kind} ${selected&&selected.id===k.id?"chosen":""}" data-world="${k.id}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
   <span class="pin-castle">${k.icon}</span><b>${escHtml(k.name.replace("İmperator ","").replace("Kraliça ","").replace("Kral ",""))}</b>
- </div>`).join("");
+ </button>`).join("");
  return `<section class="world-panel world-atlas">
   <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>5 krallıq · 1 000 qala yeri</b></div>
   <div class="mut world-subtitle">Vahid dünya xəritəsi · Dağlar, meşələr, çaylar və krallıqlar</div>
