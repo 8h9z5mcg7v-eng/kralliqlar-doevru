@@ -339,7 +339,7 @@ const M={
  site:()=>bx(-14,-14,0,28,28,3,'#c9a56a')+bx(-14,-14,0,3,3,22,'#8b5a2b')+bx(11,-14,0,3,3,22,'#8b5a2b')+bx(-14,11,0,3,3,22,'#8b5a2b')+bx(11,11,0,3,3,22,'#8b5a2b')
 };
 function glPh(k){return `<div class="sky gl" data-k="${k}"></div>`}
-function skyHtml(){return skyOld3()}
+function skyHtml(){return GLOK?glPh('city'):skyCss()}
 function skyCss(){
  const H={castle:96,farm:34,saw:30,quarry:34,mine:46,barracks:42,warehouse:36,wall:44,stable:34,range:44,drill:42};
  let h=`<div class='sky s3'><div class='w3'><i class='sl' style='left:0;top:300px;width:300px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:300px;top:0;width:300px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
@@ -701,7 +701,7 @@ function save(){if(nosave)return;S.t=Date.now();try{localStorage.setItem(KEY,JSO
 let last=Date.now(),acc=0;
 setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);refresh();tickMarch();tickBuild();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
-GLOK=false;render();
+GLinit();render();
 if(!S.seen)showWelcome();
 </script>
 <script>
