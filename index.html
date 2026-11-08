@@ -318,7 +318,8 @@ function paintMu(){document.getElementById("mu").textContent=muted?"🔇":"🔊"
 document.getElementById("mu").addEventListener("click",()=>{muted=!muted;try{localStorage.setItem("krallig_mute",muted?"1":"0")}catch(e){}paintMu();sfx("ok")});
 paintMu();
 const lvx=id=>S.lv[id]+(S.build&&S.build.id===id?1:0);
-let rstArm=false;\nlet worldSelected=null,worldZoom=1;
+let rstArm=false;
+let worldSelected=null,worldZoom=1;
 const resetHtml=()=>`<div style="text-align:center;margin:18px 0"><button data-a="rst" style="background:transparent;color:var(--mut);border:1px solid var(--line)">${rstArm?"Əminsən? Yenidən toxun":"Oyunu sıfırla"}</button></div>`;
 function showWelcome(){
  const d=document.createElement("div");
@@ -763,7 +764,8 @@ function attack(i){
  else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin.`}
 }
 document.getElementById("main").addEventListener("click",e=>{
- const wp=e.target.closest(".world-pin[data-world]");if(wp){worldSelected=wp.dataset.world;render();return}\n const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
+ const wp=e.target.closest(".world-pin[data-world]");if(wp){worldSelected=wp.dataset.world;render();return}
+  const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
  const kb=e.target.closest(".b3[data-king]");if(kb){selK=+kb.dataset.king;render();return}
  const bd=e.target.closest(".bd[data-id],.b3[data-id]");if(bd){sel=bd.dataset.id;render();return}
  const bk=e.target.closest(".bk");if(bk){sel=null;selC=null;selK=null;render();return}
@@ -777,7 +779,9 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="pn"){panel=panel===id?null:id;render();return}
  if(a==="x"){sel=null;selC=null;selK=null;render();return}
  if(a==="jn"){S.ally=+id;toast("🛡️ İttifaqa qoşuldun: "+AL[+id][0])}
- if(a==="wclose"){worldSelected=null;render();return}\n if(a==="wzoom"){worldZoom=+b.dataset.n===0?1:Math.max(1,Math.min(1.8,worldZoom+(+b.dataset.n)*.2));render();return}\n if(a==="wpage"){S.worldPage=Math.max(1,Math.min(10,+id||1));save();render();return}
+ if(a==="wclose"){worldSelected=null;render();return}
+  if(a==="wzoom"){worldZoom=+b.dataset.n===0?1:Math.max(1,Math.min(1.8,worldZoom+(+b.dataset.n)*.2));render();return}
+  if(a==="wpage"){S.worldPage=Math.max(1,Math.min(10,+id||1));save();render();return}
  if(a==="mkalliance"){const input=document.getElementById("allianceName"),name=(input?.value||"").trim();if(name.length<3){toast("İttifaq adı ən azı 3 hərf olmalıdır");return}if(S.playerAlliance){toast("Artıq ittifaqın var");return}S.playerAlliance={name:name.slice(0,24),code:"KR"+Math.random().toString(36).slice(2,7).toUpperCase(),created:Date.now()};toast("🛡️ İttifaq yaradıldı");}
  if(a==="ak"){attackKing(+id);selK=null}
  if(a==="sp"&&S.build){const g=speedCost();if(S.res.gold>=g){S.res.gold-=g;S.build.end=Date.now()}}
