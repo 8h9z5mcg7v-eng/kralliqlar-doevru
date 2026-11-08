@@ -123,6 +123,21 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .fl{position:absolute;right:18px;top:-6px;color:#ffe29a;font-weight:800;font-size:20px;text-shadow:0 1px 2px #000;animation:flo .9s forwards;pointer-events:none}
 @keyframes flo{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-22px)}}
 .bd[data-id]{cursor:pointer}
+
+/* Dünya xəritəsi — 1000 krallıq yuvası */
+.world-panel{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#263b25,#172719)}
+.world-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.world-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+.world-cell{min-width:0;aspect-ratio:1;border:1px solid #66814f;border-radius:7px;background:linear-gradient(145deg,#456c3c,#29462b);color:#d9e7c8;font-size:clamp(10px,2.5vw,15px);display:flex;align-items:center;justify-content:center;position:relative;padding:0}
+.world-cell.empty{background:linear-gradient(145deg,#344c32,#233923);opacity:.82}
+.world-cell.mine{background:linear-gradient(145deg,#b77a27,#69451d);border:2px solid #f3ca72;box-shadow:0 0 10px #e9b44c88}
+.world-pages{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.world-pages button{padding:7px 9px;min-width:34px}
+.world-pages button.on{background:var(--acc);color:#241708}
+.alliance-create{display:flex;gap:7px;margin:10px 0;flex-wrap:wrap}
+.alliance-create input{flex:1;min-width:130px}
+.world-note{font-size:12px;color:#e0d2ad;line-height:1.5;margin-top:8px}
+
 </style>
 </head>
 <body>
@@ -182,6 +197,7 @@ let S={res:{food:300,wood:300,stone:150,gold:60},lv:{castle:1,farm:1,saw:1,quarr
 let tab="city",lastMsg="";
 
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
+S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.playerAlliance=S.playerAlliance||null;
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0},S.tech||{});
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
 S.march=S.march||null;
@@ -585,6 +601,33 @@ const CM=[
  ()=>bx(-22,-14,0,44,28,24,'#4a3f45')+py(-14,0,24,20,18,'#7b1d1d')+py(14,0,24,20,18,'#7b1d1d')+bx(-5,14,0,10,1,14,'#c0392b')+bx(-3,-3,24,6,6,12,'#f39c12')
 ];
 function armyModel(){return `<div class='p3 hop'>${bx(-9,-6,0,5,5,10,'#c0392b')+bx(-1,-6,0,5,5,10,'#2e86c1')+bx(-5,2,0,5,5,10,'#c0392b')+bx(7,-2,0,1.5,1.5,22,'#6b4a2a')+bx(8,-2,16,9,1,6,'#f1c40f')}</div>`}
+
+function worldMapHtml(){
+ const page=Math.max(1,Math.min(10,Number(S.worldPage)||1)),start=(page-1)*100;
+ let cells="";
+ for(let i=0;i<100;i++){
+  const slot=start+i,isMine=slot===54;
+  cells+=`<div class="world-cell ${isMine?"mine":"empty"}" title="${isMine?"Sənin krallığın":"Boş qala sahəsi"}">${isMine?"🏰":"·"}<small style="position:absolute;bottom:2px;right:3px;font-size:8px;opacity:.75">${slot+1}</small></div>`;
+ }
+ const used=1;
+ return `<section class="world-panel">
+  <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>${used.toLocaleString("az-AZ")} / 1 000</b></div>
+  <div class="mut" style="margin-bottom:9px">Sahə ${start+1}–${start+100} · 10 × 10 qala mövqeyi</div>
+  <div class="world-grid">${cells}</div>
+  <div class="world-pages">${Array.from({length:10},(_,i)=>`<button data-a="wpage" data-id="${i+1}" class="${page===i+1?"on":""}">${i+1}</button>`).join("")}</div>
+  <div class="world-note">🏰 Qızılı xana sənin krallığındır. Digər xanalar yeni krallıqlar üçün boş mövqelərdir. Həqiqi oyunçuların burada görünməsi üçün server bağlantısı tələb olunur.</div>
+ </section>`;
+}
+function playerAllianceHtml(){
+ const a=S.playerAlliance;
+ return `<section class="world-panel"><h2>🛡️ Sənin İttifaqın</h2>
+ ${a?`<div class="card"><div class="ic">🛡️</div><div class="in"><b>${escHtml(a.name)}</b><div class="mut">Rəhbər: Sən · Üzv sayı: 1 · İttifaq kodu: ${a.code}</div></div><span class="badge">Rəhbər</span></div>`:`<div class="mut">Öz ittifaqını yarat və gələcəkdə başqa krallıqları dəvət et.</div>
+ <div class="alliance-create"><input id="allianceName" maxlength="24" placeholder="İttifaqın adı"><button data-a="mkalliance">＋ İttifaq yarat</button></div>`}
+ <div class="world-note">Bu mərhələdə ittifaq yaradılması bu cihazda saxlanılır. Üzvlərin digər cihazlardan qoşulması üçün multiplayer serveri növbəti mərhələdə qurulmalıdır.</div>
+ </section>`;
+}
+function escHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
 function mapHtml(){return GLOK?glPh('map')+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":''):mapCss()}
 function mapCss(){
  let s=`<div class='sky s3' style='height:330px'><div class='w3'><i class='sl' style='left:0;top:300px;width:300px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:300px;top:0;width:300px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
@@ -630,7 +673,7 @@ function render(){
  if(tab==="city")h=skyHtml()+(notice?`<div id="msg">${notice}</div>`:"")+buildHtml()+hintHtml()+actionsHtml()+panelHtml()+sheetHtml();
  if(tab==="army")h=`<h2>Ordu (${armyN()}/${armyCap()})</h2><div class="mut" style="margin-bottom:8px">Ümumi güc: ${power()}. 🛡️ atlıya, 🐎 oxatana, 🏹 piyadaya qarşı +30% güclüdür (tərsi −25%). Quldur basqınları üçün ordu lazımdır.</div>`+heroCard()+Object.keys(T).map(tCard).join("");
  if(tab==="tech")h="<h2>Tədqiqat</h2>"+Object.keys(TECH).map(techCard).join("");
- if(tab==="map")h=`<h2>Xəritə</h2>${lastMsg?`<div id="msg">${lastMsg}</div>`:""}<div class="mut" style="margin-bottom:8px">Sənin gücün: ${power()}</div>`+mapHtml()+E.map((_,i)=>eCard(i)).join("")+allyHtml()+rankHtml()+campSheet()+kingSheet();
+ if(tab==="map")h=`<h2>Xəritə</h2>${lastMsg?`<div id="msg">${lastMsg}</div>`:""}<div class="mut" style="margin-bottom:8px">Sənin gücün: ${power()}</div>`+mapHtml()+worldMapHtml()+playerAllianceHtml()+E.map((_,i)=>eCard(i)).join("")+allyHtml()+rankHtml()+campSheet()+kingSheet();
  document.getElementById("main").innerHTML=h;
  attachGL();
  refresh();
@@ -676,6 +719,8 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="pn"){panel=panel===id?null:id;render();return}
  if(a==="x"){sel=null;selC=null;selK=null;render();return}
  if(a==="jn"){S.ally=+id;toast("🛡️ İttifaqa qoşuldun: "+AL[+id][0])}
+ if(a==="wpage"){S.worldPage=Math.max(1,Math.min(10,+id||1));save();render();return}
+ if(a==="mkalliance"){const input=document.getElementById("allianceName"),name=(input?.value||"").trim();if(name.length<3){toast("İttifaq adı ən azı 3 hərf olmalıdır");return}if(S.playerAlliance){toast("Artıq ittifaqın var");return}S.playerAlliance={name:name.slice(0,24),code:"KR"+Math.random().toString(36).slice(2,7).toUpperCase(),created:Date.now()};toast("🛡️ İttifaq yaradıldı");}
  if(a==="ak"){attackKing(+id);selK=null}
  if(a==="sp"&&S.build){const g=speedCost();if(S.res.gold>=g){S.res.gold-=g;S.build.end=Date.now()}}
  if(a==="dl"&&S.daily!==dayKey()){const r=dailyRw();for(const k in r)S.res[k]+=r[k];S.daily=dayKey()}
