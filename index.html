@@ -635,6 +635,14 @@ const CM=[
 ];
 function armyModel(){return `<div class='p3 hop'>${bx(-9,-6,0,5,5,10,'#c0392b')+bx(-1,-6,0,5,5,10,'#2e86c1')+bx(-5,2,0,5,5,10,'#c0392b')+bx(7,-2,0,1.5,1.5,22,'#6b4a2a')+bx(8,-2,16,9,1,6,'#f1c40f')}</div>`}
 
+function playerAllianceHtml(){
+ const a=S.playerAlliance;
+ return `<section class="world-panel"><h2>🛡️ Sənin İttifaqın</h2>
+ ${a?`<div class="card"><div class="ic">🛡️</div><div class="in"><b>${escHtml(a.name)}</b><div class="mut">Rəhbər: Sən · Üzv sayı: 1 · İttifaq kodu: ${a.code}</div></div><span class="badge">Rəhbər</span></div>`:`<div class="mut">Öz ittifaqını yarat və gələcəkdə başqa krallıqları dəvət et.</div>
+ <div class="alliance-create"><input id="allianceName" maxlength="24" placeholder="İttifaqın adı"><button data-a="mkalliance">＋ İttifaq yarat</button></div>`}
+ <div class="world-note">Bu mərhələdə ittifaq yaradılması bu cihazda saxlanılır. Üzvlərin digər cihazlardan qoşulması üçün multiplayer serveri növbəti mərhələdə qurulmalıdır.</div>
+ </section>`;
+}
 function escHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
 function mapHtml(){return GLOK?glPh('map')+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":''):mapCss()}
