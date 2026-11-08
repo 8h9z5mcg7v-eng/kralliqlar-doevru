@@ -671,7 +671,7 @@ function worldMapHtml(){
    <div class="world-region region-north">ŞİMAL DAĞLARI</div><div class="world-region region-east">ŞƏRQ MEŞƏLƏRİ</div><div class="world-region region-south">CƏNUB DÜZƏNLİYİ</div>
    ${pins}
    <div class="world-compass">N<br>✥</div>
-  </div>
+  </div></div>
   <div class="world-map-controls"><button data-a="wzoom" data-n="-1">−</button><span>Miqyas ${Math.round(worldZoom*100)}%</span><button data-a="wzoom" data-n="1">+</button><button data-a="wzoom" data-n="0">Sıfırla</button></div>\n  <div class="world-legend"><span><i class="legend-gold"></i> Sənin qalan</span><span><i class="legend-blue"></i> NPC hökmdar qalaları</span><span>〰 Çay</span><span>━ Ticarət yolları</span></div>
   ${selected?`<div class="world-selected"><b>🏰 ${escHtml(selected.name)}</b><span>${selected.kind==="mine"?"Bu sənin əsas qalandır.": "NPC hökmdarı · Döyüş gücü: "+selected.power}</span><button data-a="wclose">Bağla</button></div>`:""}\n  <div class="world-note">Bu, vahid dünya xəritəsinin ilkin görünüşüdür. Hazırda 4 hökmdar NPC-dir; real oyunçuların qalalarının burada görünməsi üçün multiplayer server bağlantısı tamamlanmalıdır. Dünya limiti 1 000 krallıq olaraq nəzərdə tutulub.</div>
  </section>`;
