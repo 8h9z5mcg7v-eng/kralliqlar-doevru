@@ -515,6 +515,8 @@ function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4
 function dbuild(k){VB=[];pk=[];pkr=[];lbl=[];const lab=(t,p)=>{const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:p})};
  if(k==='city'){Object.keys(SLOT).forEach(id=>{if(id!=='castle')road(150,150,SLOT[id][0]*300,SLOT[id][1]*300,7,7.25)});
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300,y=hh(x,z),s=(id==='castle'?1.05:1)*(1+Math.min(l,8)*.02);TR={x,y,z,s};const a0=VB.length/12;if(l){GM[id](l);if(id!=='castle'&&l>=2){const fh=l>=6?10:7,fc=l>=6?'#d9a521':'#a83232';gB(21,-19,22,1.8,1.8,20,'#6b4a2a',1);gB(22,-19,34,8,1.4,fh,fc,0);gB(20,-19,32,5,1.2,1.8,'#d9a521',0);gK(21.9,-18.1,54,2.4,0,3,'#d9a521',8,3)}}else GM.site();pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});pk.push({k:'b',id,min:[x-30*s,y,z-30*s],max:[x+30*s,y+(id==='castle'?90:50)*s,z+30*s]});lab((bu?'\ud83d\udd28 ':'')+(l>=5?'\u2605':'')+(l||(bu?'':'+')),[x,y+(id==='castle'?100:58)*s,z])})}
+ // Yol kənarlarında məşəllər
+  [[150,91],[209,150],[150,209],[91,150]].forEach(([x,z])=>{TR={x,y:hh(x,z),z,s:1};gB(-1,-1,0,2,2,11,'#59391f',1);gB(-2,-2,10,4,4,2,'#8b6a3e',1);gK(0,0,12,2.8,0,7,'#f07820',8,4);gK(0,0,14,1.5,0,4,'#ffd45a',8,4)});
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
   E.forEach((e,i)=>{const x=CP[i][0],z=CP[i][1],y=hh(x,z);TR={x,y,z,s:1};const a0=VB.length/12;GC[i]();pkr.push({k:'c',id:i,a:a0,n:VB.length/12-a0});pk.push({k:'c',id:i,min:[x-26,y,z-26],max:[x+26,y+60,z+26]});lab(ePow(i),[x,y+70,z])});
   const bo=board(),KC=['#2e86c1','#8e44ad','#16a085','#d35400'];
@@ -531,7 +533,7 @@ float unp(vec4 c){return dot(c,vec4(1.,1./255.,1./65025.,1./16581375.));}
 float shd(){vec3 p=vL.xyz/vL.w*.5+.5;if(p.x<0.||p.x>1.||p.y<0.||p.y>1.||p.z>1.)return 1.;float s=0.;for(int i=-1;i<=1;i++)for(int j=-1;j<=1;j++){float d=unp(texture2D(uSM,p.xy+vec2(float(i),float(j))/1024.));s+=(p.z-.004>d)?0.:1.;}return s/9.;}
 void main(){vec3 n=normalize(vN),v=normalize(uEye-vW);float nl=max(dot(n,-uSun),0.),s=shd();vec3 col;
 if(vT>4.5){float fr=pow(1.-max(v.y,0.),3.);vec3 b=mix(vec3(.10,.34,.46),vec3(.55,.76,.9),fr);vec3 nn=normalize(vec3(sin(vW.x*.15+uTime)*.06,1.,cos(vW.z*.13+uTime*1.1)*.06));float sp=pow(max(dot(reflect(uSun,nn),v),0.),260.);col=b*(.62+.38*s)+sp*.3*s;}
-else{float t=floor(vT+.5);vec2 off=vec2(mod(t,2.),floor(t/2.))*.5;vec3 tx=texture2D(uTex,fract(vU)*.46+.02+off).rgb;vec3 amb=mix(vec3(.30,.26,.23),vec3(.47,.57,.72),n.y*.5+.5);col=tx*vC*(amb+vec3(1.,.93,.8)*nl*s*1.05);col+=pow(max(dot(n,normalize(v-uSun)),0.),24.)*.06*s*nl;}
+else if(vT>3.5){float flick=.78+.22*sin(uTime*13.+vW.x*1.7+vW.z);col=vC*(1.05+flick*.85);col+=vec3(1.,.28,.035)*flick*.42;}else{float t=floor(vT+.5);vec2 off=vec2(mod(t,2.),floor(t/2.))*.5;vec3 tx=texture2D(uTex,fract(vU)*.46+.02+off).rgb;vec3 amb=mix(vec3(.30,.26,.23),vec3(.47,.57,.72),n.y*.5+.5);col=tx*vC*(amb+vec3(1.,.93,.8)*nl*s*1.05);col+=pow(max(dot(n,normalize(v-uSun)),0.),24.)*.06*s*nl;}
 float f=clamp((length(uEye-vW)-480.)/800.,0.,1.);col=mix(col,vec3(.78,.87,.95),f);gl_FragColor=vec4(pow(col,vec3(.92)),1.);}`;
 const SVS=`attribute vec3 aP;uniform mat4 uLV;uniform vec3 uOff;void main(){gl_Position=uLV*vec4(aP+uOff,1.);}`;
 const SFS=`precision highp float;vec4 pk(float d){vec4 e=fract(d*vec4(1.,255.,65025.,16581375.));e-=e.yzww*vec4(1./255.,1./255.,1./255.,0.);return e;}void main(){gl_FragColor=pk(gl_FragCoord.z);}`;
