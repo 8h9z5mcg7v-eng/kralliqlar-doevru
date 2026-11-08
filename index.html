@@ -89,9 +89,9 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .bk{position:fixed;inset:0;z-index:7;background:rgba(0,0,0,.4)}
 .dotb::after{content:"";display:inline-block;width:9px;height:9px;border-radius:5px;background:#e53935;margin-left:6px}
 .ghost svg{opacity:.55}
-.s3{perspective:1100px;height:350px}
-.w3{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-150px 0 0 -150px;transform-style:preserve-3d;transform:scale(.84) rotateX(58deg) rotateZ(45deg);animation:sway3 7s ease-in-out infinite alternate;background:radial-gradient(circle at 50% 50%,#d9ba80 0 15%,#c2a06a 16%,transparent 17%),repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 1px,transparent 1px 30px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 30px),radial-gradient(circle,#86c45a,#4c8d36)}
-@keyframes sway3{from{transform:scale(.84) rotateX(58deg) rotateZ(41deg)}to{transform:scale(.84) rotateX(58deg) rotateZ(49deg)}}
+.s3{perspective:1250px;height:410px}
+.w3{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-150px 0 0 -150px;transform-style:preserve-3d;transform:scale(.94) rotateX(58deg) rotateZ(45deg);animation:sway3 8s ease-in-out infinite alternate;background:radial-gradient(ellipse at 22% 25%,rgba(45,105,43,.9) 0 9%,transparent 20%),radial-gradient(ellipse at 76% 22%,rgba(55,119,48,.85) 0 10%,transparent 22%),radial-gradient(ellipse at 78% 78%,rgba(36,91,40,.85) 0 11%,transparent 23%),radial-gradient(ellipse at 23% 78%,rgba(183,151,91,.85) 0 9%,transparent 20%),radial-gradient(circle at 50% 50%,#e1c58d 0 14%,#b99760 15%,transparent 16%),repeating-linear-gradient(0deg,rgba(255,255,255,.11) 0 1px,transparent 1px 30px),repeating-linear-gradient(90deg,rgba(0,0,0,.11) 0 1px,transparent 1px 30px),radial-gradient(circle,#8bc65e,#3d7d35)}
+@keyframes sway3{from{transform:scale(.94) rotateX(58deg) rotateZ(41deg)}to{transform:scale(.94) rotateX(58deg) rotateZ(49deg)}}
 .w3 i{position:absolute;display:block}
 .w3 .sl{background:#4a2f17}
 .p3,.b3,.lab{position:absolute;transform-style:preserve-3d}
@@ -99,7 +99,7 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .lab{left:0;top:0}
 .lab span{display:block;transform:translate(-50%,-100%);background:#5b3d22;border:1px solid #ffd77a;color:#fff1c1;font:700 11px system-ui,sans-serif;padding:0 7px;border-radius:8px;white-space:nowrap}
 .b3.ghost{}
-.sky.gl{position:relative;overflow:hidden;height:350px;perspective:none;background:#c7dff2}
+.sky.gl{position:relative;overflow:hidden;height:410px;perspective:none;background:linear-gradient(180deg,#9bc4d9 0%,#d2d8ad 46%,#75994f 100%);border:2px solid #b88b4a;box-shadow:inset 0 0 28px rgba(31,43,21,.38),0 5px 14px rgba(0,0,0,.35)}
 .glo{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .lab2{position:absolute;left:0;top:0;background:#5b3d22;border:1px solid #ffd77a;color:#fff1c1;font:700 11px system-ui,sans-serif;padding:0 7px;border-radius:8px;white-space:nowrap;will-change:transform}
 .b3.pulse{animation:pls3 1.2s}
@@ -171,7 +171,7 @@ nav{z-index:40}
 .world-landmarks span{padding:6px 8px;border-radius:8px;background:#293e2a;border:1px solid #617449;color:#e8dfbf;font-size:11px}
 
 
-</style>
+.map-overview{display:flex;flex-direction:column;gap:3px;margin:10px 0 6px;padding:9px 12px;border:1px solid #9a7138;border-radius:12px;background:linear-gradient(110deg,#4c351e,#73502b);color:#ffe4a1;box-shadow:inset 0 1px rgba(255,255,255,.12)}.map-overview b{font:700 15px Georgia,serif}.map-overview span{font-size:11px;color:#ead3a8}.sky.s3{height:410px;border:2px solid #9c7138;box-shadow:inset 0 0 25px rgba(27,35,17,.38),0 5px 14px rgba(0,0,0,.32)}.sky.gl canvas{border-radius:10px}</style>
 </head>
 <body>
 <div id="top"><div id="hud"><div id="av"><svg class='bsv' viewBox='0 0 64 64' style='width:40px;height:40px'><use href='#b-hero' width='64' height='64'/></svg></div><div id="pw"></div></div><div id="res"></div></div>
@@ -325,7 +325,7 @@ function paintMu(){document.getElementById("mu").textContent=muted?"🔇":"🔊"
 document.getElementById("mu").addEventListener("click",()=>{muted=!muted;try{localStorage.setItem("krallig_mute",muted?"1":"0")}catch(e){}paintMu();sfx("ok")});
 paintMu();
 const lvx=id=>S.lv[id]+(S.build&&S.build.id===id?1:0);
-let rstArm=false,worldSelected=-1;
+let rstArm=false;
 const resetHtml=()=>`<div style="text-align:center;margin:18px 0"><button data-a="rst" style="background:transparent;color:var(--mut);border:1px solid var(--line)">${rstArm?"Əminsən? Yenidən toxun":"Oyunu sıfırla"}</button></div>`;
 function showWelcome(){
  const d=document.createElement("div");
@@ -635,65 +635,6 @@ const CM=[
 ];
 function armyModel(){return `<div class='p3 hop'>${bx(-9,-6,0,5,5,10,'#c0392b')+bx(-1,-6,0,5,5,10,'#2e86c1')+bx(-5,2,0,5,5,10,'#c0392b')+bx(7,-2,0,1.5,1.5,22,'#6b4a2a')+bx(8,-2,16,9,1,6,'#f1c40f')}</div>`}
 
-function worldMapHtml(){
- // Vahid dünya xəritəsi: qalalar coğrafi ərazilərdə yerləşir, xana cədvəli deyil.
- const rulers=[
-  {x:18,y:31,name:KINGS[0][0],power:KINGS[0][1],icon:"👑",kind:"npc"},
-  {x:75,y:23,name:KINGS[1][0],power:KINGS[1][1],icon:"👸",kind:"npc"},
-  {x:58,y:68,name:KINGS[2][0],power:KINGS[2][1],icon:"👑",kind:"npc"},
-  {x:84,y:75,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️",kind:"npc"},
-  {x:39,y:49,name:"Sənin krallığın",power:0,icon:"🏰",kind:"mine"}
- ];
- const pins=rulers.map((k,i)=>`<button type="button" class="world-pin ${k.kind} ${worldSelected===i?"selected":""}" data-world="${i}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
-  <span class="pin-castle">${k.icon}</span><b>${escHtml(k.name.replace("İmperator ","").replace("Kraliça ","").replace("Kral ",""))}</b>
- </button>`).join("");
- const selected=worldSelected>=0?rulers[worldSelected]:null;
- const detail=selected?`<div class="world-detail"><b>${escHtml(selected.name)}</b><span>${selected.kind==="mine"?"Sənin əsas qalan":"Dünya hökmdarı · NPC"}</span><span>${selected.power?"Güc: "+selected.power:"Sənin krallığın"}</span></div>`:`<div class="world-detail muted-detail">Xəritədə qalalardan birinə toxun — hökmdar haqqında məlumat görünsün.</div>`;
- return `<section class="world-panel world-atlas">
-  <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>5 krallıq · 1 000 qala yeri</b></div>
-  <div class="mut world-subtitle">Vahid dünya xəritəsi · Dağlar, meşələr, çaylar və krallıqlar</div>
-  <div class="world-land">
-   <svg class="world-terrain" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-     <linearGradient id="landBase" x2="0" y2="1"><stop stop-color="#78934d"/><stop offset=".52" stop-color="#587b3c"/><stop offset="1" stop-color="#385d32"/></linearGradient>
-     <linearGradient id="riverFill" x2="1" y2="1"><stop stop-color="#72c6d2"/><stop offset="1" stop-color="#267b9b"/></linearGradient>
-     <pattern id="terrainGrain" width="42" height="42" patternUnits="userSpaceOnUse"><circle cx="8" cy="9" r="1.5" fill="#d6d89a" opacity=".22"/><circle cx="29" cy="27" r="2" fill="#203e25" opacity=".2"/></pattern>
-    </defs>
-    <rect width="1000" height="600" fill="url(#landBase)"/>
-    <path d="M0 95 Q150 20 270 105 T520 92 T790 65 T1000 105 L1000 0 L0 0Z" fill="#9aa66b" opacity=".45"/>
-    <path d="M0 430 Q150 350 300 440 T590 420 T830 460 T1000 390 L1000 600 L0 600Z" fill="#2f5934" opacity=".48"/>
-    <path d="M-30 165 Q80 75 190 130 T390 115 T590 145 T800 90 T1030 135" fill="none" stroke="#d0c6a0" stroke-width="5" opacity=".48"/>
-    <path d="M-30 165 Q80 75 190 130 T390 115 T590 145 T800 90 T1030 135" fill="none" stroke="#746c54" stroke-width="2" opacity=".65"/>
-    <path d="M-30 520 Q160 430 310 470 T570 400 T800 430 T1030 330" fill="none" stroke="#d3c28d" stroke-width="8" opacity=".55"/>
-    <path d="M-30 520 Q160 430 310 470 T570 400 T800 430 T1030 330" fill="none" stroke="#756342" stroke-width="3" opacity=".7"/>
-    <path d="M-30 0 Q130 140 260 180 T460 270 T650 330 T850 470 T1030 600 L1030 545 Q850 410 690 290 T470 225 T280 130 T-30 -55Z" fill="url(#riverFill)" stroke="#b0e1d9" stroke-width="5" opacity=".9"/>
-    <g fill="#526d3c" stroke="#344f30" stroke-width="5">
-     <path d="M55 75l55-52 53 52-30-10-22 35-22-32z"/><path d="M180 95l48-62 61 67-35-12-27 39-21-35z"/><path d="M730 90l60-70 65 75-38-12-25 43-25-40z"/><path d="M860 155l55-68 68 74-42-13-24 42-27-40z"/>
-     <path d="M95 485l60-65 58 70-36-10-23 40-26-39z"/><path d="M690 500l55-65 64 70-38-10-25 42-25-40z"/>
-    </g>
-    <g fill="#254a2d" opacity=".85">
-     <circle cx="110" cy="260" r="36"/><circle cx="150" cy="285" r="27"/><circle cx="190" cy="260" r="34"/><circle cx="790" cy="330" r="40"/><circle cx="835" cy="350" r="32"/><circle cx="875" cy="320" r="38"/><circle cx="360" cy="520" r="35"/><circle cx="405" cy="535" r="28"/>
-    </g>
-    <rect width="1000" height="600" fill="url(#terrainGrain)"/>
-   </svg>
-   <div class="world-region region-north">ŞİMAL DAĞLARI</div><div class="world-region region-east">ŞƏRQ MEŞƏLƏRİ</div><div class="world-region region-south">CƏNUB DÜZƏNLİYİ</div>
-   ${pins}
-   <div class="world-compass">N<br>✥</div>
-  </div>
-  <div class="world-legend"><span><i class="legend-gold"></i> Sənin qalan</span><span><i class="legend-blue"></i> NPC hökmdar qalaları</span><span>〰 Çay</span><span>━ Ticarət yolları</span></div>
-  ${detail}
-  <div class="world-landmarks"><span>⛰ Şimal dağ keçidi</span><span>🌲 Şərq meşə qalası</span><span>🏚 Qədim xarabalıqlar</span><span>⚓ Cənub ticarət limanı</span></div>
-  <div class="world-note">Bu, vahid dünya xəritəsinin ilkin görünüşüdür. Hazırda 4 hökmdar NPC-dir; real oyunçuların qalalarının burada görünməsi üçün multiplayer server bağlantısı tamamlanmalıdır. Dünya limiti 1 000 krallıq olaraq nəzərdə tutulub.</div>
- </section>`;
-}
-function playerAllianceHtml(){
- const a=S.playerAlliance;
- return `<section class="world-panel"><h2>🛡️ Sənin İttifaqın</h2>
- ${a?`<div class="card"><div class="ic">🛡️</div><div class="in"><b>${escHtml(a.name)}</b><div class="mut">Rəhbər: Sən · Üzv sayı: 1 · İttifaq kodu: ${a.code}</div></div><span class="badge">Rəhbər</span></div>`:`<div class="mut">Öz ittifaqını yarat və gələcəkdə başqa krallıqları dəvət et.</div>
- <div class="alliance-create"><input id="allianceName" maxlength="24" placeholder="İttifaqın adı"><button data-a="mkalliance">＋ İttifaq yarat</button></div>`}
- <div class="world-note">Bu mərhələdə ittifaq yaradılması bu cihazda saxlanılır. Üzvlərin digər cihazlardan qoşulması üçün multiplayer serveri növbəti mərhələdə qurulmalıdır.</div>
- </section>`;
-}
 function escHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
 function mapHtml(){return GLOK?glPh('map')+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":''):mapCss()}
@@ -741,7 +682,7 @@ function render(){
  if(tab==="city")h=skyHtml()+(notice?`<div id="msg">${notice}</div>`:"")+buildHtml()+hintHtml()+actionsHtml()+panelHtml()+sheetHtml();
  if(tab==="army")h=`<h2>Ordu (${armyN()}/${armyCap()})</h2><div class="mut" style="margin-bottom:8px">Ümumi güc: ${power()}. 🛡️ atlıya, 🐎 oxatana, 🏹 piyadaya qarşı +30% güclüdür (tərsi −25%). Quldur basqınları üçün ordu lazımdır.</div>`+heroCard()+Object.keys(T).map(tCard).join("");
  if(tab==="tech")h="<h2>Tədqiqat</h2>"+Object.keys(TECH).map(techCard).join("");
- if(tab==="map")h=`<h2>Xəritə</h2>${lastMsg?`<div id="msg">${lastMsg}</div>`:""}<div class="mut" style="margin-bottom:8px">Sənin gücün: ${power()}</div>`+mapHtml()+worldMapHtml()+playerAllianceHtml()+E.map((_,i)=>eCard(i)).join("")+allyHtml()+rankHtml()+campSheet()+kingSheet();
+ if(tab==="map")h=`<h2>Xəritə</h2>${lastMsg?`<div id="msg">${lastMsg}</div>`:""}<div class="mut" style="margin-bottom:8px">Sənin gücün: ${power()}</div>`+`<div class='map-overview'><b>🗺️ Krallıq ərazisi</b><span>6 düşərgə · 4 hökmdar qalası · Sənin paytaxtın</span></div>`+mapHtml()+playerAllianceHtml()+E.map((_,i)=>eCard(i)).join("")+allyHtml()+rankHtml()+campSheet()+kingSheet();
  document.getElementById("main").innerHTML=h;
  attachGL();
  refresh();
@@ -773,8 +714,6 @@ function attack(i){
  else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin.`}
 }
 document.getElementById("main").addEventListener("click",e=>{
- const wp=e.target.closest("[data-world]");
- if(wp){worldSelected=Number(wp.dataset.world);render();return}
  const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
  const kb=e.target.closest(".b3[data-king]");if(kb){selK=+kb.dataset.king;render();return}
  const bd=e.target.closest(".bd[data-id],.b3[data-id]");if(bd){sel=bd.dataset.id;render();return}
