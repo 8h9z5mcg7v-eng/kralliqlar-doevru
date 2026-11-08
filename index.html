@@ -128,6 +128,22 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .world-panel{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#263b25,#172719)}
 .world-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
 .world-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+.world-atlas{overflow:hidden}
+.world-subtitle{margin:4px 0 10px}
+.world-land{height:clamp(340px,68vw,590px);position:relative;overflow:hidden;border:2px solid #9a8655;border-radius:14px;background:#587b3c;box-shadow:inset 0 0 35px #172c1b99}
+.world-terrain{position:absolute;inset:0;width:100%;height:100%}
+.world-region{position:absolute;color:#f3e9c8;font-size:clamp(8px,1.7vw,12px);font-weight:900;letter-spacing:2px;text-shadow:0 2px 4px #18271d;opacity:.72;pointer-events:none}
+.region-north{top:8%;left:34%}.region-east{top:46%;right:3%;writing-mode:vertical-rl}.region-south{bottom:5%;left:43%}
+.world-pin{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:58px;max-width:100px;padding:4px 6px;border-radius:10px;background:#1d3026d9;border:1px solid #c9d7a4;box-shadow:0 3px 9px #142315aa;color:#fff4d4;text-align:center;z-index:2}
+.world-pin .pin-castle{font-size:clamp(23px,5vw,38px);line-height:1.1;filter:drop-shadow(0 3px 2px #182015)}
+.world-pin b{font-size:clamp(9px,2vw,12px);line-height:1.1;text-shadow:0 1px 3px #000}
+.world-pin.npc{border-color:#9bc7e7;background:#1c3954e8}
+.world-pin.mine{border:2px solid #ffd36d;background:#68451eeF;box-shadow:0 0 18px #ffd36d99}
+.world-compass{position:absolute;right:12px;top:12px;border-radius:50%;width:38px;height:38px;background:#172b25b8;color:#f7e7bd;text-align:center;font-size:10px;font-weight:bold;padding-top:3px;line-height:15px;border:1px solid #d7c99b}
+.world-legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 2px 2px;font-size:11px;color:#eadbb8}
+.world-legend span{display:flex;align-items:center;gap:5px}
+.world-legend i{display:inline-block;width:10px;height:10px;border-radius:50%}
+.legend-gold{background:#f2bd51}.legend-blue{background:#82b9e3}
 .world-cell{min-width:0;aspect-ratio:1;border:1px solid #66814f;border-radius:7px;background:linear-gradient(145deg,#456c3c,#29462b);color:#d9e7c8;font-size:clamp(10px,2.5vw,15px);display:flex;align-items:center;justify-content:center;position:relative;padding:0}
 .world-cell.empty{background:linear-gradient(145deg,#344c32,#233923);opacity:.82}
 .world-cell.mine{background:linear-gradient(145deg,#b77a27,#69451d);border:2px solid #f3ca72;box-shadow:0 0 10px #e9b44c88}
@@ -604,34 +620,50 @@ const CM=[
 function armyModel(){return `<div class='p3 hop'>${bx(-9,-6,0,5,5,10,'#c0392b')+bx(-1,-6,0,5,5,10,'#2e86c1')+bx(-5,2,0,5,5,10,'#c0392b')+bx(7,-2,0,1.5,1.5,22,'#6b4a2a')+bx(8,-2,16,9,1,6,'#f1c40f')}</div>`}
 
 function worldMapHtml(){
- const page=Math.max(1,Math.min(10,Number(S.worldPage)||1)),start=(page-1)*100;
- // Bu dördü oyunun hazır süni hökmdarlarıdır; real oyunçular serverdən gələcək.
+ // Vahid dünya xəritəsi: qalalar coğrafi ərazilərdə yerləşir, xana cədvəli deyil.
  const rulers=[
-  {slot:8,name:KINGS[0][0],power:KINGS[0][1],icon:"👑"},
-  {slot:22,name:KINGS[1][0],power:KINGS[1][1],icon:"👸"},
-  {slot:37,name:KINGS[2][0],power:KINGS[2][1],icon:"👑"},
-  {slot:71,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️"}
+  {x:18,y:31,name:KINGS[0][0],power:KINGS[0][1],icon:"👑",kind:"npc"},
+  {x:75,y:23,name:KINGS[1][0],power:KINGS[1][1],icon:"👸",kind:"npc"},
+  {x:58,y:68,name:KINGS[2][0],power:KINGS[2][1],icon:"👑",kind:"npc"},
+  {x:84,y:75,name:KINGS[3][0],power:KINGS[3][1],icon:"⚔️",kind:"npc"},
+  {x:39,y:49,name:"Sənin krallığın",power:0,icon:"🏰",kind:"mine"}
  ];
- const mineSlot=54;
- let cells="";
- for(let i=0;i<100;i++){
-  const slot=start+i,isMine=slot===mineSlot,ruler=rulers.find(k=>k.slot===slot);
-  const cls=isMine?"mine":ruler?"king":"empty";
-  const label=isMine?"Sən":ruler?ruler.name:"Boş qala sahəsi";
-  cells+=`<div class="world-cell ${cls}" title="${escHtml(label+(ruler?" · Süni hökmdar · Güc "+ruler.power:""))}">
-   ${isMine?"🏰":ruler?`<span class="crown">${ruler.icon}</span><b>${escHtml(ruler.name.replace("İmperator ","").replace("Kraliça ","").replace("Kral ",""))}</b>`:"·"}
-   <small style="position:absolute;bottom:2px;right:3px;font-size:8px;opacity:.75">${slot+1}</small>
-  </div>`;
- }
- const used=1+rulers.length;
- const rulerList=rulers.map(k=>`<span style="display:inline-block;margin:3px 5px 3px 0;padding:4px 7px;border:1px solid #9fc6e8;border-radius:8px;background:#263b55;font-size:11px">🏰 ${escHtml(k.name)} · ${k.power} güc</span>`).join("");
- return `<section class="world-panel">
-  <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>${used.toLocaleString("az-AZ")} / 1 000</b></div>
-  <div class="mut" style="margin-bottom:9px">Sahə ${start+1}–${start+100} · Hər xana bir qala mövqeyidir</div>
-  <div class="world-grid">${cells}</div>
-  <div class="world-pages">${Array.from({length:10},(_,i)=>`<button data-a="wpage" data-id="${i+1}" class="${page===i+1?"on":""}">${i+1}</button>`).join("")}</div>
-  <div style="margin-top:10px"><b style="font-size:12px">Xəritədəki hökmdarlar</b><div>${rulerList}</div></div>
-  <div class="world-note">🟨 Sənin krallığın · 🟦 Süni hökmdarların qalaları. Şah Dəmir, İmperator Qara və digər hökmdarlar xəritədə göstərilir. Bunlar hələ NPC-dir; real oyunçular qoşulduqda serverdən gələn krallıqlar da burada görünəcək.</div>
+ const pins=rulers.map(k=>`<div class="world-pin ${k.kind}" style="left:${k.x}%;top:${k.y}%" title="${escHtml(k.name+(k.power?" · Güc "+k.power:""))}">
+  <span class="pin-castle">${k.icon}</span><b>${escHtml(k.name.replace("İmperator ","").replace("Kraliça ","").replace("Kral ",""))}</b>
+ </div>`).join("");
+ return `<section class="world-panel world-atlas">
+  <div class="world-head"><b>🌍 Böyük Krallıqlar Dünyası</b><b>5 krallıq · 1 000 qala yeri</b></div>
+  <div class="mut world-subtitle">Vahid dünya xəritəsi · Dağlar, meşələr, çaylar və krallıqlar</div>
+  <div class="world-land">
+   <svg class="world-terrain" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+     <linearGradient id="landBase" x2="0" y2="1"><stop stop-color="#78934d"/><stop offset=".52" stop-color="#587b3c"/><stop offset="1" stop-color="#385d32"/></linearGradient>
+     <linearGradient id="riverFill" x2="1" y2="1"><stop stop-color="#72c6d2"/><stop offset="1" stop-color="#267b9b"/></linearGradient>
+     <pattern id="terrainGrain" width="42" height="42" patternUnits="userSpaceOnUse"><circle cx="8" cy="9" r="1.5" fill="#d6d89a" opacity=".22"/><circle cx="29" cy="27" r="2" fill="#203e25" opacity=".2"/></pattern>
+    </defs>
+    <rect width="1000" height="600" fill="url(#landBase)"/>
+    <path d="M0 95 Q150 20 270 105 T520 92 T790 65 T1000 105 L1000 0 L0 0Z" fill="#9aa66b" opacity=".45"/>
+    <path d="M0 430 Q150 350 300 440 T590 420 T830 460 T1000 390 L1000 600 L0 600Z" fill="#2f5934" opacity=".48"/>
+    <path d="M-30 165 Q80 75 190 130 T390 115 T590 145 T800 90 T1030 135" fill="none" stroke="#d0c6a0" stroke-width="5" opacity=".48"/>
+    <path d="M-30 165 Q80 75 190 130 T390 115 T590 145 T800 90 T1030 135" fill="none" stroke="#746c54" stroke-width="2" opacity=".65"/>
+    <path d="M-30 520 Q160 430 310 470 T570 400 T800 430 T1030 330" fill="none" stroke="#d3c28d" stroke-width="8" opacity=".55"/>
+    <path d="M-30 520 Q160 430 310 470 T570 400 T800 430 T1030 330" fill="none" stroke="#756342" stroke-width="3" opacity=".7"/>
+    <path d="M-30 0 Q130 140 260 180 T460 270 T650 330 T850 470 T1030 600 L1030 545 Q850 410 690 290 T470 225 T280 130 T-30 -55Z" fill="url(#riverFill)" stroke="#b0e1d9" stroke-width="5" opacity=".9"/>
+    <g fill="#526d3c" stroke="#344f30" stroke-width="5">
+     <path d="M55 75l55-52 53 52-30-10-22 35-22-32z"/><path d="M180 95l48-62 61 67-35-12-27 39-21-35z"/><path d="M730 90l60-70 65 75-38-12-25 43-25-40z"/><path d="M860 155l55-68 68 74-42-13-24 42-27-40z"/>
+     <path d="M95 485l60-65 58 70-36-10-23 40-26-39z"/><path d="M690 500l55-65 64 70-38-10-25 42-25-40z"/>
+    </g>
+    <g fill="#254a2d" opacity=".85">
+     <circle cx="110" cy="260" r="36"/><circle cx="150" cy="285" r="27"/><circle cx="190" cy="260" r="34"/><circle cx="790" cy="330" r="40"/><circle cx="835" cy="350" r="32"/><circle cx="875" cy="320" r="38"/><circle cx="360" cy="520" r="35"/><circle cx="405" cy="535" r="28"/>
+    </g>
+    <rect width="1000" height="600" fill="url(#terrainGrain)"/>
+   </svg>
+   <div class="world-region region-north">ŞİMAL DAĞLARI</div><div class="world-region region-east">ŞƏRQ MEŞƏLƏRİ</div><div class="world-region region-south">CƏNUB DÜZƏNLİYİ</div>
+   ${pins}
+   <div class="world-compass">N<br>✥</div>
+  </div>
+  <div class="world-legend"><span><i class="legend-gold"></i> Sənin qalan</span><span><i class="legend-blue"></i> NPC hökmdar qalaları</span><span>〰 Çay</span><span>━ Ticarət yolları</span></div>
+  <div class="world-note">Bu, vahid dünya xəritəsinin ilkin görünüşüdür. Hazırda 4 hökmdar NPC-dir; real oyunçuların qalalarının burada görünməsi üçün multiplayer server bağlantısı tamamlanmalıdır. Dünya limiti 1 000 krallıq olaraq nəzərdə tutulub.</div>
  </section>`;
 }
 function playerAllianceHtml(){
