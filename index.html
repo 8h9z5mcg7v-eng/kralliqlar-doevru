@@ -241,13 +241,14 @@ try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.a
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0},S.tech||{});
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
-S.march=S.march||null;S.gather=S.gather||null;S.monsterMarch=S.monsterMarch||null;S.monstersDefeated=S.monstersDefeated||{};S.monsterLevelUnlocked=Math.max(1,Math.min(5,Number(S.monsterLevelUnlocked)||1));S.wounded=S.wounded||{inf:0,arc:0,cav:0};S.monsterLoot=Object.assign({relic:0,crystal:0,medal:0},S.monsterLoot||{});
+S.march=S.march||null;S.gather=S.gather||null;S.monsterMarch=S.monsterMarch||null;S.monstersDefeated=S.monstersDefeated||{};S.monsterLevelUnlocked=Math.max(1,Math.min(5,Number(S.monsterLevelUnlocked)||1));S.wounded=S.wounded||{inf:0,arc:0,cav:0};S.monsterLoot=Object.assign({relic:0,crystal:0,medal:0},S.monsterLoot||{});S.heroGear=Object.assign({weapon:0,armor:0,amulet:0},S.heroGear||{});
 S.stats=S.stats||{wins:0,trained:0};S.claimed=S.claimed||{};S.camps=S.camps||[0,0,0,0,0,0];S.build=S.build||null;S.seen=S.seen||0;S.start=S.start||Date.now();S.kcd=S.kcd||{};if(S.ally===undefined)S.ally=null;S.lv.warehouse=S.lv.warehouse||0;S.lv.wall=S.lv.wall||0;S.lv.stable=S.lv.stable||0;S.lv.range=S.lv.range||0;S.lv.drill=S.lv.drill||0;S.stats.raids=S.stats.raids||0;if(!S.raidAt||S.raidAt<Date.now())S.raidAt=Date.now()+180000;S.daily=S.daily||"";
 const territoryCount=()=>Object.keys(S.territories||{}).filter(k=>!!S.territories[k]).length;
 const territoryBonus=()=>1+Math.min(territoryCount(),4)*.05;
 const relicBonus=()=>1+.02*(Number(S.monsterLoot.relic)||0);
 const crystalBonus=()=>1+.01*(Number(S.monsterLoot.crystal)||0);
 const medalBonus=()=>1+.03*(Number(S.monsterLoot.medal)||0);
+const gearBonus=()=>1+.02*(Number(S.heroGear.weapon)||0)+.015*(Number(S.heroGear.armor)||0)+.01*(Number(S.heroGear.amulet)||0);
 const prod=()=>{const p={food:0,wood:0,stone:0,gold:0},tb=territoryBonus()*crystalBonus();for(const id in B){const b=B[id];if(b.p)p[b.p]+=b.r*S.lv[id]*(1+.15*S.tech.prod+.03*S.hero.sk.eco+(S.ally===0?.08:0))*tb}return p};
 (function offline(){const s=Math.min(Math.max((Date.now()-S.t)/1000,0),8*3600),p=prod();for(const k in p)addRes(k,p[k]*s);S.t=Date.now()})();
 
@@ -256,7 +257,7 @@ const afford=c=>Object.keys(c).every(k=>S.res[k]>=c[k]);
 const fmtC=c=>Object.keys(c).map(k=>R[k][0]+c[k]).join(" ");
 const armyN=()=>S.army.inf+S.army.arc+S.army.cav;
 const armyCap=()=>10+20*S.lv.barracks;
-const power=()=>Math.round(Object.keys(T).reduce((a,k)=>a+S.army[k]*T[k].pw*(1+.04*S.lv[MIL[k]]),0)*(1+.1*S.tech.pow+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0))*relicBonus());
+const power=()=>Math.round(Object.keys(T).reduce((a,k)=>a+S.army[k]*T[k].pw*(1+.04*S.lv[MIL[k]]),0)*(1+.1*S.tech.pow+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0))*relicBonus()*gearBonus());
 const TECH={prod:{n:"Əkinçilik",i:"🌱",d:"Bütün istehsal +15%",c:{wood:200,stone:100}},pow:{n:"Hərbi təlim",i:"🎖️",d:"Ordu gücü +10%",c:{food:200,gold:60}},loot:{n:"Qarət sənəti",i:"💰",d:"Qənimət +20%",c:{wood:150,gold:80}},cheap:{n:"Təchizat",i:"📦",d:"Əsgər qiyməti −6%",c:{food:250,stone:150}}};
 const MAXT=8;
 const tCost=k=>{const o={};for(const r in TECH[k].c)o[r]=Math.ceil(TECH[k].c[r]*Math.pow(1.7,S.tech[k]));return o};
@@ -627,8 +628,8 @@ function GLinit(){try{cv=document.createElement('canvas');cv.style.cssText='posi
  GLOK=true;requestAnimationFrame(loop)}catch(e){GLOK=false;console.warn(e)}}
 const heroNeed=()=>40*S.hero.lv;
 function heroCard(){
- const h=S.hero;
- return `<div class="card"><div class="ic">${bsv("hero",46)}</div><div class="in"><b>Sərkərdə</b><span class="lv">Səv. ${h.lv}</span><div class="mut">Ordu gücü +${3*(h.lv-1)}% · Təcrübə ${h.xp}/${heroNeed()}</div></div></div>`+skillHtml();
+ const h=S.hero,g=S.heroGear;
+ return `<div class="card"><div class="ic">${bsv("hero",46)}</div><div class="in"><b>Sərkərdə</b><span class="lv">Səv. ${h.lv}</span><div class="mut">Ordu gücü +${3*(h.lv-1)}% · Təcrübə ${h.xp}/${heroNeed()}</div><div class="mut">⚔️ Silah: ${g.weapon||"—"} səv. · 🛡️ Zireh: ${g.armor||"—"} səv. · 📿 Amulet: ${g.amulet||"—"} səv.</div><div class="mut">Avadanlıq bonusu: +${Math.round((gearBonus()-1)*100)}% ordu gücü</div></div></div>`+skillHtml();
 }
 function gainXp(x){const h=S.hero;h.xp+=x;let up=0;while(h.xp>=heroNeed()){h.xp-=heroNeed();h.lv++;up++}return up}
 function techCard(k){
@@ -794,7 +795,7 @@ function armyPickerMarkup(x,y,kind,key){
  return "<div style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:9px 0'>"+["inf","arc","cav"].map(k=>"<label style='font-size:11px;color:var(--mut)'>"+labels[k]+"<input data-army='"+k+"' type='number' min='0' max='"+S.army[k]+"' value='"+S.army[k]+"' style='width:100%;min-width:0;padding:7px;margin-top:3px'></label>").join("")+"</div><button type='button' data-world-action='"+kind+"' data-x='"+x+"' data-y='"+y+"' "+(key?"data-resource='"+key+"'":"")+">"+(kind==="monster"?"⚔️ Seçilmiş ordu ilə hücum et":"⚔️ Seçilmiş ordunu göndər")+"</button>";
 }
 function selectedTroops(){const out={inf:0,arc:0,cav:0};document.querySelectorAll("#slotInfo [data-army]").forEach(i=>{const k=i.dataset.army;out[k]=Math.max(0,Math.min(S.army[k],Math.floor(Number(i.value)||0)))});return out}
-function troopPower(t){return Math.round((t.inf*T.inf.pw+t.arc*T.arc.pw*1.18+t.cav*T.cav.pw*1.08)*(1+.1*S.tech.pow+.03*(S.hero.lv-1)+.04*S.hero.sk.atk)*relicBonus()*medalBonus())}
+function troopPower(t){return Math.round((t.inf*T.inf.pw+t.arc*T.arc.pw*1.18+t.cav*T.cav.pw*1.08)*(1+.1*S.tech.pow+.03*(S.hero.lv-1)+.04*S.hero.sk.atk)*relicBonus()*medalBonus()*gearBonus())}
 function returnTroops(t){for(const k of ["inf","arc","cav"])S.army[k]+=Math.max(0,Number(t[k])||0)}
 function tickGather(){if(!S.gather)return;const g=S.gather,left=g.end-Date.now(),el=document.getElementById("gatherTimer");if(left>0){if(el)el.textContent=(g.phase==="out"?"Resurs nöqtəsinə yürüş":"Qalaya qayıdış")+" · "+Math.ceil(left/1000)+" san";const marker=document.getElementById("gatherTroop");if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},f=Math.max(0,Math.min(1,1-left/Math.max(1,g.sec*1000))),p=g.phase==="out"?f:1-f;marker.setAttribute("transform","translate("+((home.x+(g.x-home.x)*p)*30+15)+" "+((home.y+(g.y-home.y)*p)*30+15)+")")}return}if(g.phase==="out"){addRes(g.key,g.amount);g.phase="back";g.end=Date.now()+g.sec*1000;lastMsg="📦 "+g.amount+" "+R[g.key][1]+" toplandı. Ordu geri qayıdır.";save();if(tab==="map")render()}else{returnTroops(g.troops||{});S.gather=null;lastMsg="🏰 Ordu qalaya qayıtdı. Sağ qalan qoşunlar yenidən orduna qoşuldu.";save();if(tab==="map")render()}}
 function refreshMonsterRespawnTimer(){const el=document.querySelector("[data-monster-respawn]");if(!el)return;const x=Number(el.dataset.x),y=Number(el.dataset.y),left=monsterRespawnLeft(x,y);el.textContent=monsterRespawnText(left);if(left<=0&&tab==="map")render()}
@@ -811,7 +812,7 @@ function tickMonster(){
  const my=troopPower(m.troops||{}),win=my>=m.enemy*(.85+Math.random()*.3);
  let lost=0;
  for(const k of ["inf","arc","cav"]){const rate=win?.06+Math.random()*.10:.22+Math.random()*.20,l=Math.min(m.troops[k],Math.round(m.troops[k]*rate));m.troops[k]-=l;lost+=l;const hurt=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurt;}
- if(win){S.monstersDefeated[m.x+","+m.y]=Date.now();const ml=Math.max(1,Number(m.level)||monsterLevelAt(m.x,m.y));if(ml===S.monsterLevelUnlocked&&S.monsterLevelUnlocked<5)S.monsterLevelUnlocked++;const mult=ml;const loot={food:(50+Math.floor(Math.random()*51))*mult,wood:(40+Math.floor(Math.random()*41))*mult,stone:(35+Math.floor(Math.random()*36))*mult,gold:(10+Math.floor(Math.random()*16))*mult};for(const k in loot)addRes(k,loot[k]);gainXp(12*ml);let rare="";if(Math.random()<.18){const item=["relic","crystal","medal"][Math.floor(Math.random()*3)];S.monsterLoot[item]=(Number(S.monsterLoot[item])||0)+1;rare=item==="relic"?"Qədim relikviya":item==="crystal"?"Sehrli kristal":"Cəsarət medalı";rare=" 🎁 Nadir qənimət: "+rare+"!"}lastMsg="🏆 <span class='win'>Qələbə!</span> "+ml+"-ci səviyyə canavarı məğlub edildi. "+(S.monsterLevelUnlocked>ml?"🔓 "+S.monsterLevelUnlocked+"-ci səviyyə açıldı! ":"")+"Qənimət: "+fmtC(loot)+". İtki: "+lost+" əsgər."+rare}
+ if(win){S.monstersDefeated[m.x+","+m.y]=Date.now();const ml=Math.max(1,Number(m.level)||monsterLevelAt(m.x,m.y));if(ml===S.monsterLevelUnlocked&&S.monsterLevelUnlocked<5)S.monsterLevelUnlocked++;const mult=ml;const loot={food:(50+Math.floor(Math.random()*51))*mult,wood:(40+Math.floor(Math.random()*41))*mult,stone:(35+Math.floor(Math.random()*36))*mult,gold:(10+Math.floor(Math.random()*16))*mult};for(const k in loot)addRes(k,loot[k]);gainXp(12*ml);let rare="";if(Math.random()<.18){const item=["relic","crystal","medal"][Math.floor(Math.random()*3)];S.monsterLoot[item]=(Number(S.monsterLoot[item])||0)+1;rare=item==="relic"?"Qədim relikviya":item==="crystal"?"Sehrli kristal":"Cəsarət medalı";rare=" 🎁 Nadir qənimət: "+rare+"!"}let gearDrop="";if(Math.random()<.24){const slot=["weapon","armor","amulet"][Math.floor(Math.random()*3)],names={weapon:"Əjdaha qılıncı",armor:"Mühafizə zirehi",amulet:"Qədim amulet"},before=Number(S.heroGear[slot])||0;if(ml>before){S.heroGear[slot]=ml;gearDrop=" 🛡️ Yeni avadanlıq tapıldı: "+names[slot]+" · Səviyyə "+ml+" (təchiz edildi)!";}else gearDrop=" 🧩 "+names[slot]+" fraqmenti tapıldı, amma mövcud avadanlıq daha güclüdür."}lastMsg="🏆 <span class='win'>Qələbə!</span> "+ml+"-ci səviyyə canavarı məğlub edildi. "+(S.monsterLevelUnlocked>ml?"🔓 "+S.monsterLevelUnlocked+"-ci səviyyə açıldı! ":"")+"Qənimət: "+fmtC(loot)+". İtki: "+lost+" əsgər."+rare+gearDrop}
  else{gainXp(4);lastMsg="⚔️ <span class='lose'>Məğlubiyyət.</span> Canavarlar ordunu geri oturtdu. İtki: "+lost+" əsgər."}
  m.phase="back";m.end=Date.now()+m.sec*1000;save();if(tab==="map")render();
 }
