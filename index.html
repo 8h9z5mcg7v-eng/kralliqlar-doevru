@@ -181,6 +181,7 @@ body.map-open{max-width:none;padding:0;overflow:hidden}body.map-open #top,body.m
 .map-tools.map-gesture-hint{position:absolute;z-index:4;top:7px;left:8px;margin:0;padding:7px 10px;border-radius:10px;background:#201d17d9;border:1px solid #96703d;box-shadow:0 3px 10px #0007;pointer-events:none}.map-tools.map-gesture-hint span{font-size:10px;color:#f2dcae}.kingdom-world-map{touch-action:pan-x pan-y}
 .tech-branch{margin:12px 0 16px;padding:10px;border:1px solid #9a7541;border-radius:14px;background:linear-gradient(145deg,#3d3020,#263322)}.tech-branch h3{margin:2px 0 5px;color:#ffe29a;font:700 16px Georgia,serif}.tech-branch-note{margin-bottom:8px}.tech-branch .card{margin-bottom:7px}.tech-branch .pips{letter-spacing:1px;font-size:10px;color:#ffd16d}.tech-branch .card button{min-width:86px}
 .tech-chain{display:flex;flex-direction:column;align-items:stretch;gap:0}.tech-node{padding:10px;margin:0;border:1px solid #8c754e;border-radius:12px;background:linear-gradient(145deg,#403322,#263322);box-shadow:inset 0 1px 0 #ffffff16}.tech-node.is-locked{opacity:.68;border-style:dashed;filter:saturate(.65)}.tech-node-top{display:flex;gap:10px;align-items:flex-start}.tech-node-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:10px;background:#1119;font-size:24px}.tech-node-info{min-width:0;flex:1}.tech-node-info>b{display:inline-block;margin:2px 8px 3px 0}.tech-node .lv{float:right}.tech-node .pips{font-size:11px;letter-spacing:2px;color:#ffd16d;margin-top:5px}.tech-requirement{font-size:11px;color:#d8c59d;margin:5px 0}.tech-node>button{width:100%;margin-top:7px}.tech-connector{height:25px;display:flex;align-items:center;justify-content:center;color:#e7bd68;font-size:20px;position:relative}.tech-connector:before{content:"";position:absolute;top:0;bottom:0;width:2px;background:#b18b4e66}.tech-connector span{z-index:1;background:#2c3325;border:1px solid #987a48;border-radius:50%;width:21px;height:21px;line-height:18px;text-align:center;font-size:15px}
+.academy-card{margin:12px 0 18px;padding:13px;border:1px solid #b58b4d;border-radius:15px;background:linear-gradient(145deg,#463b2a,#202d25);box-shadow:inset 0 1px 0 #ffffff20}.academy-head{display:flex;align-items:center;gap:12px;margin-bottom:9px}.academy-head>span{font-size:34px;background:#1118;border-radius:12px;padding:7px}.academy-head b{font-size:17px;color:#ffe3a1}.academy-card button{margin-top:9px;width:100%}.academy-progress,.research-active{margin-top:10px;padding:10px;border-radius:10px;background:#1115;border:1px solid #ffffff20}.research-active{border-color:#b58b4d}.research-active button{background:#78562d}.academy-ready{margin-top:10px;padding-top:8px;border-top:1px solid #ffffff20}.academy-card button:disabled{opacity:.5}
 </style>
 </head>
 <body>
@@ -242,6 +243,7 @@ let tab="city",lastMsg="",mapPanel="monsters";
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0,store:0,gather:0,march:0,training:0,wall:0,hospital:0,scout:0,build:0,research:0},S.tech||{});
+S.academyLevel=Math.max(0,Math.min(10,Number(S.academyLevel)||0));S.academyBuild=S.academyBuild||null;S.researchJob=S.researchJob||null;
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
 S.march=S.march||null;S.gather=S.gather||null;S.monsterMarch=S.monsterMarch||null;S.monstersDefeated=S.monstersDefeated||{};S.monsterLevelUnlocked=Math.max(1,Math.min(50,Number(S.monsterLevelUnlocked)||1));S.wounded=S.wounded||{inf:0,arc:0,cav:0};S.monsterLoot=Object.assign({relic:0,crystal:0,medal:0},S.monsterLoot||{});S.heroGear=Object.assign({weapon:0,armor:0,amulet:0},S.heroGear||{});S.heroGearFragments=Object.assign({weapon:0,armor:0,amulet:0},S.heroGearFragments||{});
 S.stats=S.stats||{wins:0,trained:0};S.claimed=S.claimed||{};S.camps=S.camps||[0,0,0,0,0,0];S.build=S.build||null;S.seen=S.seen||0;S.start=S.start||Date.now();S.kcd=S.kcd||{};if(S.ally===undefined)S.ally=null;S.lv.warehouse=S.lv.warehouse||0;S.lv.wall=S.lv.wall||0;S.lv.stable=S.lv.stable||0;S.lv.range=S.lv.range||0;S.lv.drill=S.lv.drill||0;S.stats.raids=S.stats.raids||0;if(!S.raidAt||S.raidAt<Date.now())S.raidAt=Date.now()+180000;S.daily=S.daily||"";
@@ -645,8 +647,34 @@ function techCard(k){
  return `<div class="tech-node ${locked?"is-locked":""}"><div class="tech-node-top"><span class="tech-node-icon">${t.i}</span><div class="tech-node-info"><b>${t.n}</b><span class="lv">${l}/${MAXT}</span><div class="mut">${t.d}</div><div class="pips">${"●".repeat(Math.min(l,MAXT))}${"○".repeat(Math.max(0,MAXT-l))}</div><div class="tech-requirement">${locked?"🔒 ":"🔗 "}${need}</div></div></div>
  <button data-a="rs" data-id="${k}" data-cap="${mx?1:0}" data-lock="${locked?1:0}" data-c='${JSON.stringify(c)}'>${mx?"Maksimum":locked?"Kilidli":"Araşdır"}<small>${mx||locked?"":fmtC(c)}</small></button></div>`;
 }
+function academyCost(){const l=S.academyLevel;return {wood:Math.ceil(260*Math.pow(1.65,l)),stone:Math.ceil(180*Math.pow(1.65,l)),gold:Math.ceil(45*Math.pow(1.55,l))}}
+function academySeconds(){return Math.max(20,Math.round(35*Math.pow(1.55,S.academyLevel)))}
+function researchSeconds(k){return Math.max(12,Math.round(45*Math.pow(1.42,S.tech[k])/(1+.12*S.academyLevel)))}
+function researchSpeedCost(){return S.researchJob?Math.max(1,Math.ceil((S.researchJob.end-Date.now())/5000)):0}
+function academySpeedCost(){return S.academyBuild?Math.max(1,Math.ceil((S.academyBuild.end-Date.now())/5000)):0}
+function academyHtml(){
+ const c=academyCost(),busy=!!S.academyBuild,ready=S.academyLevel>0;
+ return `<section class="academy-card"><div class="academy-head"><span>🏛️</span><div><b>Elmi Akademiya</b><div class="mut">Səviyyə ${S.academyLevel}/10 · Hər səviyyə tədqiqatı 12% sürətləndirir</div></div></div>
+ ${busy?`<div class="academy-progress" id="academyTimer">Akademiya tikilir…</div><button data-a="academySpeed" id="academySpeedBtn">Sürətləndir</button>`:S.academyLevel>=10?`<div class="mut">Akademiya maksimum səviyyədədir.</div>`:`<div class="mut">${ready?"Akademiyanı təkmilləşdir":"Texnologiyaları araşdırmaq üçün əvvəlcə akademiya tik."} · ${fmtC(c)} · ${academySeconds()} san</div><button data-a="academy">${ready?"Akademiyanı yüksəlt":"Akademiya tik"}<small>${fmtC(c)}</small></button>`}
+ ${S.researchJob?`<div class="research-active"><b>🔬 Hazırda araşdırılır: ${TECH[S.researchJob.id].n}</b><div class="mut" id="researchTimer">Qalan vaxt hesablanır…</div><button data-a="researchSpeed" id="researchSpeedBtn">Sürətləndir</button></div>`:ready?`<div class="mut academy-ready">Akademiya hazırdır. Texnologiya seçib tədqiqata başla.</div>`:`<div class="mut academy-ready">Akademiya olmadan tədqiqat başlamaq mümkün deyil.</div>`}
+ </section>`;
+}
 function techTreeHtml(){
- return TECH_BRANCHES.map(([id,title,keys])=>`<section class="tech-branch"><h3>${title}</h3><div class="mut tech-branch-note">Hər növbəti texnologiya üçün əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır.</div><div class="tech-chain">${keys.map((k,i)=>(i?`<div class="tech-connector"><span>↓</span></div>`:"")+techCard(k)).join("")}</div></section>`).join("");
+ return academyHtml()+TECH_BRANCHES.map(([id,title,keys])=>`<section class="tech-branch"><h3>${title}</h3><div class="mut tech-branch-note">Hər növbəti texnologiya üçün əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır.</div><div class="tech-chain">${keys.map((k,i)=>(i?`<div class="tech-connector"><span>↓</span></div>`:"")+techCard(k)).join("")}</div></section>`).join("");
+}
+function tickResearch(){
+ if(S.academyBuild){
+  const left=S.academyBuild.end-Date.now(),el=document.getElementById("academyTimer"),btn=document.getElementById("academySpeedBtn");
+  if(left<=0){S.academyLevel++;S.academyBuild=null;save();render();toast("🏛️ Akademiya səviyyə "+S.academyLevel+" oldu!");return}
+  if(el)el.textContent="Tikintiyə qalıb: "+Math.ceil(left/1000)+" san";
+  if(btn){btn.textContent="Sürətləndir 🪙"+academySpeedCost();btn.disabled=S.res.gold<academySpeedCost()}
+ }
+ if(S.researchJob){
+  const left=S.researchJob.end-Date.now(),el=document.getElementById("researchTimer"),btn=document.getElementById("researchSpeedBtn");
+  if(left<=0){const id=S.researchJob.id;S.tech[id]=Math.min(MAXT,(Number(S.tech[id])||0)+1);S.researchJob=null;save();render();sfx("done");toast("🔬 "+TECH[id].n+" tədqiqatı tamamlandı!");return}
+  if(el)el.textContent="Tədqiqata qalıb: "+Math.ceil(left/1000)+" san";
+  if(btn){btn.textContent="Sürətləndir 🪙"+researchSpeedCost();btn.disabled=S.res.gold<researchSpeedCost()}
+ }
 }
 const POS=E.map((_,i)=>{const a=i/6*Math.PI*2+.4,u=.5+.42*Math.cos(a),v=.5+.42*Math.sin(a);return [50+(u-v)*46,12+(u+v)*40]});
 const CP=E.map((_,i)=>{const a=i/6*Math.PI*2+.4;return [150+95*Math.cos(a),150+95*Math.sin(a)]});
@@ -899,7 +927,7 @@ document.getElementById("main").addEventListener("click",e=>{
  const a=b.dataset.a,id=b.dataset.id;
  if(a==="up"){if(S.build)return;const c=cost(id);if(!afford(c)||capped(id))return;for(const k in c)S.res[k]-=c[k];S.build={id,end:Date.now()+buildSec(id)*1000};sel=null}
  if(a==="tr"){const n=+b.dataset.n,c=trCost(id,n);if(!afford(c)||armyN()+n>armyCap())return;for(const k in c)S.res[k]-=c[k];S.army[id]+=n;S.stats.trained+=n;popId=id;popN=n}
- if(a==="rs"){const pre=techPrerequisite(id);if((pre&&(Number(S.tech[pre])||0)<1)||S.tech[id]>=MAXT){toast("🔒 Əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır");return}const c=tCost(id);if(!afford(c))return;for(const k in c)S.res[k]-=c[k];S.tech[id]++}
+ if(a==="rs"){const pre=techPrerequisite(id);if(S.academyLevel<1){toast("Əvvəlcə Elmi Akademiyanı tik");return}if(S.researchJob){toast("Başqa tədqiqat artıq davam edir");return}if((pre&&(Number(S.tech[pre])||0)<1)||S.tech[id]>=MAXT){toast("🔒 Əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır");return}const c=tCost(id);if(!afford(c))return;for(const k in c)S.res[k]-=c[k];S.researchJob={id,end:Date.now()+researchSeconds(id)*1000};toast("🔬 Tədqiqat başladı: "+TECH[id].n)}
  if(a==="rst"){if(!rstArm){rstArm=true;render();return}nosave=true;try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}
  if(a==="sk"&&SK[id]&&skPts()>0)S.hero.sk[id]++;
  if(a==="pn"){panel=panel===id?null:id;render();return}
@@ -909,6 +937,9 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="mkalliance"){const input=document.getElementById("allianceName"),name=(input?.value||"").trim();if(name.length<3){toast("İttifaq adı ən azı 3 hərf olmalıdır");return}if(S.playerAlliance){toast("Artıq ittifaqın var");return}S.playerAlliance={name:name.slice(0,24),code:"KR"+Math.random().toString(36).slice(2,7).toUpperCase(),created:Date.now()};toast("🛡️ İttifaq yaradıldı");}
  if(a==="ak"){attackKing(+id);selK=null}
  if(a==="sp"&&S.build){const g=speedCost();if(S.res.gold>=g){S.res.gold-=g;S.build.end=Date.now()}}
+ if(a==="academy"){if(S.academyBuild||S.academyLevel>=10)return;const c=academyCost();if(!afford(c)){toast("Akademiya üçün kifayət qədər resurs yoxdur");return}for(const k in c)S.res[k]-=c[k];S.academyBuild={end:Date.now()+academySeconds()*1000};toast("🏛️ Akademiya tikintisi başladı")}
+ if(a==="academySpeed"&&S.academyBuild){const g=academySpeedCost();if(S.res.gold>=g){S.res.gold-=g;S.academyBuild.end=Date.now()}}
+ if(a==="researchSpeed"&&S.researchJob){const g=researchSpeedCost();if(S.res.gold>=g){S.res.gold-=g;S.researchJob.end=Date.now()}}
  if(a==="dl"&&S.daily!==dayKey()){const r=dailyRw();for(const k in r)S.res[k]+=r[k];S.daily=dayKey()}
  if(a==="cl"){const q=Q.find(x=>x.id===id);if(q&&q.ok()&&!S.claimed[id]){for(const k in q.rw)S.res[k]+=q.rw[k];S.claimed[id]=1;toast("🎯 Tapşırıq tamamlandı!")}}
  if(a==="mar"){if(S.march||S.gather||S.monsterMarch)return;if(!power())lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";else{lastMsg="";S.march={i:+id,end:Date.now()+marchSec(+id)*1000};selC=null}}
@@ -931,7 +962,7 @@ document.addEventListener("click",e=>{const a=e.target.closest("button[data-worl
 let nosave=false;
 function save(){if(nosave)return;S.t=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let last=Date.now(),acc=0;
-setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);refresh();refreshMonsterRespawnTimer();tickMarch();tickGather();tickMonster();tickBuild();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
+setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);refresh();refreshMonsterRespawnTimer();tickMarch();tickGather();tickMonster();tickBuild();tickResearch();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 if(!S.seen)showWelcome();
