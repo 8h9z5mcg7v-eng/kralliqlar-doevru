@@ -197,6 +197,17 @@ body.map-open{max-width:none;padding:0;overflow:hidden}body.map-open #top,body.m
 .feature-head{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 9px;border-bottom:1px solid #98703e;color:#ffe3a4;font:700 17px Georgia,serif}
 .feature-body{overflow:auto;overscroll-behavior:contain;padding:8px 2px 3px}.feature-body h2{margin:5px 0 9px;font-size:15px}.feature-body .card{margin:6px 0;padding:8px}.feature-body .mut{font-size:11px}
 @media(max-width:380px){.tip-compact{margin:5px 6px 7px;padding:5px 7px;gap:5px}.tip-text{-webkit-line-clamp:1}.feature-panel{width:94vw;max-height:76dvh;padding:8px}}
+
+/* Tighten the home-city viewport: remove oversized empty scroll area */
+.city-stage{margin:4px 0 6px;}
+.city-stage>.sky{margin:0;}
+.sky.s3{height:clamp(500px,66svh,610px);min-height:500px;overflow:hidden;overscroll-behavior:none;}
+.sky.s3 .w3{transform:scale(2.05) rotateX(58deg) rotateZ(45deg);}
+.sky.gl{height:clamp(500px,66svh,610px);min-height:500px;}
+.tip-compact{margin:4px 6px 6px;}
+.city-status-card{bottom:7px;}
+@media(max-height:760px){.sky.s3,.sky.gl{height:500px;min-height:500px}.sky.s3 .w3{transform:scale(1.85) rotateX(58deg) rotateZ(45deg)}}
+@media(min-width:600px){.sky.s3,.sky.gl{height:610px}.sky.s3 .w3{transform:scale(2.2) rotateX(58deg) rotateZ(45deg)}}
 </style>
 </head>
 <body>
