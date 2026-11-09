@@ -235,7 +235,9 @@ S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0},S.tech||{});
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
 S.march=S.march||null;
 S.stats=S.stats||{wins:0,trained:0};S.claimed=S.claimed||{};S.camps=S.camps||[0,0,0,0,0,0];S.build=S.build||null;S.seen=S.seen||0;S.start=S.start||Date.now();S.kcd=S.kcd||{};if(S.ally===undefined)S.ally=null;S.lv.warehouse=S.lv.warehouse||0;S.lv.wall=S.lv.wall||0;S.lv.stable=S.lv.stable||0;S.lv.range=S.lv.range||0;S.lv.drill=S.lv.drill||0;S.stats.raids=S.stats.raids||0;if(!S.raidAt||S.raidAt<Date.now())S.raidAt=Date.now()+180000;S.daily=S.daily||"";
-const prod=()=>{const p={food:0,wood:0,stone:0,gold:0};for(const id in B){const b=B[id];if(b.p)p[b.p]+=b.r*S.lv[id]*(1+.15*S.tech.prod+.03*S.hero.sk.eco+(S.ally===0?.08:0))}return p};
+const territoryCount=()=>Object.keys(S.territories||{}).filter(k=>!!S.territories[k]).length;
+const territoryBonus=()=>1+Math.min(territoryCount(),4)*.05;
+const prod=()=>{const p={food:0,wood:0,stone:0,gold:0},tb=territoryBonus();for(const id in B){const b=B[id];if(b.p)p[b.p]+=b.r*S.lv[id]*(1+.15*S.tech.prod+.03*S.hero.sk.eco+(S.ally===0?.08:0))*tb}return p};
 (function offline(){const s=Math.min(Math.max((Date.now()-S.t)/1000,0),8*3600),p=prod();for(const k in p)addRes(k,p[k]*s);S.t=Date.now()})();
 
 const cost=id=>{const o={};for(const k in B[id].c)o[k]=Math.ceil(B[id].c[k]*Math.pow(1.6,S.lv[id]));return o};
@@ -691,7 +693,7 @@ function render(){
  if(tab==="city")h=skyHtml()+(notice?`<div id="msg">${notice}</div>`:"")+buildHtml()+hintHtml()+actionsHtml()+panelHtml()+sheetHtml();
  if(tab==="army")h=`<h2>Ordu (${armyN()}/${armyCap()})</h2><div class="mut" style="margin-bottom:8px">Ümumi güc: ${power()}. 🛡️ atlıya, 🐎 oxatana, 🏹 piyadaya qarşı +30% güclüdür (tərsi −25%). Quldur basqınları üçün ordu lazımdır.</div>`+heroCard()+Object.keys(T).map(tCard).join("");
  if(tab==="tech")h="<h2>Tədqiqat</h2>"+Object.keys(TECH).map(techCard).join("");
- if(tab==="map")h=`<h2>Xəritə</h2>${lastMsg?`<div id="msg">${lastMsg}</div>`:""}<div class="mut" style="margin-bottom:8px">Sənin gücün: ${power()}</div>`+`<div class='map-overview'><b>🗺️ Krallıq ərazisi</b><span>6 düşərgə · 4 hökmdar qalası · Sənin paytaxtın</span></div>`+mapHtml()+`<div class='map-legend'><span><i class='capital'></i> Sənin paytaxtın</span><span><i class='ruler'></i> Hökmdar qalaları (NPC)</span><span><i class='camp'></i> Düşərgələr</span><span><i class='road'></i> Yürüş yolları</span><span><i style='background:repeating-linear-gradient(90deg,#f1dfae 0 3px,transparent 3px 5px)'></i> Ərazi sərhədləri</span></div>`+playerAllianceHtml()+E.map((_,i)=>eCard(i)).join("")+allyHtml()+rankHtml()+campSheet()+kingSheet();
+ if(tab==="map")h=`<h2>Xəritə</h2>${lastMsg?`<div id="msg">${lastMsg}</div>`:""}<div class="mut" style="margin-bottom:8px">Sənin gücün: ${power()}</div>`+`<div class='map-overview'><b>🗺️ Krallıq ərazisi</b><span>6 düşərgə · 4 hökmdar qalası · Sənin paytaxtın</span><span>🏰 Fəth edilən ərazi: ${territoryCount()}/4 · İstehsal bonusu: +${Math.round((territoryBonus()-1)*100)}%</span></div>`+mapHtml()+`<div class='map-legend'><span><i class='capital'></i> Sənin paytaxtın</span><span><i class='ruler'></i> Hökmdar qalaları (NPC)</span><span><i class='camp'></i> Düşərgələr</span><span><i class='road'></i> Yürüş yolları</span><span><i style='background:repeating-linear-gradient(90deg,#f1dfae 0 3px,transparent 3px 5px)'></i> Ərazi sərhədləri</span></div>`+playerAllianceHtml()+E.map((_,i)=>eCard(i)).join("")+allyHtml()+rankHtml()+campSheet()+kingSheet();
  document.getElementById("main").innerHTML=h;
  attachGL();
  refresh();
