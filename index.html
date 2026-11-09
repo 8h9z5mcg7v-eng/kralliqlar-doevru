@@ -209,10 +209,10 @@ body.map-open{max-width:none;padding:0;overflow:hidden}body.map-open #top,body.m
 @media(max-height:760px){.sky.s3,.sky.gl{height:500px;min-height:500px}.sky.s3 .w3{transform:scale(1.85) rotateX(58deg) rotateZ(45deg)}}
 @media(min-width:600px){.sky.s3,.sky.gl{height:610px}.sky.s3 .w3{transform:scale(2.2) rotateX(58deg) rotateZ(45deg)}}
 
-/* Zoom the full kingdom city out so every building fits in view */
-.sky.s3 .w3{transform:scale(1.22) rotateX(58deg) rotateZ(45deg);}
-@media(max-height:760px){.sky.s3 .w3{transform:scale(1.12) rotateX(58deg) rotateZ(45deg)}}
-@media(min-width:600px){.sky.s3 .w3{transform:scale(1.35) rotateX(58deg) rotateZ(45deg)}}
+/* Enlarge the city scene while keeping the full-screen mobile layout */
+.sky.s3 .w3{transform:scale(1.42) rotateX(58deg) rotateZ(45deg);transform-origin:50% 48%;}
+@media(max-height:760px){.sky.s3 .w3{transform:scale(1.30) rotateX(58deg) rotateZ(45deg)}}
+@media(min-width:600px){.sky.s3 .w3{transform:scale(1.55) rotateX(58deg) rotateZ(45deg)}}
 
 /* CoK-inspired building detail panel */
 .sheet.building-sheet{box-sizing:border-box;width:min(100%,560px);padding:7px 14px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#59432b 0%,#302317 100%);border:1px solid #b98b48;border-bottom:0;border-radius:19px 19px 0 0;box-shadow:0 -9px 28px #0009;max-height:min(72dvh,690px);display:flex;flex-direction:column;gap:9px}
@@ -808,7 +808,7 @@ const SVS=`attribute vec3 aP;uniform mat4 uLV;uniform vec3 uOff;void main(){gl_P
 const SFS=`precision highp float;vec4 pk(float d){vec4 e=fract(d*vec4(1.,255.,65025.,16581375.));e-=e.yzww*vec4(1./255.,1./255.,1./255.,0.);return e;}void main(){gl_FragColor=pk(gl_FragCoord.z);}`;
 function drawB(b){gl.bindBuffer(gl.ARRAY_BUFFER,b.b);[[0,3,0],[1,3,12],[2,3,24],[3,2,36],[4,1,44]].forEach(([i,n,o])=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,n,gl.FLOAT,false,48,o)});gl.drawArrays(gl.TRIANGLES,0,b.n)}
 function shadowPass(){LV=m4.mul(m4.ortho(230,50,1000),m4.look([150-SUN[0]*500,-SUN[1]*500,150-SUN[2]*500],[150,0,150]));gl.bindFramebuffer(gl.FRAMEBUFFER,smF);gl.viewport(0,0,1024,1024);gl.clearColor(1,1,1,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PS);gl.uniformMatrix4fv(gl.getUniformLocation(PS,'uLV'),false,LV);gl.uniform3f(gl.getUniformLocation(PS,'uOff'),0,0,0);[SB,DB].forEach(b=>b&&drawB(b));gl.bindFramebuffer(gl.FRAMEBUFFER,null)}
-function cam(a){const yaw=yawB+Math.sin(performance.now()/2800)*.1,tg=[150,10,150],D=620,e=[tg[0]+D*Math.cos(pitch)*Math.sin(yaw),tg[1]+D*Math.sin(pitch),tg[2]+D*Math.cos(pitch)*Math.cos(yaw)],f=v3.nz(v3.sub(tg,e)),r=v3.nz(v3.cr(f,[0,1,0])),u=v3.cr(r,f);return{e,tg,f,r,u,a,fov:.7}}
+function cam(a){const yaw=yawB+Math.sin(performance.now()/2800)*.1,tg=[150,10,150],D=560,e=[tg[0]+D*Math.cos(pitch)*Math.sin(yaw),tg[1]+D*Math.sin(pitch),tg[2]+D*Math.cos(pitch)*Math.cos(yaw)],f=v3.nz(v3.sub(tg,e)),r=v3.nz(v3.cr(f,[0,1,0])),u=v3.cr(r,f);return{e,tg,f,r,u,a,fov:.7}}
 function draw(){const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.round(cv.clientWidth*dpr),h=Math.round(cv.clientHeight*dpr);if(!w||!h)return;if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}
  const c=cam(w/h),VP=m4.mul(m4.persp(c.fov,w/h,20,2600),m4.look(c.e,c.tg));lastVP=VP;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,w,h);gl.clearColor(.78,.87,.95,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PM);
  const U=n=>gl.getUniformLocation(PM,n);gl.uniformMatrix4fv(U('uVP'),false,VP);gl.uniformMatrix4fv(U('uLV'),false,LV);gl.uniform3fv(U('uSun'),SUN);gl.uniform3fv(U('uEye'),c.e);gl.uniform1f(U('uTime'),performance.now()/1000);gl.uniform1i(U('uTex'),0);gl.uniform1i(U('uSM'),1);
