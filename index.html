@@ -730,6 +730,15 @@ function mapHtml(){
  }
  let labels="";
  for(let i=0;i<=50;i+=5){labels+="<text x='"+(i*30+15)+"' y='14' font-size='10' fill='#fff0c7' stroke='#28371f' stroke-width='2' paint-order='stroke' text-anchor='middle'>"+i+"</text>";labels+="<text x='8' y='"+(i*30+20)+"' font-size='10' fill='#fff0c7' stroke='#28371f' stroke-width='2' paint-order='stroke'>"+i+"</text>"}
+ let gatherMarker="";
+ if(S.gather){
+  const g=S.gather,home=S.outpostSlot&&slots[Number(S.outpostSlot)-1]?slots[Number(S.outpostSlot)-1]:{x:25,y:25};
+  const total=Math.max(1,g.sec*1000),remaining=Math.max(0,g.end-Date.now());
+  const progress=Math.max(0,Math.min(1,1-remaining/total)),f=g.phase==="out"?progress:1-progress;
+  const gx=(home.x+(g.x-home.x)*f)*30+15,gy=(home.y+(g.y-home.y)*f)*30+15;
+  const hx=home.x*30+15,hy=home.y*30+15,tx=g.x*30+15,ty=g.y*30+15;
+  gatherMarker="<path d='M"+hx+" "+hy+"L"+tx+" "+ty+"' stroke='#ffe5a0' stroke-width='3' stroke-dasharray='8 7' opacity='.9' fill='none'/><g id='gatherTroop' transform='translate("+gx+" "+gy+")'><circle r='15' fill='#17251a' stroke='#ffe5a0' stroke-width='2.5'/><text text-anchor='middle' y='6' font-size='18'>⚔️</text><circle cx='11' cy='-11' r='4' fill='#e8b64f' stroke='#342719' stroke-width='1'/></g>";
+ }
  const zoom=Math.round(mapZoom*1500);
  const pos=selectedWorldSlot&&slots[selectedWorldSlot-1]?slots[selectedWorldSlot-1]:null;
  const own=Number(S.outpostSlot)===selectedWorldSlot;
@@ -744,7 +753,7 @@ function mapHtml(){
  "<rect width='1500' height='1500' fill='url(#world-ground)'/>"+tiles+
  "<g pointer-events='none'>"+river+roads+fields+rocks+trees+relief+detail+waterLines+parcelGrid+"</g>"+
  "<rect width='1500' height='1500' fill='url(#world-grass-grain)' pointer-events='none' opacity='.7'/>"+
- "<g pointer-events='none'>"+resources+rulers+labels+"</g></svg></div>"+
+ "<g pointer-events='none'>"+resources+rulers+labels+gatherMarker+"</g></svg></div>"+
  (S.gather?"<div class='slot-info' id='gatherTimer'>Ordu yürüşdədir...</div>":"")+"<div class='slot-info' id='slotInfo'>"+(selectedWorldSlot?"<b>🏰 Qala mövqeyi #"+selectedWorldSlot+"</b><span>Koordinat: X "+pos.x+" · Y "+pos.y+". "+(own?"Bu mövqe sənin cihazında ayrılıb.":"Bu torpaq sahəsi seçilib. Qalanı burada yerləşdirmək üçün ayır.")+"</span>"+(own?"<button type='button' data-world-action='release'>Yeri boşalt</button>":"<button type='button' data-world-action='claim'>Bu yerdə qala qur</button>"):"Xəritədə boş torpaq xanasına toxunaraq 1000 qala mövqeyindən birini seç.")+"</div>"+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":"");
 }
 function mapOld2(){
@@ -763,7 +772,7 @@ function mapOld(){
   s+=`<div id="mk" style="z-index:3;position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);">${bsv("army",38).replace("class='bsv'","class='bsv bob'")}</div>`}
  return s+"</div>"+(S.march?`<div class="mut" id="mt" style="margin-bottom:8px"></div>`:"");
 }
-function tickGather(){if(!S.gather)return;const g=S.gather,left=g.end-Date.now(),el=document.getElementById("gatherTimer");if(left>0){if(el)el.textContent=(g.phase==="out"?"Resurs nöqtəsinə yürüş":"Qalaya qayıdış")+" · "+Math.ceil(left/1000)+" san";return}if(g.phase==="out"){addRes(g.key,g.amount);g.phase="back";g.end=Date.now()+g.sec*1000;lastMsg="📦 "+g.amount+" "+R[g.key][1]+" toplandı. Ordu geri qayıdır.";save();if(tab==="map")render()}else{S.gather=null;lastMsg="🏰 Ordu qalaya qayıtdı.";save();if(tab==="map")render()}}
+function tickGather(){if(!S.gather)return;const g=S.gather,left=g.end-Date.now(),el=document.getElementById("gatherTimer");if(left>0){if(el)el.textContent=(g.phase==="out"?"Resurs nöqtəsinə yürüş":"Qalaya qayıdış")+" · "+Math.ceil(left/1000)+" san";const marker=document.getElementById("gatherTroop");if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},f=Math.max(0,Math.min(1,1-left/Math.max(1,g.sec*1000))),p=g.phase==="out"?f:1-f;marker.setAttribute("transform","translate("+((home.x+(g.x-home.x)*p)*30+15)+" "+((home.y+(g.y-home.y)*p)*30+15)+")")}return}if(g.phase==="out"){addRes(g.key,g.amount);g.phase="back";g.end=Date.now()+g.sec*1000;lastMsg="📦 "+g.amount+" "+R[g.key][1]+" toplandı. Ordu geri qayıdır.";save();if(tab==="map")render()}else{S.gather=null;lastMsg="🏰 Ordu qalaya qayıtdı.";save();if(tab==="map")render()}}
 function tickMarch(){
  if(!S.march)return;
  const m=S.march,left=m.end-Date.now();
