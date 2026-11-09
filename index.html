@@ -759,6 +759,29 @@ function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4
 function dbuild(k){VB=[];pk=[];pkr=[];lbl=[];const lab=(t,p)=>{const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:p})};
  if(k==='city'){
   /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
+  /* Şəhərə canlılıq verən bağlar, ağaclar, fənərlər və bayraqlar */
+  [[48,142],[252,142],[48,178],[252,178],[82,292],[218,292],[82,8],[218,8]].forEach(([x,z],i)=>{
+   tree(x,z,i%3===0?1.05:.82,i%2===0);
+  });
+  [[104,34],[196,34],[104,105],[196,105],[104,205],[196,205],[104,276],[196,276]].forEach(([x,z],i)=>{
+   TR={x,y:hh(x,z),z,s:1};
+   gB(-7,-6,0,14,12,1.2,'#496b37',3);
+   [[-4,-3],[4,-3],[-4,3],[4,3]].forEach(([a,b],j)=>gK(a,b,1.2,1.7,1.2,2.5,['#d8b64b','#c66b49','#e6d5a2'][j%3],7,3));
+   gK(0,0,1.2,2.8,1.8,3.5,i%2?'#397b3b':'#4b8c43',8,3);
+  });
+  [[34,60],[266,60],[34,160],[266,160],[34,240],[266,240],[150,60],[150,240]].forEach(([x,z])=>{
+   TR={x,y:hh(x,z),z,s:1};
+   gK(0,0,0,3.2,2.4,2.2,'#82735e',8,0);
+   gB(-.8,-.8,2,1.6,1.6,19,'#59452d',1);
+   gB(.8,-.8,17,5,.8,3,'#e5bd58',0);
+   gK(1.5,-.8,20,1.4,0,2,'#ffe6a0',8,3);
+  });
+  /* Mərkəzi meydan və qala girişinə daş döşəmə */
+  road(150,84,150,145,12,7.35);
+  road(126,115,174,115,10,7.35);
+  [[140,106],[160,106],[140,126],[160,126]].forEach(([x,z])=>{
+   TR={x,y:hh(x,z),z,s:1};gK(0,0,7.3,2.1,2.1,.8,'#c6b38d',8,0);
+  });
   road(8,10,8,290,7,7.25);road(292,10,292,290,7,7.25);
   [60,160,240].forEach(z=>road(8,z,292,z,7,7.25));
   Object.keys(SLOT).forEach(id=>{if(id==='castle')return;const x=SLOT[id][0]*300,z=SLOT[id][1]*300,lane=z<150?60:240,dir=lane>z?1:-1,start=z+dir*(id==='tent'?30:19);if(Math.abs(lane-start)>3)road(x,start,x,lane,4,7.1)});
