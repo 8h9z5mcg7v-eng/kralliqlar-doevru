@@ -868,7 +868,32 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
    if(l)GM[id](l);else GM.site();
    pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});
    pk.push({k:'b',id,min:[x-30*s,y,z-30*s],max:[x+30*s,y+(id==='castle'?100:58)*s,z+30*s]});
-   lab(B[id]?.n||id,[x,y+(id==='castle'?108:65)*s,z]);if(id==='tent'&&l>0){const offsets=[[58,-22],[-58,-22],[58,38],[-58,38],[0,92],[112,35],[-112,35]];offsets.slice(0,Math.max(0,S.tentCount-1)).forEach(o=>{const tx=x+o[0],tz=z+o[1],ts=.62,ty=addCityPad(tx,tz,ts,58,52);TR={x:tx,y:ty,z:tz,s:ts};const ta=VB.length/12;GM.tent();pkr.push({k:'b',id:'tent',a:ta,n:VB.length/12-ta});pk.push({k:'b',id:'tent',min:[tx-27,ty,tz-21],max:[tx+27,ty+34,tz+21]});lab('Hərbi çadır',[tx,ty+29,tz])})}if(id==='hospital'&&l>0){const offsets=[[62,-12],[-62,-12],[0,62]];offsets.slice(0,Math.max(0,S.hospitalCount-1)).forEach(o=>{const hx=x+o[0],hz=z+o[1],hs=.66,hy=addCityPad(hx,hz,hs,62,56);TR={x:hx,y:hy,z:hz,s:hs};const ha=VB.length/12;GM.hospital();pkr.push({k:'b',id:'hospital',a:ha,n:VB.length/12-ha});pk.push({k:'b',id:'hospital',min:[hx-27,hy,hz-23],max:[hx+27,hy+38,hz+23]});lab('Xəstəxana',[hx,hy+31,hz])})}})}
+   lab(B[id]?.n||id,[x,y+(id==='castle'?108:65)*s,z]);}) 
+  /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
+  const fieldSlots=[
+   ...[[78,16],[150,16],[222,16],[78,284],[150,284],[222,284],[18,78]].map(([x,z])=>({x,z,id:'tent',name:'Çadır sahəsi'})),
+   ...[[282,78],[18,222],[282,222]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
+  ];
+  fieldSlots.forEach((p,i)=>{
+   const built=p.id==='tent'?i<7&&i<S.tentCount-1:(i-7)<Math.max(0,S.hospitalCount-1);
+   const sc=.72,pw=52,pd=44,y=addCityPad(p.x,p.z,sc,pw,pd);
+   TR={x:p.x,y,z:p.z,s:sc};
+   const wood='#76502e',stone='#a99a7d';
+   gB(-pw/2,-pd/2,.55,pw,2,1.5,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.5,wood,0);
+   gB(-pw/2,-pd/2,.55,2,pd,1.5,wood,0);gB(pw/2-2,-pd/2,.55,2,pd,1.5,wood,0);
+   [[-22,-18],[22,-18],[-22,18],[22,18]].forEach(([a,b])=>gK(a,b,1.8,1.3,1.3,4,stone,6,0));
+   const a0=VB.length/12;
+   if(built){if(p.id==='tent')GM.tent();else GM.hospital();pkr.push({k:'b',id:p.id,a:a0,n:VB.length/12-a0})}
+   else{
+    gB(-8,-7,1.9,16,1.5,1.2,'#b69b70',0);
+    gB(-8,5,1.9,16,1.5,1.2,'#b69b70',0);
+    gB(-8,-7,1.9,1.5,13,1.2,'#b69b70',0);
+    gB(6,-7,1.9,1.5,13,1.2,'#b69b70',0);
+   }
+   pk.push({k:'b',id:p.id,min:[p.x-29,y,p.z-25],max:[p.x+29,y+43,p.z+25]});
+   lab(built?(p.id==='tent'?'Hərbi çadır':'Xəstəxana'):p.name,[p.x,y+(built?31:9),p.z]);
+  });
+ }
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
   E.forEach((e,i)=>{const x=CP[i][0],z=CP[i][1],y=hh(x,z);TR={x,y,z,s:1};const a0=VB.length/12;GC[i]();pkr.push({k:'c',id:i,a:a0,n:VB.length/12-a0});pk.push({k:'c',id:i,min:[x-26,y,z-26],max:[x+26,y+60,z+26]});lab(ePow(i),[x,y+70,z])});
   const bo=board(),KC=['#2e86c1','#8e44ad','#16a085','#d35400'];
