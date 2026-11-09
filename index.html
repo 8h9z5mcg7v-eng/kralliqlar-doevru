@@ -409,7 +409,7 @@ function buildingDetailHtml(id){
  if(B[id].p)html="<h3>📈 İstehsal</h3>"+rows([["Hazırkı istehsal",(B[id].r*l).toFixed(1)+" "+R[B[id].p][1]+"/san"],["Növbəti səviyyədə",(B[id].r*next*(1+.15*S.tech.prod+.03*S.hero.sk.eco)).toFixed(1)+" "+R[B[id].p][1]+"/san"],["Baza artımı","+"+B[id].r.toFixed(1)+" "+R[B[id].p][1]+"/san"]])+"<div class='mut'>İstehsal texnologiya və digər bonuslarla artır.</div>";
  if(id==="castle")html="<h3>🏰 Qala səviyyəsi</h3>"+rows([["Hazırkı səviyyə",l+"/30"],["Binalar üçün maksimum səviyyə",l],["Növbəti səviyyə","Bütün binaların inkişaf limitini artırır"]]);
  if(id==="warehouse")html="<h3>📦 Anbar tutumu</h3>"+rows([["Hazırkı bonus","+"+(25*l)+"%"],["Növbəti səviyyə","Anbar tutumu +25%"],["Təsir","Resursların saxlanma limitini artırır"]]);
- if(B[id].p){const count=Math.max(1,Number(S.resourceCount?.[id])||1),extra=Object.fromEntries(Object.entries(B[id].c).map(([k,v])=>[k,Math.ceil(v*2.8)])),canAdd=count<2&&l>0&&!S.build&&afford(extra),addHtml=count>=2?"<div class=\"building-lock-note\">Bu resurs binası üçün əlavə sahə artıq açılıb.</div>":l<1?"Əvvəlcə əsas "+B[id].n.toLowerCase()+" tikilməlidir.":"<div class=\"building-upgrade-cost\"><span>＋ Əlavə resurs sahəsi</span><b>"+fmtC(extra)+"</b><small>⏱️ "+fmtDuration(buildSec(id+"Add"))+" · "+count+"/2 sahə</small></div><button class=\"building-upgrade-btn\" data-a=\"resourceAdd\" data-id=\""+id+"\" "+(canAdd?"":"disabled")+">＋ Əlavə "+B[id].n.toLowerCase()+" tik</button>";html+="<h3>🌿 Resurs sahələri</h3>"+rows([["Açıq sahələr",count+"/2"],["Ümumi istehsal",(bSafeRate(id)*count).toFixed(1)+" "+R[B[id].p][1]+"/san"],["Əlavə sahənin təsiri","İstehsal gücü ikiqat artır"]])+addHtml;}
+ if(B[id].p){const count=Math.max(1,Number(S.resourceCount?.[id])||1),extra=Object.fromEntries(Object.entries(B[id].c).map(([k,v])=>[k,Math.ceil(v*2.8)])),canAdd=count<2&&l>0&&!S.build&&afford(extra),addHtml=count>=2?"<div class=\"building-lock-note\">Bu resurs binası üçün əlavə sahə artıq açılıb.</div>":l<1?"Əvvəlcə əsas "+B[id].n.toLowerCase()+" tikilməlidir.":"<div class=\"building-upgrade-cost\"><span>＋ Əlavə resurs sahəsi</span><b>"+fmtC(extra)+"</b><small>⏱️ "+fmtDuration(buildSec(id+"Add"))+" · "+count+"/2 sahə</small></div><button class=\"building-upgrade-btn\" data-a=\"resourceAdd\" data-id=\""+id+"\" "+(canAdd?"":"disabled")+">＋ Əlavə "+B[id].n.toLowerCase()+" tik</button>";html+="<h3>🌿 Resurs sahələri</h3>"+rows([["Açıq sahələr",count+"/2"],["Ümumi istehsal",(B[id].r*l*count).toFixed(1)+" "+R[B[id].p][1]+"/san"],["Əlavə sahənin təsiri","İstehsal gücü ikiqat artır"]])+addHtml;}
  if(id==="tent"){const nl=Math.min(30,l+1),count=Math.max(1,Number(S.tentCount)||1),max=maxTentCount(),extra=tentBuildCost(),canAdd=count<max&&l>0&&!S.build&&afford(extra),addHtml=count>=max?"<div class=\"building-lock-note\">🔒 Bu qala səviyyəsində maksimum "+max+" hərbi çadır tikilə bilər.</div>":l<1?"<div class=\"building-lock-note\">Əvvəlcə ilk hərbi çadırı tik.</div>":"<div class=\"building-upgrade-cost\"><span>⛺ Əlavə çadırın tikintisi</span><b>"+fmtC(extra)+"</b><small>⏱️ "+fmtDuration(tentBuildSeconds())+" · "+count+"/"+max+" çadır</small></div><button class=\"building-upgrade-btn\" data-a=\"tentAdd\" "+(canAdd?"":"disabled")+">＋ Əlavə hərbi çadır tik</button>";html="<h3>⛺ Hərbi çadırlar · Təlim tutumu</h3>"+rows([["Çadırların sayı",count+"/"+max],["Hər çadırın səviyyəsi",l+"/30"],["Bir sifarişdə ümumi tutum",trainingVolume()+" əsgərədək"],["Ümumi təlim sürəti bonusu","+"+tentSpeedBonus()+"%"],["Növbəti səviyyədə tutum",TENT_VOLUME[nl]*count+" əsgər"],["Növbəti səviyyədə sürət","+"+(TENT_SPEED[nl]*count)+"%"],["İnkişaf qaydası","Çadır sayını artırmaq sifariş tutumunu və təlim sürətini yüksəldir. Bütün çadırlar birlikdə inkişaf edir."]])+addHtml};
  if(id==="hospital"){const count=Math.max(1,Number(S.hospitalCount)||1),max=maxHospitalCount(),extra=hospitalBuildCost(),canAdd=count<max&&l>0&&!S.build&&afford(extra),addHtml=count>=max?"<div class=\"building-lock-note\">🔒 Bu qala səviyyəsində maksimum "+max+" xəstəxana tikilə bilər.</div>":l<1?"<div class=\"building-lock-note\">Əvvəlcə ilk xəstəxananı tik.</div>":"<div class=\"building-upgrade-cost\"><span>🏥 Əlavə xəstəxananın tikintisi</span><b>"+fmtC(extra)+"</b><small>⏱️ "+fmtDuration(hospitalBuildSeconds())+" · "+count+"/"+max+" xəstəxana</small></div><button class=\"building-upgrade-btn\" data-a=\"hospitalAdd\" "+(canAdd?"":"disabled")+">＋ Əlavə xəstəxana tik</button>";html="<h3>🏥 Xəstəxanalar · Yaralı tutumu</h3>"+rows([["Xəstəxanaların sayı",count+"/"+max],["Hər xəstəxananın səviyyəsi",l+"/30"],["Ümumi yaralı tutumu",hospitalCapacity().toLocaleString("az-AZ")],["Hazırda yaralı",woundedTotal().toLocaleString("az-AZ")],["Boş çarpayı",Math.max(0,hospitalCapacity()-woundedTotal()).toLocaleString("az-AZ")],["Növbəti səviyyə",HOSPITAL_CAPACITY[Math.min(30,l+1)]*count+" yaralı"],["Qayda","Xəstəxanaların səviyyəsi ortaqdır; əlavə bina ümumi tutumu artırır."]])+addHtml}
  if(id==="wall")html="<h3>🧱 Müdafiə</h3>"+rows([["Hazırkı müdafiə","+"+(5*l)+"%"],["Basqın itkilərinin azalması","−"+(2*l)+"%"],["Növbəti səviyyə","Müdafiə +5%, itki −2%"]]);
@@ -896,20 +896,20 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
   });
   /* Əlavə resurs sahələri: ferma, mişar, daş və qızıl */
   const resourceSlots=[
-   {id:'farm',x:18,z:78,name:'Ferma sahəsi'},
-   {id:'saw',x:18,z:222,name:'Taxta sahəsi'},
-   {id:'quarry',x:282,z:78,name:'Dəmir sahəsi'},
-   {id:'mine',x:282,z:222,name:'Qızıl sahəsi'}
+   {id:'farm',x:48,z:42,name:'Ferma sahəsi'},
+   {id:'saw',x:48,z:258,name:'Taxta sahəsi'},
+   {id:'quarry',x:252,z:42,name:'Dəmir sahəsi'},
+   {id:'mine',x:252,z:258,name:'Qızıl sahəsi'}
   ];
   resourceSlots.forEach(p=>{
-   const built=(Number(S.resourceCount?.[p.id])||0)>=2,sc=.52,pw=43,pd=36,y=addCityPad(p.x,p.z,sc,pw,pd);
+   const built=(Number(S.resourceCount?.[p.id])||0)>=2,sc=.36,pw=36,pd=30,y=addCityPad(p.x,p.z,sc,pw,pd);
    TR={x:p.x,y,z:p.z,s:sc};const wood='#76502e',stone='#a99a7d';
    gB(-pw/2,-pd/2,.55,pw,2,1.3,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.3,wood,0);
    gB(-pw/2,-pd/2,.55,2,pd,1.3,wood,0);gB(pw/2-2,-pd/2,.55,2,pd,1.3,wood,0);
    const a0=VB.length/12;
    if(built){GM[p.id](S.lv[p.id]);pkr.push({k:'b',id:p.id,a:a0,n:VB.length/12-a0})}
    else{gB(-7,-6,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,4,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,-6,1.7,1.4,12,1.2,'#b69b70',0);gB(5,-6,1.7,1.4,12,1.2,'#b69b70',0)}
-   pk.push({k:'b',id:p.id,min:[p.x-24,y,p.z-20],max:[p.x+24,y+38,p.z+20]});
+   pk.push({k:'b',id:p.id,min:[p.x-19,y,p.z-16],max:[p.x+19,y+30,p.z+16]});
    lab(built?B[p.id].n:p.name,[p.x,y+(built?29:8),p.z]);
   });
  }
