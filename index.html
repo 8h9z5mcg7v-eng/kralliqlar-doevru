@@ -244,7 +244,7 @@ let tab="city",lastMsg="",mapPanel="monsters",techPage="";
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0,store:0,gather:0,march:0,training:0,wall:0,hospital:0,scout:0,build:0,research:0,foodcraft:0,woodcraft:0,stonecraft:0,infantry:0,archery:0,cavalry:0,swift:0},S.tech||{});
-S.academyLevel=Math.max(0,Math.min(30,Number(S.academyLevel)||0));S.academyBuild=S.academyBuild||null;S.researchJob=S.researchJob||null;S.trainingJob=S.trainingJob||null;S.trainingQueue=Array.isArray(S.trainingQueue)?S.trainingQueue:[];S.actionLog=Array.isArray(S.actionLog)?S.actionLog:[];
+S.academyLevel=Math.max(0,Math.min(30,Number(S.academyLevel)||0));S.academyBuild=S.academyBuild||null;S.researchJob=S.researchJob||null;S.trainingJob=S.trainingJob||null;S.trainingQueue=Array.isArray(S.trainingQueue)?S.trainingQueue:[];
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
 S.march=S.march||null;S.gather=S.gather||null;S.monsterMarch=S.monsterMarch||null;S.monstersDefeated=S.monstersDefeated||{};S.monsterLevelUnlocked=Math.max(1,Math.min(50,Number(S.monsterLevelUnlocked)||1));S.wounded=S.wounded||{inf:0,arc:0,cav:0};S.monsterLoot=Object.assign({relic:0,crystal:0,medal:0},S.monsterLoot||{});S.heroGear=Object.assign({weapon:0,armor:0,amulet:0},S.heroGear||{});S.heroGearFragments=Object.assign({weapon:0,armor:0,amulet:0},S.heroGearFragments||{});
 S.stats=S.stats||{wins:0,trained:0};S.claimed=S.claimed||{};S.camps=S.camps||[0,0,0,0,0,0];S.build=S.build||null;S.seen=S.seen||0;S.start=S.start||Date.now();S.kcd=S.kcd||{};if(S.ally===undefined)S.ally=null;S.lv.warehouse=S.lv.warehouse||0;S.lv.wall=S.lv.wall||0;S.lv.stable=S.lv.stable||0;S.lv.range=S.lv.range||0;S.lv.drill=S.lv.drill||0;S.stats.raids=S.stats.raids||0;if(!S.raidAt||S.raidAt<Date.now())S.raidAt=Date.now()+180000;S.daily=S.daily||"";
@@ -350,7 +350,7 @@ function sfx(t){
 }
 let tt=0;
 function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("on"),2200)}
-function actionFail(reason){const entry={time:Date.now(),text:reason};S.actionLog.unshift(entry);S.actionLog=S.actionLog.slice(0,8);lastMsg=reason;save();toast("⚠️ "+reason);render()}
+function actionFail(reason){lastMsg=reason;toast("⚠️ "+reason)}
 function paintMu(){document.getElementById("mu").textContent=muted?"🔇":"🔊"}
 document.getElementById("mu").addEventListener("click",()=>{muted=!muted;try{localStorage.setItem("krallig_mute",muted?"1":"0")}catch(e){}paintMu();sfx("ok")});
 paintMu();
