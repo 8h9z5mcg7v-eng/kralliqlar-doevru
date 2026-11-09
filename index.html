@@ -572,12 +572,12 @@ function attackKing(i){
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fbc02d"};
 const SLOT={
  castle:[150/300,150/300],
- barracks:[70/300,102/300],range:[230/300,102/300],
- stable:[70/300,198/300],drill:[230/300,198/300],
- hospital:[150/300,62/300],tent:[150/300,238/300],
- farm:[18/300,18/300],saw:[18/300,150/300],
- quarry:[282/300,18/300],mine:[282/300,150/300],
- warehouse:[18/300,282/300],wall:[150/300,264/300]
+ barracks:[78/300,122/300],range:[222/300,122/300],
+ stable:[78/300,178/300],drill:[222/300,178/300],
+ hospital:[150/300,72/300],tent:[150/300,228/300],
+ farm:[12/300,90/300],saw:[12/300,210/300],
+ quarry:[288/300,90/300],mine:[288/300,210/300],
+ warehouse:[150/300,12/300],wall:[150/300,264/300]
 };
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
@@ -870,7 +870,7 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
    if(id==='wall')return;
    const core=['barracks','range','stable','drill','hospital','tent'].includes(id);
    const s=(id==='castle'?1.08:(core?.82:1.02))*(1+Math.min(l,8)*.02);
-   const pw=id==='castle'?116:(core?62:90),pd=id==='castle'?108:(core?58:78);
+   const pw=id==='castle'?116:(core?56:(['farm','saw','quarry','mine','warehouse'].includes(id)?58:90)),pd=id==='castle'?108:(core?52:(['farm','saw','quarry','mine','warehouse'].includes(id)?50:78));
    const y=addCityPad(x,z,s,pw,pd);TR={x,y,z,s};const a0=VB.length/12;
    if(l)GM[id](l);else GM.site();
    pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});
@@ -902,10 +902,10 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
   });
   /* Əlavə resurs sahələri: ferma, mişar, daş və qızıl */
   const resourceSlots=[
-   {id:'farm',x:48,z:42,name:'Ferma sahəsi'},
-   {id:'saw',x:48,z:258,name:'Taxta sahəsi'},
-   {id:'ironMine',x:252,z:42,name:'Dəmir sahəsi'},
-   {id:'mine',x:252,z:258,name:'Qızıl sahəsi'}
+   {id:'farm',x:18,z:120,name:'Ferma sahəsi'},
+   {id:'saw',x:18,z:180,name:'Taxta sahəsi'},
+   {id:'ironMine',x:282,z:120,name:'Dəmir sahəsi'},
+   {id:'mine',x:282,z:180,name:'Qızıl sahəsi'}
   ];
   resourceSlots.forEach(p=>{
    const built=(Number(S.resourceCount?.[p.id])||0)>=2,sc=.36,pw=36,pd=30,y=addCityPad(p.x,p.z,sc,pw,pd);
