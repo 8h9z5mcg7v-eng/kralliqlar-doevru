@@ -782,7 +782,7 @@ function returnTroops(t){for(const k of ["inf","arc","cav"])S.army[k]+=Math.max(
 function tickGather(){if(!S.gather)return;const g=S.gather,left=g.end-Date.now(),el=document.getElementById("gatherTimer");if(left>0){if(el)el.textContent=(g.phase==="out"?"Resurs nöqtəsinə yürüş":"Qalaya qayıdış")+" · "+Math.ceil(left/1000)+" san";const marker=document.getElementById("gatherTroop");if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},f=Math.max(0,Math.min(1,1-left/Math.max(1,g.sec*1000))),p=g.phase==="out"?f:1-f;marker.setAttribute("transform","translate("+((home.x+(g.x-home.x)*p)*30+15)+" "+((home.y+(g.y-home.y)*p)*30+15)+")")}return}if(g.phase==="out"){addRes(g.key,g.amount);g.phase="back";g.end=Date.now()+g.sec*1000;lastMsg="📦 "+g.amount+" "+R[g.key][1]+" toplandı. Ordu geri qayıdır.";save();if(tab==="map")render()}else{returnTroops(g.troops||{});S.gather=null;lastMsg="🏰 Ordu qalaya qayıtdı. Sağ qalan qoşunlar yenidən orduna qoşuldu.";save();if(tab==="map")render()}}
 function tickMonster(){
  if(!S.monsterMarch)return;
- const m=S.monsterMarch,left=m.end-Date.now(),el=document.getElementById("gatherTimer");
+ const m=S.monsterMarch;m.troops=m.troops||{inf:0,arc:0,cav:0};m.phase=m.phase||"out";const left=m.end-Date.now(),el=document.getElementById("gatherTimer");
  if(left>0){
   if(el)el.textContent=(m.phase==="back"?"🏰 Qalaya qayıdış":"🐺 Canavar düşərgəsinə yürüş")+" · "+Math.ceil(left/1000)+" san";
   const marker=document.getElementById("gatherTroop");
