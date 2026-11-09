@@ -244,6 +244,7 @@ let tab="city",lastMsg="",mapPanel="monsters",techPage="";
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0,store:0,gather:0,march:0,training:0,wall:0,hospital:0,scout:0,build:0,research:0,foodcraft:0,woodcraft:0,stonecraft:0,infantry:0,archery:0,cavalry:0,swift:0},S.tech||{});
+S.troops=S.troops||{};for(const k of ["inf","arc","cav"]){if(!Array.isArray(S.troops[k])){S.troops[k]=Array(10).fill(0);S.troops[k][0]=Math.max(0,Number(S.army[k])||0)}else{S.troops[k]=Array.from({length:10},(_,i)=>Math.max(0,Number(S.troops[k][i])||0))}S.army[k]=S.troops[k].reduce((a,b)=>a+b,0)}
 S.academyLevel=Math.max(0,Math.min(30,Number(S.academyLevel)||0));S.academyBuild=S.academyBuild||null;S.researchJob=S.researchJob||null;S.trainingJob=S.trainingJob||null;S.trainingQueue=Array.isArray(S.trainingQueue)?S.trainingQueue:[];
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
 S.march=S.march||null;S.gather=S.gather||null;S.monsterMarch=S.monsterMarch||null;S.monstersDefeated=S.monstersDefeated||{};S.monsterLevelUnlocked=Math.max(1,Math.min(50,Number(S.monsterLevelUnlocked)||1));S.wounded=S.wounded||{inf:0,arc:0,cav:0};S.monsterLoot=Object.assign({relic:0,crystal:0,medal:0},S.monsterLoot||{});S.heroGear=Object.assign({weapon:0,armor:0,amulet:0},S.heroGear||{});S.heroGearFragments=Object.assign({weapon:0,armor:0,amulet:0},S.heroGearFragments||{});
@@ -260,18 +261,27 @@ const prod=()=>{const p={food:0,wood:0,stone:0,gold:0},tb=territoryBonus()*cryst
 const cost=id=>{const o={};for(const k in B[id].c)o[k]=Math.ceil(B[id].c[k]*Math.pow(1.6,S.lv[id]));return o};
 const afford=c=>Object.keys(c).every(k=>S.res[k]>=c[k]);
 const fmtC=c=>Object.keys(c).map(k=>R[k][0]+c[k]).join(" ");
-const armyN=()=>S.army.inf+S.army.arc+S.army.cav;
+const armyN=()=>["inf","arc","cav"].reduce((a,k)=>a+syncArmy(k),0);
 const armyCap=()=>10+20*S.lv.barracks+5*S.tech.training;
 const troopTech=k=>1+.08*(k==="inf"?S.tech.infantry:k==="arc"?S.tech.archery:S.tech.cavalry);
-const power=()=>Math.round(Object.keys(T).reduce((a,k)=>a+S.army[k]*T[k].pw*(1+.04*S.lv[MIL[k]])*troopTech(k),0)*(1+.1*S.tech.pow+.05*S.tech.march+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0))*relicBonus()*gearBonus());
+const power=()=>Math.round(["inf","arc","cav"].reduce((a,k)=>a+tierArmyPower(k),0)*(1+.1*S.tech.pow+.05*S.tech.march+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0))*relicBonus()*gearBonus());
 const TECH={prod:{n:"Ümumi istehsal",i:"🌱",d:"Bütün resurs istehsalı +15% / səviyyə",branch:"eco",c:{wood:200,stone:100}},foodcraft:{n:"Əkinçilik",i:"🌾",d:"Taxıl istehsalı +8% / səviyyə",branch:"eco",c:{food:180,wood:80}},woodcraft:{n:"Ağackəsmə",i:"🪓",d:"Odun istehsalı +8% / səviyyə",branch:"eco",c:{wood:180,food:80}},stonecraft:{n:"Daş karxanası",i:"⛏️",d:"Daş istehsalı +8% / səviyyə",branch:"eco",c:{stone:180,wood:100}},store:{n:"Anbarçılıq",i:"🏚️",d:"Resurs saxlama limiti +10% / səviyyə",branch:"eco",c:{wood:220,stone:130}},gather:{n:"Toplayıcılıq",i:"⛏️",d:"Xəritədən resurs toplama +10% / səviyyə",branch:"eco",c:{food:180,wood:180}},pow:{n:"Hərbi təlim",i:"🎖️",d:"Bütün qoşunların hücum gücü +10% / səviyyə",branch:"army",c:{food:200,gold:60}},infantry:{n:"Piyada ustalığı",i:"🛡️",d:"Piyada hücumu +8% / səviyyə",branch:"army",c:{food:220,wood:120}},archery:{n:"Oxçuluq",i:"🏹",d:"Oxatan hücumu +8% / səviyyə",branch:"army",c:{wood:240,gold:70}},cavalry:{n:"Süvari taktikası",i:"🐎",d:"Süvari hücumu +8% / səviyyə",branch:"army",c:{food:260,stone:100}},swift:{n:"Sürətli yürüş",i:"💨",d:"Xəritə yürüş vaxtı −5% / səviyyə",branch:"army",c:{food:220,gold:90}},march:{n:"Yürüş taktikası",i:"🐎",d:"Yürüş ordusunun gücü +5% / səviyyə",branch:"army",c:{food:240,gold:90}},training:{n:"Çağırış sistemi",i:"🛡️",d:"Ordu limiti +5 və təlim sürəti +8% / səviyyə",branch:"army",c:{food:260,wood:120}},wall:{n:"Möhkəmləndirilmiş divarlar",i:"🧱",d:"Canavar itkiləri −4%, şəhər müdafiəsi +8% / səviyyə",branch:"def",c:{stone:240,wood:160}},hospital:{n:"Tibb bilikləri",i:"🏥",d:"Yaralıların müalicə xərci −8% / səviyyə",branch:"def",c:{food:260,gold:100}},scout:{n:"Kəşfiyyat",i:"🦅",d:"Canavar qəniməti +8%, döyüş itkiləri −2% / səviyyə",branch:"def",c:{wood:220,gold:110}},loot:{n:"Qarət sənəti",i:"💰",d:"Düşərgə döyüşlərindən qənimət +20% / səviyyə",branch:"army",c:{wood:150,gold:80}},cheap:{n:"Təchizat",i:"📦",d:"Əsgər qiyməti −6% / səviyyə",branch:"dev",c:{food:250,stone:150}},build:{n:"Memarlıq",i:"🏗️",d:"Bina tikinti vaxtı −5% / səviyyə",branch:"dev",c:{wood:260,stone:180}},research:{n:"Elmi metod",i:"📚",d:"Texnologiya tədqiqatı xərci −5% / səviyyə",branch:"dev",c:{gold:130,stone:220}}};
 const TECH_BRANCHES=[["eco","🌾 Resurslar və iqtisadiyyat",["prod","foodcraft","woodcraft","stonecraft","store","gather"]],["army","⚔️ Hərbi tədqiqatlar",["pow","infantry","archery","cavalry","march","swift","training","loot"]],["def","🏰 Şəhər müdafiəsi",["wall","hospital","scout"]],["dev","🔬 Şəhərin inkişafı",["cheap","build","research"]]];
 const TECH_MAX={prod:10,foodcraft:10,woodcraft:10,stonecraft:10,store:10,gather:15,pow:10,infantry:7,archery:7,cavalry:7,swift:10,march:10,training:20,loot:10,wall:10,hospital:10,scout:5,cheap:10,build:10,research:10};
 const maxTechLevel=k=>TECH_MAX[k]||10;
 const totalTechLevels=keys=>keys.reduce((n,k)=>n+maxTechLevel(k),0);
 const tCost=k=>{const o={};for(const r in TECH[k].c)o[r]=Math.ceil(TECH[k].c[r]*Math.pow(1.7,S.tech[k])*(1-.05*S.tech.research));return o};
-const trCost=(k,n)=>{const o={},m=1-.06*S.tech.cheap;for(const r in T[k].c)o[r]=Math.ceil(T[k].c[r]*n*m);return o};
-const trainingSeconds=(k,n)=>Math.max(5,Math.ceil(n*(k==="cav"?14:k==="arc"?10:8)/(1+.08*S.tech.training+.05*S.lv.drill)));
+const troopTierName=(k,t)=>TROOP_TIER_NAMES[k][Math.max(0,Math.min(9,(Number(t)||1)-1))];
+const troopTierOpen=(k,t)=>Number(S.lv[k==="inf"?"barracks":k==="arc"?"range":"stable"])>=TROOP_TIER_UNLOCK[t-1];
+const troopTierPower=(k,t)=>T[k].pw*Math.pow(1.2,t-1);
+const troopTierCost=(k,t,n)=>{const o={},m=(1-.06*S.tech.cheap)*Math.pow(1.65,t-1);for(const r in T[k].c)o[r]=Math.ceil(T[k].c[r]*n*m);return o};
+const trCost=(k,n,t=1)=>troopTierCost(k,t,n);
+const trainingSeconds=(k,n,t=1)=>Math.max(5,Math.ceil(n*(k==="cav"?14:k==="arc"?10:8)*Math.pow(1.28,t-1)/(1+.08*S.tech.training+.05*S.lv.drill)));
+const syncArmy=k=>{S.army[k]=S.troops[k].reduce((a,b)=>a+b,0);return S.army[k]};
+const tierArmyPower=k=>S.troops[k].reduce((a,n,i)=>a+n*troopTierPower(k,i+1)*(1+.04*S.lv[MIL[k]])*troopTech(k),0);
+const removeTierTroops=(k,n)=>{let left=Math.min(syncArmy(k),Math.max(0,n));const removed=Array(10).fill(0);for(let i=0;i<10&&left>0;i++){const take=Math.min(S.troops[k][i],left);S.troops[k][i]-=take;removed[i]=take;left-=take}syncArmy(k);return removed};
+const addTierTroops=(k,arr)=>{for(let i=0;i<10;i++)S.troops[k][i]+=Math.max(0,Number(arr?.[i])||0);syncArmy(k)};
+const loseTierTroops=(k,n)=>removeTierTroops(k,n).reduce((a,b)=>a+b,0);
 const trainingSpeedCost=()=>S.trainingJob?Math.max(1,Math.ceil((S.trainingJob.end-Date.now())/5000)):0;
 const capped=id=>id!=="castle"&&S.lv[id]>=S.lv.castle;
 
@@ -282,7 +292,7 @@ function bCard(id){
  <button data-a="up" data-id="${id}" data-cap="${cp?1:0}" data-c='${JSON.stringify(c)}'>${cp?"Qalanı yüksəlt":(l?"Yüksəlt":"Tik")}<small>${cp?"":fmtC(c)+" · "+fmtDuration(buildSec(id))}</small></button></div>`;
 }
 function pendingTrainingCount(){return (S.trainingJob?S.trainingJob.count:0)+S.trainingQueue.reduce((n,j)=>n+(Number(j.count)||0),0)}
-function trainingQueueHtml(){const j=S.trainingJob,left=j?Math.max(0,j.end-Date.now()):0,bonus=S.tech.training*8+S.lv.drill*5;return `<div class="card" style="margin:10px 0"><div class="ic">⏳</div><div class="in"><b>Təlim növbəsi · ${j?1:0}/${S.trainingQueue.length+ (j?1:0)} aktiv</b><div class="mut">${j?`Hazırlanır: ${T[j.id]?.n||"Ordu"} · ${j.count} əsgər · <span id="trainingTimer">${fmtDuration(Math.ceil(left/1000))}</span>`:"Hazırda təlim yoxdur"}</div><div class="mut">Gözləyən sifarişlər: ${S.trainingQueue.length}/4 · Sürət bonusu: +${bonus}%</div>${j?`<button type="button" data-a="ts" id="trainingSpeedBtn">Dərhal bitir 🪙${trainingSpeedCost()}</button>`:""}${S.trainingQueue.map((q,i)=>`<div class="map-panel-item" style="padding-top:5px"><span>${i+1}. ${T[q.id]?.n||"Ordu"} — ${q.count} əsgər · ${fmtDuration(trainingSeconds(q.id,q.count))}</span><button type="button" data-a="tc" data-id="${i}">Ləğv et</button></div>`).join("")}</div><span class="badge">${j?"Təlimdə":"Hazır"}</span></div>`}
+function trainingQueueHtml(){const j=S.trainingJob,left=j?Math.max(0,j.end-Date.now()):0,bonus=S.tech.training*8+S.lv.drill*5;return `<div class="card" style="margin:10px 0"><div class="ic">⏳</div><div class="in"><b>Təlim növbəsi · ${j?1:0}/${S.trainingQueue.length+ (j?1:0)} aktiv</b><div class="mut">${j?`Hazırlanır: ${(T[j.id]?.n||"Ordu")+" T"+(j.tier||1)+" "+(j.tier?troopTierName(j.id,j.tier):"")} · ${j.count} əsgər · <span id="trainingTimer">${fmtDuration(Math.ceil(left/1000))}</span>`:"Hazırda təlim yoxdur"}</div><div class="mut">Gözləyən sifarişlər: ${S.trainingQueue.length}/4 · Sürət bonusu: +${bonus}%</div>${j?`<button type="button" data-a="ts" id="trainingSpeedBtn">Dərhal bitir 🪙${trainingSpeedCost()}</button>`:""}${S.trainingQueue.map((q,i)=>`<div class="map-panel-item" style="padding-top:5px"><span>${i+1}. ${T[q.id]?.n||"Ordu"} — ${q.count} əsgər · ${fmtDuration(trainingSeconds(q.id,q.count,q.tier||1))}</span><button type="button" data-a="tc" data-id="${i}">Ləğv et</button></div>`).join("")}</div><span class="badge">${j?"Təlimdə":"Hazır"}</span></div>`}
 const TROOP_TIER_UNLOCK=[1,4,7,10,13,16,19,22,26,30];
 const TROOP_TIER_NAMES={
  inf:["Milis","Piyada","Nizəli","Qılınclı","Lansçı","Nəcib qılınclı","Qvardiyaçı","Ağır nizəli","Halberdçi","Berserk"],
@@ -300,9 +310,8 @@ function troopTierCatalogHtml(){
  }).join("");
 }
 function tCard(k){
- const t=T[k],full=false;
- return `<div class="card" id="u-${k}"><div class="ic">${t.i}</div><div class="in"><b>${t.n}</b><span class="lv">${S.army[k]}</span><div class="mut">Güc ${t.pw} · ${fmtC(trCost(k,1))} · ${fmtDuration(trainingSeconds(k,1))}/ədəd</div></div>
- <div class="row" style="flex:0 0 130px"><button data-a="tr" data-id="${k}" data-n="1" ${full?"disabled":""}>+1</button><button data-a="tr" data-id="${k}" data-n="5" ${full?"disabled":""}>+5</button></div></div>`;
+ const t=T[k],building=k==="inf"?"barracks":k==="arc"?"range":"stable",lv=S.lv[building]||0;
+ return `<div class="card" id="u-${k}" style="display:block"><div class="row" align="center"><div class="ic">${t.i}</div><div class="in"><b>${t.n} · ${syncArmy(k)} nəfər</b><div class="mut">${B[building].n}: səviyyə ${lv} · Ümumi güc ${Math.round(tierArmyPower(k))}</div></div></div>${TROOP_TIER_NAMES[k].map((name,i)=>{const tier=i+1,open=troopTierOpen(k,tier),count=S.troops[k][i],cost=trCost(k,1,tier);return `<div class="map-panel-item" style="gap:6px;align-items:center"><span style="flex:1;min-width:0">${open?"🔓":"🔒"} <b>T${tier}</b> · ${name}<small style="display:block">${count} nəfər · Güc ${Math.round(troopTierPower(k,tier))} · ${fmtC(cost)} · ${fmtDuration(trainingSeconds(k,1,tier))}/ədəd</small></span><span style="display:flex;gap:4px;flex-wrap:nowrap">${open?`<button data-a="tr" data-id="${k}" data-tier="${tier}" data-n="1">+1</button><button data-a="tr" data-id="${k}" data-tier="${tier}" data-n="5">+5</button>`:`<small>Bin. ${TROOP_TIER_UNLOCK[i]}</small>`}</span></div>`}).join("")}</div>`;
 }
 const Q=[
  {id:"q1",n:"Qızıl mədənini tik",ok:()=>S.lv.mine>=1,rw:{wood:150,stone:80}},
@@ -345,7 +354,7 @@ function fmtDuration(sec){sec=Math.max(0,Math.ceil(Number(sec)||0));const d=Math
 function buildSec(id){return Math.max(5,Math.round(20*Math.pow(1.5,S.lv[id])*(id==="castle"?2:1)*(S.ally===2?.75:1)*(1-.05*S.tech.build)))}
 function speedCost(){return S.build?Math.max(1,Math.ceil((S.build.end-Date.now())/5000)):0}
 const buildHtml=()=>S.build?`<div class="card" style="margin-top:10px"><div class="ic">⏳</div><div class="in"><b>${B[S.build.id].n} yüksəldilir</b><div class="mut" id="bt"></div></div><button data-a="sp" id="bs"></button></div>`:"";
-function tickTraining(){if(!S.trainingJob&&S.trainingQueue.length){const next=S.trainingQueue.shift();next.started=Date.now();next.end=Date.now()+trainingSeconds(next.id,next.count)*1000;S.trainingJob=next;save();render()}if(!S.trainingJob)return;const j=S.trainingJob,left=j.end-Date.now(),el=document.getElementById("trainingTimer");if(left>0){if(el)el.textContent=fmtDuration(Math.ceil(left/1000));const sb=document.getElementById("trainingSpeedBtn");if(sb){sb.textContent="Dərhal bitir 🪙"+trainingSpeedCost();sb.disabled=S.res.gold<trainingSpeedCost()}return}S.army[j.id]=(Number(S.army[j.id])||0)+j.count;S.stats.trained=(Number(S.stats.trained)||0)+j.count;popId=j.id;popN=j.count;S.trainingJob=null;if(S.trainingQueue.length){const next=S.trainingQueue.shift();next.started=Date.now();next.end=Date.now()+trainingSeconds(next.id,next.count)*1000;S.trainingJob=next}save();render();sfx("done");toast("⚔️ "+j.count+" "+T[j.id].n+" hazırdır!");}
+function tickTraining(){if(!S.trainingJob&&S.trainingQueue.length){const next=S.trainingQueue.shift();next.started=Date.now();next.end=Date.now()+trainingSeconds(next.id,next.count)*1000;S.trainingJob=next;save();render()}if(!S.trainingJob)return;const j=S.trainingJob,left=j.end-Date.now(),el=document.getElementById("trainingTimer");if(left>0){if(el)el.textContent=fmtDuration(Math.ceil(left/1000));const sb=document.getElementById("trainingSpeedBtn");if(sb){sb.textContent="Dərhal bitir 🪙"+trainingSpeedCost();sb.disabled=S.res.gold<trainingSpeedCost()}return}S.troops[j.id][(j.tier||1)-1]+=j.count;syncArmy(j.id);S.stats.trained=(Number(S.stats.trained)||0)+j.count;popId=j.id;popN=j.count;S.trainingJob=null;if(S.trainingQueue.length){const next=S.trainingQueue.shift();next.started=Date.now();next.end=Date.now()+trainingSeconds(next.id,next.count)*1000;S.trainingJob=next}save();render();sfx("done");toast("⚔️ "+j.count+" "+troopTierName(j.id,j.tier||1)+" hazırdır!");}
 function tickBuild(){
  if(!S.build)return;
  const left=S.build.end-Date.now();
@@ -398,7 +407,7 @@ function attackKing(i){
  if(!my){lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";return}
  const kp=board().find(r=>r[3]===i)[1],win=effPower(KT[i])/kp*(.85+Math.random()*.3)>=1;
  const rate=win?.08+Math.random()*.12:.3+Math.random()*.2;
- let lost=0;const lostBy={inf:0,arc:0,cav:0},hurtBy={inf:0,arc:0,cav:0};for(const k of ["inf","arc","cav"]){const l=Math.min(S.army[k],Math.round(S.army[k]*rate));S.army[k]-=l;lost+=l;lostBy[k]=l;hurtBy[k]=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurtBy[k];}
+ let lost=0;const lostBy={inf:0,arc:0,cav:0},hurtBy={inf:0,arc:0,cav:0};for(const k of ["inf","arc","cav"]){const l=loseTierTroops(k,Math.round(S.army[k]*rate));lost+=l;lostBy[k]=l;hurtBy[k]=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurtBy[k];}
  S.kcd[i]=Date.now()+120000;
  const up=gainXp(win?25+Math.round(kp/20):5),upT=up?" 👑 Sərkərdə "+S.hero.lv+". səviyyəyə yüksəldi!":"";
  if(win){S.stats.wins++;S.territories[i]={capturedAt:Date.now(),name:KINGS[i][0]};const m=1+.2*S.tech.loot+.05*S.hero.sk.loot,loot={food:Math.round(kp*.75*m),wood:Math.round(kp*.75*m),stone:Math.round(kp*.5*m),gold:Math.round(kp*.2*m)};for(const k in loot)S.res[k]+=loot[k];
@@ -474,7 +483,7 @@ let notice="";
 const BEATS={inf:"cav",cav:"arc",arc:"inf"};
 const ETYPE=["inf","cav","arc","inf","cav","arc"],KT=["inf","arc","cav","inf"];
 function effPower(type){
- let s=0;for(const k in T){let m=1;if(BEATS[k]===type)m=1.3;else if(BEATS[type]===k)m=.75;s+=S.army[k]*T[k].pw*m*(1+.04*S.lv[MIL[k]])*troopTech(k)}
+ let s=0;for(const k in T){let m=1;if(BEATS[k]===type)m=1.3;else if(BEATS[type]===k)m=.75;s+=tierArmyPower(k)*m}
  return Math.round(s*(1+.1*S.tech.pow+.05*S.tech.march+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0))*relicBonus()*gearBonus());
 }
 const skPts=()=>S.hero.lv-1-S.hero.sk.atk-S.hero.sk.eco-S.hero.sk.loot;
@@ -871,8 +880,8 @@ function armyPickerMarkup(x,y,kind,key){
  return "<div style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:9px 0'>"+["inf","arc","cav"].map(k=>"<label style='font-size:11px;color:var(--mut)'>"+labels[k]+"<input data-army='"+k+"' type='number' min='0' max='"+S.army[k]+"' value='"+S.army[k]+"' style='width:100%;min-width:0;padding:7px;margin-top:3px'></label>").join("")+"</div><button type='button' data-world-action='"+kind+"' data-x='"+x+"' data-y='"+y+"' "+(key?"data-resource='"+key+"'":"")+">"+(kind==="monster"?"⚔️ Seçilmiş ordu ilə hücum et":"⚔️ Seçilmiş ordunu göndər")+"</button>";
 }
 function selectedTroops(){const out={inf:0,arc:0,cav:0};document.querySelectorAll("#slotInfo [data-army]").forEach(i=>{const k=i.dataset.army;out[k]=Math.max(0,Math.min(S.army[k],Math.floor(Number(i.value)||0)))});return out}
-function troopPower(t){return Math.round((t.inf*T.inf.pw*troopTech("inf")+t.arc*T.arc.pw*1.18*troopTech("arc")+t.cav*T.cav.pw*1.08*troopTech("cav"))*(1+.1*S.tech.pow+.05*S.tech.march+.03*(S.hero.lv-1)+.04*S.hero.sk.atk)*relicBonus()*medalBonus()*gearBonus())}
-function returnTroops(t){for(const k of ["inf","arc","cav"])S.army[k]+=Math.max(0,Number(t[k])||0)}
+function troopPower(t){const avg=k=>S.army[k]>0?t[k]*tierArmyPower(k)/S.army[k]:t[k]*T[k].pw*troopTech(k);return Math.round((avg("inf")+avg("arc")*1.18+avg("cav")*1.08)*(1+.1*S.tech.pow+.05*S.tech.march+.03*(S.hero.lv-1)+.04*S.hero.sk.atk)*relicBonus()*medalBonus()*gearBonus())}
+function returnTroops(t){for(const k of ["inf","arc","cav"]){S.troops[k][0]+=Math.max(0,Number(t[k])||0);syncArmy(k)}}
 function tickGather(){if(!S.gather)return;const g=S.gather,left=g.end-Date.now(),el=document.getElementById("gatherTimer");if(left>0){if(el)el.textContent=(g.phase==="out"?"Resurs nöqtəsinə yürüş":"Qalaya qayıdış")+" · "+Math.ceil(left/1000)+" san";const marker=document.getElementById("gatherTroop");if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},f=Math.max(0,Math.min(1,1-left/Math.max(1,g.sec*1000))),p=g.phase==="out"?f:1-f;marker.setAttribute("transform","translate("+((home.x+(g.x-home.x)*p)*30+15)+" "+((home.y+(g.y-home.y)*p)*30+15)+")")}return}if(g.phase==="out"){addRes(g.key,g.amount);g.phase="back";g.end=Date.now()+g.sec*1000;lastMsg="📦 "+g.amount+" "+R[g.key][1]+" toplandı. Ordu geri qayıdır.";save();if(tab==="map")render()}else{returnTroops(g.troops||{});S.gather=null;lastMsg="🏰 Ordu qalaya qayıtdı. Sağ qalan qoşunlar yenidən orduna qoşuldu.";save();if(tab==="map")render()}}
 function refreshMonsterRespawnTimer(){const el=document.querySelector("[data-monster-respawn]");if(!el)return;const x=Number(el.dataset.x),y=Number(el.dataset.y),left=monsterRespawnLeft(x,y);el.textContent=monsterRespawnText(left);if(left<=0&&tab==="map")render()}
 function tickMonster(){
@@ -936,7 +945,7 @@ function refresh(){
  document.querySelectorAll("button[data-a]").forEach(b=>{
   const a=b.dataset.a;
   if(a==="up"||a==="rs"){const blocked=b.dataset.cap==="1"||b.dataset.lock==="1"||b.dataset.academyLock==="1"||(a==="rs"&&(!!S.researchJob||S.academyLevel<1))||!afford(JSON.parse(b.dataset.c))||(a==="up"&&!!S.build);b.disabled=false;b.setAttribute("aria-disabled",blocked?"true":"false");b.classList.toggle("blocked-action",blocked)}
-  if(a==="tr"){b.disabled=false;const n=+b.dataset.n,blocked=S.trainingQueue.length>=4||!afford(trCost(b.dataset.id,n))||armyN()+pendingTrainingCount()+n>armyCap();b.setAttribute("aria-disabled",blocked?"true":"false");b.classList.toggle("blocked-action",blocked)}
+  if(a==="tr"){b.disabled=false;const n=+b.dataset.n,tier=+b.dataset.tier||1,blocked=!troopTierOpen(b.dataset.id,tier)||S.trainingQueue.length>=4||!afford(trCost(b.dataset.id,n,tier))||armyN()+pendingTrainingCount()+n>armyCap();b.setAttribute("aria-disabled",blocked?"true":"false");b.classList.toggle("blocked-action",blocked)}
  });
 }
 function attack(i){
@@ -946,13 +955,13 @@ function attack(i){
  const rate=win?.08+Math.random()*.12:.3+Math.random()*.2;
  const up=gainXp(win?15*(i+1):5),upT=up?" 👑 Sərkərdə "+S.hero.lv+". səviyyəyə yüksəldi!":"";
  let lost=0;const lostBy={inf:0,arc:0,cav:0},hurtBy={inf:0,arc:0,cav:0};
- for(const k of ["inf","arc","cav"]){const l=Math.min(S.army[k],Math.round(S.army[k]*rate));S.army[k]-=l;lost+=l;lostBy[k]=l;hurtBy[k]=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurtBy[k]}
+ for(const k of ["inf","arc","cav"]){const l=loseTierTroops(k,Math.round(S.army[k]*rate));lost+=l;lostBy[k]=l;hurtBy[k]=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurtBy[k]}
  if(win){S.stats.wins++;const m=(i+1)*(1+.2*S.tech.loot+.05*S.hero.sk.loot);S.camps[i]++;const loot={food:Math.round(60*m),wood:Math.round(60*m),stone:Math.round(30*m),gold:Math.round(15*m)};for(const k in loot)S.res[k]+=loot[k];
   lastMsg=`<span class="win">Qələbə!</span> ${E[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər (${casualtyDetails(lostBy,hurtBy)}).${upT}`}
  else lastMsg=`<span class="lose">Məğlubiyyət.</span> ${E[i][0]} çox güclü idi. İtki: ${lost} əsgər (${Math.floor(lost*.6)} yaralı, ${lost-Math.floor(lost*.6)} həlak).${upT}`;
  const ev=Math.random();
  if(win&&ev<.2){const g=20*(i+1)+Math.round(Math.random()*30);S.res.gold+=g;lastMsg+=` 🎁 Düşərgədə sandıq tapdın: +🪙${g}!`}
- else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d;lostBy[k]+=d;hurtBy[k]+=Math.floor(d*.6);S.wounded[k]=(Number(S.wounded[k])||0)+Math.floor(d*.6)}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
+ else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=loseTierTroops(k,r);r-=d;lostBy[k]+=d;hurtBy[k]+=Math.floor(d*.6);S.wounded[k]=(Number(S.wounded[k])||0)+Math.floor(d*.6)}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
 }
 document.getElementById("main").addEventListener("click",e=>{
  const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
@@ -967,7 +976,7 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="tc"){const i=Number(id),q=S.trainingQueue[i];if(!q)return;const refund=q.cost||trCost(q.id,q.count);for(const k in refund)addRes(k,Math.floor(refund[k]*.8));S.trainingQueue.splice(i,1);toast("Sifariş ləğv edildi · 80% resurs qaytarıldı")}
  if(a==="ts"&&S.trainingJob){const g=trainingSpeedCost();if(S.res.gold<g){toast("Sürətləndirmək üçün kifayət qədər qızıl yoxdur");return}S.res.gold-=g;S.trainingJob.end=Date.now();tickTraining();return}
  if(a==="up"){if(S.build)return;const c=cost(id);if(!afford(c)||capped(id))return;for(const k in c)S.res[k]-=c[k];S.build={id,end:Date.now()+buildSec(id)*1000};sel=null}
- if(a==="tr"){const n=+b.dataset.n,c=trCost(id,n);for(const k in c)S.res[k]-=c[k];const job={id,count:n,cost:{...c}};if(!S.trainingJob){job.started=Date.now();job.end=Date.now()+trainingSeconds(id,n)*1000;S.trainingJob=job;toast("⏳ "+T[id].n+" təlimə başladı")}else{S.trainingQueue.push(job);toast("📋 "+T[id].n+" təlim növbəsinə əlavə edildi")}}
+ if(a==="tr"){const n=+b.dataset.n,tier=+b.dataset.tier||1;if(!troopTierOpen(id,tier)){actionFail("Bu əsgər dərəcəsi üçün hərbi binanı "+TROOP_TIER_UNLOCK[tier-1]+"-ci səviyyəyə yüksəlt.");return}const c=trCost(id,n,tier);if(!afford(c)){actionFail("Bu əsgər dərəcəsi üçün resurs çatmır: "+fmtC(c));return}if(armyN()+pendingTrainingCount()+n>armyCap()){actionFail("Ordu limiti dolub.");return}for(const k in c)S.res[k]-=c[k];const job={id,tier,count:n,cost:{...c}};if(!S.trainingJob){job.started=Date.now();job.end=Date.now()+trainingSeconds(id,n,tier)*1000;S.trainingJob=job;toast("⏳ "+troopTierName(id,tier)+" təlimə başladı")}else{S.trainingQueue.push(job);toast("📋 "+troopTierName(id,tier)+" növbəyə əlavə edildi")}}
  if(a==="rs"){const pre=techPrerequisite(id),level=Number(S.tech[id])||0,requiredAcademy=academyRequirement(id,level+1);if(S.academyLevel<1){toast("Əvvəlcə Elmi Akademiyanı tik");return}if(S.researchJob){toast("Başqa tədqiqat artıq davam edir");return}if(S.academyLevel<requiredAcademy){toast("🏛️ Bu səviyyə üçün Elmi Akademiya "+requiredAcademy+"-ci səviyyə olmalıdır");return}if((pre&&(Number(S.tech[pre])||0)<1)||level>=maxTechLevel(id)){toast("🔒 Əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır");return}const c=tCost(id);if(!afford(c))return;for(const k in c)S.res[k]-=c[k];S.researchJob={id,started:Date.now(),end:Date.now()+researchSeconds(id)*1000};toast("🔬 Tədqiqat başladı: "+TECH[id].n)}
  if(a==="rst"){if(!rstArm){rstArm=true;render();return}nosave=true;try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}
  if(a==="sk"&&SK[id]&&skPts()>0)S.hero.sk[id]++;
