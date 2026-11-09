@@ -643,7 +643,7 @@ function sheetHtml(){
  </div>`:"";
  return `<div class="bk"></div><section class="sheet building-sheet">
   <div class="sheet-grab"></div>
-  <header class="building-sheet-head"><div class="building-sheet-icon">${bsv(sel,46)}</div><div class="building-sheet-name"><b>${b.n}</b><small>${l? "Şəhər infrastrukturu":"Yeni tikinti"} · ${S.lv[sel]}-ci səviyyə</small></div><button data-a="x" class="x" aria-label="Bağla">✕</button></header>
+  <header class="building-sheet-head"><div class="building-sheet-icon">${bsv(sel,46)}</div><div class="building-sheet-name"><b>${b.n}</b><small>${S.lv[sel]>0?"Şəhər infrastrukturu":"Yeni tikinti"} · ${S.lv[sel]}-ci səviyyə</small></div><button data-a="x" class="x" aria-label="Bağla">✕</button></header>
   ${activeHtml}
   <div class="building-sheet-content">${bCard(sel)}</div>
  </section>`;
