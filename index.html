@@ -234,7 +234,7 @@ try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.a
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0},S.tech||{});
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
-S.march=S.march||null;S.gather=S.gather||null;
+S.march=S.march||null;S.gather=S.gather||null;S.monsterMarch=S.monsterMarch||null;S.monstersDefeated=S.monstersDefeated||{};
 S.stats=S.stats||{wins:0,trained:0};S.claimed=S.claimed||{};S.camps=S.camps||[0,0,0,0,0,0];S.build=S.build||null;S.seen=S.seen||0;S.start=S.start||Date.now();S.kcd=S.kcd||{};if(S.ally===undefined)S.ally=null;S.lv.warehouse=S.lv.warehouse||0;S.lv.wall=S.lv.wall||0;S.lv.stable=S.lv.stable||0;S.lv.range=S.lv.range||0;S.lv.drill=S.lv.drill||0;S.stats.raids=S.stats.raids||0;if(!S.raidAt||S.raidAt<Date.now())S.raidAt=Date.now()+180000;S.daily=S.daily||"";
 const territoryCount=()=>Object.keys(S.territories||{}).filter(k=>!!S.territories[k]).length;
 const territoryBonus=()=>1+Math.min(territoryCount(),4)*.05;
@@ -711,7 +711,7 @@ function mapHtml(){
    const resourceType=v===0?"Daş yatağı":v===1?"Taxıl":"Odun";
    resources+="<g class='world-resource-node' data-world-resource='"+resourceType+"' data-x='"+x+"' data-y='"+y+"' pointer-events='all' transform='translate("+cx+" "+cy+")'><ellipse cy='7' rx='8' ry='3' fill='#17251a' opacity='.4'/><circle r='7' fill='#2a3525' stroke='#e0c17c' stroke-width='1.2'/><text text-anchor='middle' y='4' font-size='12'>"+glyph+"</text></g>";
   }
-  if(t==="forest"&&v===4)resources+="<g class='world-resource-node' data-world-resource='Canavar düşərgəsi' data-x='"+x+"' data-y='"+y+"' pointer-events='all' transform='translate("+cx+" "+cy+")'><ellipse cy='6' rx='8' ry='3' fill='#17251a' opacity='.4'/><text text-anchor='middle' y='5' font-size='15'>🐺</text></g>";
+  if(t==="forest"&&v===4)resources+="<g class='world-resource-node' data-world-resource='Canavar düşərgəsi' data-x='"+x+"' data-y='"+y+"' pointer-events='all' transform='translate("+cx+" "+cy+")'><ellipse cy='6' rx='8' ry='3' fill='#17251a' opacity='.4'/><text text-anchor='middle' y='5' font-size='15'>"+(S.monstersDefeated[x+","+y]?"☠️":"🐺")+"</text></g>";
  }
  let rulers="";
  rulers+=mapCastle(10,10,"Kral Arslan","#2e86c1",true);
@@ -731,8 +731,8 @@ function mapHtml(){
  let labels="";
  for(let i=0;i<=50;i+=5){labels+="<text x='"+(i*30+15)+"' y='14' font-size='10' fill='#fff0c7' stroke='#28371f' stroke-width='2' paint-order='stroke' text-anchor='middle'>"+i+"</text>";labels+="<text x='8' y='"+(i*30+20)+"' font-size='10' fill='#fff0c7' stroke='#28371f' stroke-width='2' paint-order='stroke'>"+i+"</text>"}
  let gatherMarker="";
- if(S.gather){
-  const g=S.gather,home=S.outpostSlot&&slots[Number(S.outpostSlot)-1]?slots[Number(S.outpostSlot)-1]:{x:25,y:25};
+ if(S.gather||S.monsterMarch){
+  const g=S.gather||S.monsterMarch,home=S.outpostSlot&&slots[Number(S.outpostSlot)-1]?slots[Number(S.outpostSlot)-1]:{x:25,y:25};
   const total=Math.max(1,g.sec*1000),remaining=Math.max(0,g.end-Date.now());
   const progress=Math.max(0,Math.min(1,1-remaining/total)),f=g.phase==="out"?progress:1-progress;
   const gx=(home.x+(g.x-home.x)*f)*30+15,gy=(home.y+(g.y-home.y)*f)*30+15;
@@ -754,7 +754,7 @@ function mapHtml(){
  "<g pointer-events='none'>"+river+roads+fields+rocks+trees+relief+detail+waterLines+parcelGrid+"</g>"+
  "<rect width='1500' height='1500' fill='url(#world-grass-grain)' pointer-events='none' opacity='.7'/>"+
  "<g pointer-events='none'>"+resources+rulers+labels+gatherMarker+"</g></svg></div>"+
- (S.gather?"<div class='slot-info' id='gatherTimer'>Ordu yürüşdədir...</div>":"")+"<div class='slot-info' id='slotInfo'>"+(selectedWorldSlot?"<b>🏰 Qala mövqeyi #"+selectedWorldSlot+"</b><span>Koordinat: X "+pos.x+" · Y "+pos.y+". "+(own?"Bu mövqe sənin cihazında ayrılıb.":"Bu torpaq sahəsi seçilib. Qalanı burada yerləşdirmək üçün ayır.")+"</span>"+(own?"<button type='button' data-world-action='release'>Yeri boşalt</button>":"<button type='button' data-world-action='claim'>Bu yerdə qala qur</button>"):"Xəritədə boş torpaq xanasına toxunaraq 1000 qala mövqeyindən birini seç.")+"</div>"+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":"");
+ (S.gather||S.monsterMarch?"<div class='slot-info' id='gatherTimer'>Ordu yürüşdədir...</div>":"")+"<div class='slot-info' id='slotInfo'>"+(selectedWorldSlot?"<b>🏰 Qala mövqeyi #"+selectedWorldSlot+"</b><span>Koordinat: X "+pos.x+" · Y "+pos.y+". "+(own?"Bu mövqe sənin cihazında ayrılıb.":"Bu torpaq sahəsi seçilib. Qalanı burada yerləşdirmək üçün ayır.")+"</span>"+(own?"<button type='button' data-world-action='release'>Yeri boşalt</button>":"<button type='button' data-world-action='claim'>Bu yerdə qala qur</button>"):"Xəritədə boş torpaq xanasına toxunaraq 1000 qala mövqeyindən birini seç.")+"</div>"+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":"");
 }
 function mapOld2(){
  let s=`<div class="sky" style="height:380px"><div class="world"><div class="slab"></div><div class="plot"></div>`;
@@ -773,6 +773,23 @@ function mapOld(){
  return s+"</div>"+(S.march?`<div class="mut" id="mt" style="margin-bottom:8px"></div>`:"");
 }
 function tickGather(){if(!S.gather)return;const g=S.gather,left=g.end-Date.now(),el=document.getElementById("gatherTimer");if(left>0){if(el)el.textContent=(g.phase==="out"?"Resurs nöqtəsinə yürüş":"Qalaya qayıdış")+" · "+Math.ceil(left/1000)+" san";const marker=document.getElementById("gatherTroop");if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},f=Math.max(0,Math.min(1,1-left/Math.max(1,g.sec*1000))),p=g.phase==="out"?f:1-f;marker.setAttribute("transform","translate("+((home.x+(g.x-home.x)*p)*30+15)+" "+((home.y+(g.y-home.y)*p)*30+15)+")")}return}if(g.phase==="out"){addRes(g.key,g.amount);g.phase="back";g.end=Date.now()+g.sec*1000;lastMsg="📦 "+g.amount+" "+R[g.key][1]+" toplandı. Ordu geri qayıdır.";save();if(tab==="map")render()}else{S.gather=null;lastMsg="🏰 Ordu qalaya qayıtdı.";save();if(tab==="map")render()}}
+function tickMonster(){
+ if(!S.monsterMarch)return;
+ const m=S.monsterMarch,left=m.end-Date.now(),el=document.getElementById("gatherTimer");
+ if(left>0){
+  if(el)el.textContent="🐺 Canavar düşərgəsinə yürüş · "+Math.ceil(left/1000)+" san";
+  const marker=document.getElementById("gatherTroop");
+  if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},p=Math.max(0,Math.min(1,1-left/Math.max(1,m.sec*1000)));marker.setAttribute("transform","translate("+((home.x+(m.x-home.x)*p)*30+15)+" "+((home.y+(m.y-home.y)*p)*30+15)+")")}
+  return;
+ }
+ S.monsterMarch=null;
+ const my=power(),win=my>=m.enemy*(.85+Math.random()*.3);
+ let lost=0;
+ for(const k of ["inf","arc","cav"]){const rate=win?.06+Math.random()*.10:.22+Math.random()*.20,l=Math.min(S.army[k],Math.round(S.army[k]*rate));S.army[k]-=l;lost+=l}
+ if(win){S.monstersDefeated[m.x+","+m.y]=1;const loot={food:50+Math.floor(Math.random()*51),wood:40+Math.floor(Math.random()*41),stone:35+Math.floor(Math.random()*36),gold:10+Math.floor(Math.random()*16)};for(const k in loot)addRes(k,loot[k]);gainXp(12);lastMsg="🏆 <span class='win'>Qələbə!</span> Canavar düşərgəsi təmizləndi. Qənimət: "+fmtC(loot)+". İtki: "+lost+" əsgər."}
+ else{gainXp(4);lastMsg="⚔️ <span class='lose'>Məğlubiyyət.</span> Canavarlar ordunu geri oturtdu. İtki: "+lost+" əsgər."}
+ save();if(tab==="map")render();
+}
 function tickMarch(){
  if(!S.march)return;
  const m=S.march,left=m.end-Date.now();
@@ -844,7 +861,7 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="sp"&&S.build){const g=speedCost();if(S.res.gold>=g){S.res.gold-=g;S.build.end=Date.now()}}
  if(a==="dl"&&S.daily!==dayKey()){const r=dailyRw();for(const k in r)S.res[k]+=r[k];S.daily=dayKey()}
  if(a==="cl"){const q=Q.find(x=>x.id===id);if(q&&q.ok()&&!S.claimed[id]){for(const k in q.rw)S.res[k]+=q.rw[k];S.claimed[id]=1;toast("🎯 Tapşırıq tamamlandı!")}}
- if(a==="mar"){if(S.march)return;if(!power())lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";else{lastMsg="";S.march={i:+id,end:Date.now()+marchSec(+id)*1000};selC=null}}
+ if(a==="mar"){if(S.march||S.gather||S.monsterMarch)return;if(!power())lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";else{lastMsg="";S.march={i:+id,end:Date.now()+marchSec(+id)*1000};selC=null}}
  sfx("ok");save();render();if(popId){const c=document.getElementById("u-"+popId);if(c){c.classList.add("pop");c.insertAdjacentHTML("beforeend","<span class='fl'>+"+popN+"</span>")}popId=""}
 });
 let mapZoom=1;
@@ -852,11 +869,11 @@ let selectedWorldSlot=Number(S.outpostSlot)||0;
 document.addEventListener("click",e=>{const b=e.target.closest("button[data-profile-save]");if(!b)return;const n=document.getElementById("kingdomNameInput"),r=document.getElementById("rulerNameInput");S.kingdomName=(n?.value||"").trim().slice(0,24)||"Mənim Krallığım";S.rulerName=(r?.value||"").trim().slice(0,24)||"Adsız Sərkərdə";save();lastMsg="Krallıq profili yadda saxlanıldı.";render()});
 document.addEventListener("click",e=>{const z=e.target.closest("button[data-mapzoom]");if(!z)return;e.preventDefault();const a=z.dataset.mapzoom;mapZoom=a==="reset"?1:Math.max(0.6,Math.min(2.4,mapZoom+(a==="in" ? 0.2 : -0.2)));const w=document.querySelector(".kingdom-world-svg");if(w){w.setAttribute("width",Math.round(1500*mapZoom));w.setAttribute("height",Math.round(1500*mapZoom));}const r=document.querySelector(".map-tools [data-mapzoom='reset']");if(r)r.textContent=Math.round(mapZoom*100)+"%";});
 document.addEventListener("click",e=>{const b=e.target.closest("nav button[data-tab]");if(!b)return;e.preventDefault();e.stopPropagation();const next=b.dataset.tab;if(!["city","army","tech","map"].includes(next))return;tab=next;rstArm=false;sel=null;selC=null;selK=null;if(tab!=="city")notice="";render();window.scrollTo(0,0)},true);
-document.addEventListener("click",e=>{const a=e.target.closest("button[data-world-action]");if(a){e.preventDefault();if(a.dataset.worldAction==="claim"&&selectedWorldSlot){S.outpostSlot=selectedWorldSlot;save();render()}else if(a.dataset.worldAction==="release"){delete S.outpostSlot;save();selectedWorldSlot=0;render()}else if(a.dataset.worldAction==="gather"&&!S.gather&&!S.march&&armyN()>0){const x=Number(a.dataset.x),y=Number(a.dataset.y),key=a.dataset.resource;const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25};const sec=Math.max(8,Math.min(35,Math.round(Math.hypot(x-home.x,y-home.y)*.75+8)));S.gather={x:x,y:y,key:key,amount:80,phase:"out",end:Date.now()+sec*1000,sec:sec};lastMsg="Ordu resurs nöqtəsinə yola düşdü.";save();render()}return}const node=e.target.closest(".kingdom-world-map [data-world-resource]");if(node){const box=document.getElementById("slotInfo");if(box){const kind=node.dataset.worldResource,x=node.dataset.x,y=node.dataset.y;const icon=kind==="Daş yatağı"?"⛏":kind==="Taxıl"?"🌾":kind==="Odun"?"🪵":"🐺";const key=kind==="Daş yatağı"?"stone":kind==="Taxıl"?"food":"wood";box.innerHTML="<b>"+icon+" "+kind+"</b><span>Koordinat: X "+x+" · Y "+y+"</span>"+(kind==="Canavar düşərgəsi"?"<small>Canavar düşərgəsi — döyüş hələ açılmayıb.</small>":(armyN()>0?"<button type='button' data-world-action='gather' data-x='"+x+"' data-y='"+y+"' data-resource='"+key+"'>⚔️ Ordu göndər</button>":"<small>Əvvəlcə ordu hazırla.</small>"));}return}const p=e.target.closest(".kingdom-world-map rect[data-slot]");if(!p)return;selectedWorldSlot=Number(p.dataset.slot);const box=document.getElementById("slotInfo");if(box){const own=Number(S.outpostSlot)===selectedWorldSlot,pt=worldSlots()[selectedWorldSlot-1];box.innerHTML="<b>🏰 Qala mövqeyi #"+selectedWorldSlot+"</b><span>Koordinat: X "+pt.x+" · Y "+pt.y+". "+(own?"Bu mövqe sənin cihazında ayrılıb.":"Bu torpaq sahəsi seçilib. Qalanı burada yerləşdirmək üçün ayır.")+"</span>"+(own?"<button type=\"button\" data-world-action=\"release\">Yeri boşalt</button>":"<button type=\"button\" data-world-action=\"claim\">Bu yerdə qala qur</button>")}document.querySelectorAll(".kingdom-world-map rect[data-slot]").forEach(c=>{const on=Number(c.dataset.slot)===selectedWorldSlot;c.setAttribute("stroke",on?"#fff3a6":"#263d25");c.setAttribute("stroke-width",on?"2.5":".8");c.setAttribute("fill",on?"#b5d47b":c.dataset.basefill)});});
+document.addEventListener("click",e=>{const a=e.target.closest("button[data-world-action]");if(a){e.preventDefault();if(a.dataset.worldAction==="claim"&&selectedWorldSlot){S.outpostSlot=selectedWorldSlot;save();render()}else if(a.dataset.worldAction==="release"){delete S.outpostSlot;save();selectedWorldSlot=0;render()}else if(a.dataset.worldAction==="monster"&&!S.monsterMarch&&!S.gather&&!S.march&&armyN()>0){const x=Number(a.dataset.x),y=Number(a.dataset.y),home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},sec=Math.max(8,Math.min(35,Math.round(Math.hypot(x-home.x,y-home.y)*.75+8))),enemy=60+((x*13+y*7)%120);S.monsterMarch={x,y,enemy,sec,end:Date.now()+sec*1000};lastMsg="Ordu canavar düşərgəsinə yola düşdü.";save();render()}else if(a.dataset.worldAction==="gather"&&!S.gather&&!S.march&&!S.monsterMarch&&armyN()>0){const x=Number(a.dataset.x),y=Number(a.dataset.y),key=a.dataset.resource;const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25};const sec=Math.max(8,Math.min(35,Math.round(Math.hypot(x-home.x,y-home.y)*.75+8)));S.gather={x:x,y:y,key:key,amount:80,phase:"out",end:Date.now()+sec*1000,sec:sec};lastMsg="Ordu resurs nöqtəsinə yola düşdü.";save();render()}return}const node=e.target.closest(".kingdom-world-map [data-world-resource]");if(node){const box=document.getElementById("slotInfo");if(box){const kind=node.dataset.worldResource,x=node.dataset.x,y=node.dataset.y;const icon=kind==="Daş yatağı"?"⛏":kind==="Taxıl"?"🌾":kind==="Odun"?"🪵":"🐺";const key=kind==="Daş yatağı"?"stone":kind==="Taxıl"?"food":"wood";box.innerHTML="<b>"+icon+" "+kind+"</b><span>Koordinat: X "+x+" · Y "+y+"</span>"+(kind==="Canavar düşərgəsi"?(S.monstersDefeated[x+","+y]?"<small>Bu düşərgə təmizlənib.</small>":(armyN()>0&&!S.gather&&!S.march&&!S.monsterMarch?"<small>Təxmini düşmən gücü: "+(60+((Number(x)*13+Number(y)*7)%120))+"</small><button type='button' data-world-action='monster' data-x='"+x+"' data-y='"+y+"'>⚔️ Canavarlara hücum et</button>":"<small>Əvvəlcə yürüşü tamamla və ordu hazırla.</small>")):(armyN()>0&&!S.monsterMarch?"<button type='button' data-world-action='gather' data-x='"+x+"' data-y='"+y+"' data-resource='"+key+"'>⚔️ Ordu göndər</button>":"<small>Əvvəlcə ordu hazırla.</small>"));}return}const p=e.target.closest(".kingdom-world-map rect[data-slot]");if(!p)return;selectedWorldSlot=Number(p.dataset.slot);const box=document.getElementById("slotInfo");if(box){const own=Number(S.outpostSlot)===selectedWorldSlot,pt=worldSlots()[selectedWorldSlot-1];box.innerHTML="<b>🏰 Qala mövqeyi #"+selectedWorldSlot+"</b><span>Koordinat: X "+pt.x+" · Y "+pt.y+". "+(own?"Bu mövqe sənin cihazında ayrılıb.":"Bu torpaq sahəsi seçilib. Qalanı burada yerləşdirmək üçün ayır.")+"</span>"+(own?"<button type=\"button\" data-world-action=\"release\">Yeri boşalt</button>":"<button type=\"button\" data-world-action=\"claim\">Bu yerdə qala qur</button>")}document.querySelectorAll(".kingdom-world-map rect[data-slot]").forEach(c=>{const on=Number(c.dataset.slot)===selectedWorldSlot;c.setAttribute("stroke",on?"#fff3a6":"#263d25");c.setAttribute("stroke-width",on?"2.5":".8");c.setAttribute("fill",on?"#b5d47b":c.dataset.basefill)});});
 let nosave=false;
 function save(){if(nosave)return;S.t=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let last=Date.now(),acc=0;
-setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);refresh();tickMarch();tickGather();tickBuild();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
+setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);refresh();tickMarch();tickGather();tickMonster();tickBuild();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 if(!S.seen)showWelcome();
