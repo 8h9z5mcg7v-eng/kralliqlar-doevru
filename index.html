@@ -452,7 +452,7 @@ const BEATS={inf:"cav",cav:"arc",arc:"inf"};
 const ETYPE=["inf","cav","arc","inf","cav","arc"],KT=["inf","arc","cav","inf"];
 function effPower(type){
  let s=0;for(const k in T){let m=1;if(BEATS[k]===type)m=1.3;else if(BEATS[type]===k)m=.75;s+=S.army[k]*T[k].pw*m*(1+.04*S.lv[MIL[k]])*troopTech(k)}
- return Math.round(s*(1+.1*S.tech.pow+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0)));
+ return Math.round(s*(1+.1*S.tech.pow+.05*S.tech.march+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0))*relicBonus()*gearBonus());
 }
 const skPts=()=>S.hero.lv-1-S.hero.sk.atk-S.hero.sk.eco-S.hero.sk.loot;
 const SK={atk:["⚔️","Hücum","+4% ordu gücü"],eco:["🌾","İdarəetmə","+3% istehsal"],loot:["💰","Tacir","+5% qənimət"]};
