@@ -103,7 +103,7 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .lab{left:0;top:0}
 .lab span{display:block;transform:translate(-50%,-100%);background:#5b3d22;border:1px solid #ffd77a;color:#fff1c1;font:700 11px system-ui,sans-serif;padding:0 7px;border-radius:8px;white-space:nowrap}
 .b3.ghost{}
-.sky.gl{position:relative;overflow:hidden;height:410px;perspective:none;background:linear-gradient(180deg,#9bc4d9 0%,#d2d8ad 46%,#75994f 100%);border:2px solid #b88b4a;box-shadow:inset 0 0 28px rgba(31,43,21,.38),0 5px 14px rgba(0,0,0,.35)}
+.sky.gl{position:relative;overflow:hidden;height:520px;perspective:none;background:linear-gradient(180deg,#9bc4d9 0%,#d2d8ad 46%,#75994f 100%);border:2px solid #b88b4a;box-shadow:inset 0 0 28px rgba(31,43,21,.38),0 5px 14px rgba(0,0,0,.35)}
 .glo{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .lab2{position:absolute;left:0;top:0;background:#5b3d22;border:1px solid #ffd77a;color:#fff1c1;font:700 11px system-ui,sans-serif;padding:0 7px;border-radius:8px;white-space:nowrap;will-change:transform}
 .b3.pulse{animation:pls3 1.2s}
@@ -445,8 +445,13 @@ function attackKing(i){
  try{window.scrollTo({top:0,behavior:"smooth"})}catch(e){}
 }
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",gold:"#fbc02d"};
-const RING=["mine","quarry","wall","saw","range","barracks","drill","stable","farm","warehouse"];
-const SLOT={castle:[.5,.5]};RING.forEach((id,i)=>{const a=i/RING.length*Math.PI*2+.3;SLOT[id]=[.5+.46*Math.cos(a),.5+.46*Math.sin(a)]});SLOT.tent=[.5,.19];
+const SLOT={
+ castle:[.5,115/300],
+ farm:[60/300,45/300],tent:[.5,45/300],quarry:[240/300,45/300],
+ saw:[60/300,115/300],mine:[240/300,115/300],
+ range:[60/300,185/300],drill:[.5,185/300],stable:[240/300,185/300],
+ barracks:[60/300,255/300],warehouse:[.5,255/300],wall:[240/300,255/300]
+};
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
 const sh=(c,f)=>{const n=parseInt(c.slice(1),16),m=v=>Math.min(255,Math.round(v*f));return `rgb(${m(n>>16)},${m(n>>8&255)},${m(n&255)})`};
@@ -472,7 +477,7 @@ function glPh(k){return `<div class="sky gl" data-k="${k}"></div>`}
 function skyHtml(){return GLOK?glPh('city'):skyCss()}
 function skyCss(){
  const H={castle:96,farm:34,saw:30,quarry:34,mine:46,barracks:42,warehouse:36,wall:44,stable:34,range:44,drill:42,tent:48};
- let h=`<div class='sky s3'><div class='w3'><div class='tent-yard' style='left:132px;top:-112px'><span>HƏRBİ DÜŞƏRGƏ</span></div><i class='sl' style='left:0;top:360px;width:360px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:360px;top:0;width:360px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
+ let h=`<div class='sky s3'><div class='w3'><div class='tent-yard' style='left:132px;top:22px'><span>HƏRBİ DÜŞƏRGƏ</span></div><i class='sl' style='left:0;top:360px;width:360px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:360px;top:0;width:360px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
  [[18,18],[342,18],[18,342],[342,342],[180,8],[8,180]].forEach(t=>{h+=`<div class='p3' style='left:${t[0]}px;top:${t[1]}px'>${bx(-2,-2,0,4,4,8,'#7a4a22')}${py(0,0,6,18,22,'#2f7d32')}</div>`});
  Object.keys(SLOT).forEach(id=>{
   const bu=S.build&&S.build.id===id,l=S.lv[id],cx=SLOT[id][0]*360,cy=SLOT[id][1]*360,k=(id==='castle'?.85:1)*(1+Math.min(l,8)*.02);
@@ -644,8 +649,12 @@ function mkBuf(a){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.
 function sbuild(){VB=[];terr();water();for(let i=0;i<90;i++){const a=grn()*6.283,r=140+grn()*45,x=150+Math.cos(a)*r,z=150+Math.sin(a)*r;if(hh(x,z)<1.2)continue;tree(x,z,.8+grn()*.7,grn()<.55)}SB=mkBuf(VB)}
 function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4,'#2e86c1'],[6,-3,'#c0392b']].forEach(([x,y,c])=>{gK(x,y,0,2.2,2.2,9,c,8,3);gK(x,y,9,2,0,2,'#e8c9a0',8,3)});gB(10,0,0,1.2,1.2,22,'#6b4a2a');gB(11,0,14,9,.8,6,'#f1c40f');MB=mkBuf(VB);VB=sv}
 function dbuild(k){VB=[];pk=[];pkr=[];lbl=[];const lab=(t,p)=>{const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:p})};
- if(k==='city'){Object.keys(SLOT).forEach(id=>{if(id!=='castle')road(150,150,SLOT[id][0]*300,SLOT[id][1]*300,7,7.25)});
-  Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300,y=hh(x,z),s=(id==='castle'?1.05:1)*(1+Math.min(l,8)*.02);TR={x,y,z,s};const a0=VB.length/12;if(l)GM[id](l);else GM.site();pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});pk.push({k:'b',id,min:[x-30*s,y,z-30*s],max:[x+30*s,y+(id==='castle'?90:50)*s,z+30*s]});lab((bu?'\ud83d\udd28 ':'')+(l>=5?'\u2605':'')+(l||(bu?'':'+')),[x,y+(id==='castle'?100:58)*s,z])})}
+ if(k==='city'){
+  /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
+  road(25,18,25,282,7,7.25);road(275,18,275,282,7,7.25);
+  [80,150,220].forEach(z=>road(25,z,275,z,7,7.25));
+  Object.keys(SLOT).forEach(id=>{if(id==='castle')return;const x=SLOT[id][0]*300,z=SLOT[id][1]*300,lane=z<150?80:220,dir=lane>z?1:-1,start=z+dir*(id==='tent'?30:19);if(Math.abs(lane-start)>3)road(x,start,x,lane,4,7.1)});
+  Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300,y=hh(x,z),s=(id==='castle'?1.08:1.02)*(1+Math.min(l,8)*.02);TR={x,y,z,s};const a0=VB.length/12;if(l)GM[id](l);else GM.site();pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});pk.push({k:'b',id,min:[x-38*s,y,z-38*s],max:[x+38*s,y+(id==='castle'?100:58)*s,z+38*s]});lab((bu?'🔨 ':'')+(l>=5?'★':'')+(l||(bu?'':'+')),[x,y+(id==='castle'?108:65)*s,z])})}
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
   E.forEach((e,i)=>{const x=CP[i][0],z=CP[i][1],y=hh(x,z);TR={x,y,z,s:1};const a0=VB.length/12;GC[i]();pkr.push({k:'c',id:i,a:a0,n:VB.length/12-a0});pk.push({k:'c',id:i,min:[x-26,y,z-26],max:[x+26,y+60,z+26]});lab(ePow(i),[x,y+70,z])});
   const bo=board(),KC=['#2e86c1','#8e44ad','#16a085','#d35400'];
@@ -668,7 +677,7 @@ const SVS=`attribute vec3 aP;uniform mat4 uLV;uniform vec3 uOff;void main(){gl_P
 const SFS=`precision highp float;vec4 pk(float d){vec4 e=fract(d*vec4(1.,255.,65025.,16581375.));e-=e.yzww*vec4(1./255.,1./255.,1./255.,0.);return e;}void main(){gl_FragColor=pk(gl_FragCoord.z);}`;
 function drawB(b){gl.bindBuffer(gl.ARRAY_BUFFER,b.b);[[0,3,0],[1,3,12],[2,3,24],[3,2,36],[4,1,44]].forEach(([i,n,o])=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,n,gl.FLOAT,false,48,o)});gl.drawArrays(gl.TRIANGLES,0,b.n)}
 function shadowPass(){LV=m4.mul(m4.ortho(230,50,1000),m4.look([150-SUN[0]*500,-SUN[1]*500,150-SUN[2]*500],[150,0,150]));gl.bindFramebuffer(gl.FRAMEBUFFER,smF);gl.viewport(0,0,1024,1024);gl.clearColor(1,1,1,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PS);gl.uniformMatrix4fv(gl.getUniformLocation(PS,'uLV'),false,LV);gl.uniform3f(gl.getUniformLocation(PS,'uOff'),0,0,0);[SB,DB].forEach(b=>b&&drawB(b));gl.bindFramebuffer(gl.FRAMEBUFFER,null)}
-function cam(a){const yaw=yawB+Math.sin(performance.now()/2800)*.1,tg=[150,10,150],D=520,e=[tg[0]+D*Math.cos(pitch)*Math.sin(yaw),tg[1]+D*Math.sin(pitch),tg[2]+D*Math.cos(pitch)*Math.cos(yaw)],f=v3.nz(v3.sub(tg,e)),r=v3.nz(v3.cr(f,[0,1,0])),u=v3.cr(r,f);return{e,tg,f,r,u,a,fov:.7}}
+function cam(a){const yaw=yawB+Math.sin(performance.now()/2800)*.1,tg=[150,10,150],D=490,e=[tg[0]+D*Math.cos(pitch)*Math.sin(yaw),tg[1]+D*Math.sin(pitch),tg[2]+D*Math.cos(pitch)*Math.cos(yaw)],f=v3.nz(v3.sub(tg,e)),r=v3.nz(v3.cr(f,[0,1,0])),u=v3.cr(r,f);return{e,tg,f,r,u,a,fov:.7}}
 function draw(){const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.round(cv.clientWidth*dpr),h=Math.round(cv.clientHeight*dpr);if(!w||!h)return;if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}
  const c=cam(w/h),VP=m4.mul(m4.persp(c.fov,w/h,20,2600),m4.look(c.e,c.tg));lastVP=VP;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,w,h);gl.clearColor(.78,.87,.95,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PM);
  const U=n=>gl.getUniformLocation(PM,n);gl.uniformMatrix4fv(U('uVP'),false,VP);gl.uniformMatrix4fv(U('uLV'),false,LV);gl.uniform3fv(U('uSun'),SUN);gl.uniform3fv(U('uEye'),c.e);gl.uniform1f(U('uTime'),performance.now()/1000);gl.uniform1i(U('uTex'),0);gl.uniform1i(U('uSM'),1);
