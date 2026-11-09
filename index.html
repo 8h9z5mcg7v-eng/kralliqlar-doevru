@@ -803,6 +803,11 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
   /* Mərkəzi meydan və qala girişinə daş döşəmə */
   road(150,84,150,145,12,7.35);
   road(126,115,174,115,10,7.35);
+  /* Şəhər darvazasından əsas qalaya aparan daş prospekt və daxili keçidlər */
+  road(150,258,150,180,15,7.4);
+  road(150,180,150,172,11,7.4);
+  road(150,205,96,205,8,7.35);road(204,205,150,205,8,7.35);
+  road(150,95,96,95,8,7.35);road(204,95,150,95,8,7.35);
   [[140,106],[160,106],[140,126],[160,126]].forEach(([x,z])=>{
    TR={x,y:hh(x,z),z,s:1};gK(0,0,7.3,2.1,2.1,.8,'#c6b38d',8,0);
   });
@@ -825,7 +830,8 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
    for(let p=-len/2+4;p<len/2-2;p+=10)gB(alongX?p-2:-6,alongX?-6:p-2,wallH,4,4,5,capStone,0);
   };
   fortWall(150,42,220,true);fortWall(42,150,216,false);fortWall(258,150,216,false);
-  fortWall(95,258,106,true);fortWall(205,258,106,true);
+  /* Ön divar iki hissəyə ayrılır ki, əsas darvazanın keçidi açıq qalsın */
+  fortWall(81,258,78,true);fortWall(219,258,78,true);
   /* Künc qüllələri və bayraqlar */
   [[42,42],[258,42],[42,258],[258,258],[122,258],[178,258]].forEach(([x,z],i)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.25,z,s:1};
