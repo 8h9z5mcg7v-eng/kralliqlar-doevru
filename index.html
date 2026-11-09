@@ -786,7 +786,7 @@ function tickMonster(){
  if(left>0){
   if(el)el.textContent=(m.phase==="back"?"🏰 Qalaya qayıdış":"🐺 Canavar düşərgəsinə yürüş")+" · "+Math.ceil(left/1000)+" san";
   const marker=document.getElementById("gatherTroop");
-  if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},p=Math.max(0,Math.min(1,1-left/Math.max(1,m.sec*1000)));marker.setAttribute("transform","translate("+((home.x+(m.x-home.x)*p)*30+15)+" "+((home.y+(m.y-home.y)*p)*30+15)+")")}
+  if(marker){const home=S.outpostSlot&&worldSlots()[Number(S.outpostSlot)-1]?worldSlots()[Number(S.outpostSlot)-1]:{x:25,y:25},f=Math.max(0,Math.min(1,1-left/Math.max(1,m.sec*1000))),p=m.phase==="back"?1-f:f;marker.setAttribute("transform","translate("+((home.x+(m.x-home.x)*p)*30+15)+" "+((home.y+(m.y-home.y)*p)*30+15)+")")}
   return;
  }
  if(m.phase==="back"){returnTroops(m.troops||{});S.monsterMarch=null;lastMsg="🏰 Ordu qalaya qayıtdı. Sağ qalan qoşunlar yenidən orduna qoşuldu.";save();if(tab==="map")render();return}
