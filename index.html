@@ -172,7 +172,7 @@ nav{z-index:1000;pointer-events:auto}nav button{position:relative;z-index:1001;t
 
 
 .map-legend{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 14px;padding:9px 10px;border:1px solid #8a6330;border-radius:11px;background:linear-gradient(110deg,#49331f,#302315);color:#f8e5bd;font-size:11px}.map-legend span{display:inline-flex;align-items:center;gap:4px}.map-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid #f5dfad}.map-legend .capital{background:#e6b74d}.map-legend .ruler{background:#65a9d5}.map-legend .camp{background:#bc8050}.map-legend .road{background:#d8c08d}.map-tools{display:flex;align-items:center;gap:7px;margin:7px 0 9px}.map-tools button{min-width:42px;height:36px;border:1px solid #9a7138;border-radius:9px;background:linear-gradient(#79552d,#49311d);color:#ffe6ad;font-size:18px;font-weight:700}.map-tools button[data-mapzoom='reset']{font-size:12px;min-width:58px}.map-tools span{font-size:10px;color:var(--mut);margin-left:3px}.w3{will-change:transform}
-.map-overview{display:flex;flex-direction:column;gap:3px;margin:10px 0 6px;padding:9px 12px;border:1px solid #9a7138;border-radius:12px;background:linear-gradient(110deg,#4c351e,#73502b);color:#ffe4a1;box-shadow:inset 0 1px rgba(255,255,255,.12)}.map-overview b{font:700 15px Georgia,serif}.map-overview span{font-size:11px;color:#ead3a8} .sky.s3{height:820px;overflow:auto;display:block;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:2px solid #9c7138;box-shadow:inset 0 0 25px rgba(27,35,17,.38),0 5px 14px rgba(0,0,0,.32)}.sky.gl canvas{border-radius:10px}.sky.gl .world-slots-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible}.sky.gl .world-slots-overlay circle[data-slot]{pointer-events:all;cursor:pointer}.kingdom-world-map{height:min(72vh,740px);min-height:520px;overflow:auto;position:relative;border:2px solid #a17b43;border-radius:10px;background:#29432a;box-shadow:inset 0 0 35px rgba(0,0,0,.4);-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-x pan-y}.kingdom-world-svg{display:block;max-width:none;max-height:none;background:#668d42}.kingdom-world-svg rect[data-slot]{cursor:pointer;pointer-events:all}.kingdom-world-svg rect[data-slot]:active{filter:brightness(1.35)}.kingdom-world-svg .world-castle text{font-family:Georgia,serif}.kingdom-world-map::-webkit-scrollbar{width:8px;height:8px}.kingdom-world-map::-webkit-scrollbar-thumb{background:#a17b43;border-radius:8px}</style>
+.map-overview{display:flex;flex-direction:column;gap:3px;margin:10px 0 6px;padding:9px 12px;border:1px solid #9a7138;border-radius:12px;background:linear-gradient(110deg,#4c351e,#73502b);color:#ffe4a1;box-shadow:inset 0 1px rgba(255,255,255,.12)}.map-overview b{font:700 15px Georgia,serif}.map-overview span{font-size:11px;color:#ead3a8} .sky.s3{height:820px;overflow:auto;display:block;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:2px solid #9c7138;box-shadow:inset 0 0 25px rgba(27,35,17,.38),0 5px 14px rgba(0,0,0,.32)}.sky.gl canvas{border-radius:10px}.sky.gl .world-slots-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible}.sky.gl .world-slots-overlay circle[data-slot]{pointer-events:all;cursor:pointer}.kingdom-world-map{height:min(72vh,740px);min-height:520px;overflow:auto;position:relative;border:2px solid #a17b43;border-radius:10px;background:#29432a;box-shadow:inset 0 0 35px rgba(0,0,0,.4);-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-x pan-y}.kingdom-world-svg{display:block;max-width:none;max-height:none;background:#668d42}.kingdom-world-svg rect[data-slot]{cursor:pointer;pointer-events:all}.kingdom-world-svg rect[data-slot]:active{filter:brightness(1.35)}.kingdom-world-svg .world-castle text{font-family:Georgia,serif}.kingdom-world-map::-webkit-scrollbar{width:8px;height:8px}.kingdom-world-map::-webkit-scrollbar-thumb{background:#a17b43;border-radius:8px}.kingdom-world-map{background:#263d2b!important;border-color:#a17b43;box-shadow:inset 0 0 42px rgba(8,17,12,.55),0 8px 20px rgba(0,0,0,.3)}.kingdom-world-svg{filter:saturate(1.08) contrast(1.04)}.kingdom-world-svg rect[data-slot]{cursor:pointer;pointer-events:all;transition:fill .12s,stroke .12s}.kingdom-world-svg rect[data-slot]:active{filter:brightness(1.28)}.kingdom-world-svg .world-castle{filter:drop-shadow(1px 3px 2px rgba(0,0,0,.65))}</style>
 </head>
 <body>
 <div id="top"><div id="hud"><div id="av"><svg class='bsv' viewBox='0 0 64 64' style='width:40px;height:40px'><use href='#b-hero' width='64' height='64'/></svg></div><div id="pw"></div></div><div id="res"></div></div>
@@ -665,32 +665,51 @@ function worldSlots(){
  return Array.from({length:1000},(_,i)=>land[Math.floor(i*land.length/1000)]);
 }
 function mapCastle(x,y,name,color,small){
- const cx=x*30+15,cy=y*30+15,sc=small?0.78:1;
+ const cx=x*30+15,cy=y*30+15,sc=small?1.02:1.2;
  return "<g transform='translate("+cx+" "+cy+") scale("+sc+")' class='world-castle' pointer-events='none'>"+
- "<ellipse cx='0' cy='10' rx='14' ry='6' fill='#1b2617' opacity='.45'/>"+
- "<path d='M-13 10V-3h5v-7h5v7h6v-7h5v7h5V10Z' fill='"+color+"' stroke='#e9d5a4' stroke-width='1.8'/>"+
- "<path d='M-3 10V2Q0 -2 3 2V10' fill='#49321d' stroke='#2b2116' stroke-width='1'/>"+
- "<path d='M0 -10V-19' stroke='#49321d' stroke-width='1.5'/><path d='M0 -19l9 3-9 3Z' fill='"+color+"' stroke='#49321d' stroke-width='.7'/>"+
- "<text x='0' y='23' text-anchor='middle' font-size='8.5' font-weight='bold' fill='#fff0c8' stroke='#26301c' stroke-width='2.5' paint-order='stroke'>"+escHtml(name)+"</text></g>";
+ "<ellipse cx='0' cy='12' rx='19' ry='8' fill='#172116' opacity='.55'/>"+
+ "<path d='M-19 5L-15 -5L-7 -10L7 -10L16 -4L19 6Z' fill='#756b56' stroke='#302b21' stroke-width='1.4'/>"+
+ "<path d='M-17 5V-8h7v-8h7v8h6v-8h7v8h7V5Z' fill='#a99a7d' stroke='#4d4638' stroke-width='1.5'/>"+
+ "<path d='M-17 -8h7M-3 -8h6M10 -8h7' stroke='#e1d4b7' stroke-width='1.4'/>"+
+ "<path d='M-14 -15v-5l4 0v5M-3 -15v-5h6v5M10 -15v-5h4v5' fill='#8c7c60' stroke='#403a2e' stroke-width='1'/>"+
+ "<path d='M-4 5V-1Q0 -7 4 -1V5Z' fill='#382719' stroke='#d1bd91' stroke-width='1'/>"+
+ "<path d='M0 -20V-29' stroke='#3b3021' stroke-width='1.5'/><path d='M0 -29l10 3-10 4Z' fill='"+color+"' stroke='#4a3521' stroke-width='.8'/>"+
+ "<text x='0' y='24' text-anchor='middle' font-size='8.5' font-weight='bold' fill='#fff1d0' stroke='#1b2619' stroke-width='3' paint-order='stroke'>"+escHtml(name)+"</text></g>";
 }
 function mapHtml(){
  const slots=worldSlots(),slotMap=new Map(slots.map((p,i)=>[p.x+","+p.y,i+1]));
  const colors={grass:["#668d42","#70974a","#789d50","#60863e","#83a454"],forest:["#385f35","#416b39","#4a713b","#52783e"],water:["#397d91","#438ba0","#347486"],mountain:["#8b8066","#9b8e70","#796f5b"]};
- let tiles="",decor="";
+ const hash=(x,y,n)=>Math.abs((x*73856093^y*19349663^n*83492791)>>>0);
+ let tiles="",detail="",trees="",rocks="",fields="",waterLines="";
  for(let y=0;y<50;y++)for(let x=0;x<50;x++){
-  const type=worldTerrain(x,y),v=(x*19+y*23+x*y*3)%colors[type].length;
+  const type=worldTerrain(x,y),v=hash(x,y,3)%colors[type].length;
   const slot=slotMap.get(x+","+y)||0,selected=slot&&slot===selectedWorldSlot;
-  const fill=selected?"#b5d47b":colors[type][v];
-  tiles+="<rect "+(slot?"data-slot='"+slot+"' data-basefill='"+colors[type][v]+"'":"")+" x='"+(x*30)+"' y='"+(y*30)+"' width='30' height='30' fill='"+fill+"' stroke='"+(selected?"#fff3a6":"#263d25")+"' stroke-opacity='"+(selected?".98":".32")+"' stroke-width='"+(selected?"2.5":".8")+"' class='"+(selected?"selected":"")+"' />";
-  if(type==="forest"&&((x*7+y*11)%5===0))decor+="<path d='M"+(x*30+15)+" "+(y*30+23)+"l-8 -12h5l-5 -8h16l-5 8h5Z' fill='#244d2b' stroke='#b5c58a' stroke-width='.7' opacity='.88'/>";
-  if(type==="mountain"&&((x*5+y*3)%4===0))decor+="<path d='M"+(x*30+3)+" "+(y*30+25)+"l12 -20 12 20Z' fill='#b4a78a' stroke='#5c5948' stroke-width='1'/><path d='M"+(x*30+10)+" "+(y*30+13)+"l5 -8 5 8' fill='none' stroke='#e8e0c9' stroke-width='1.5'/>";
-  if(type==="water"&&((x+y)%3===0))decor+="<path d='M"+(x*30+5)+" "+(y*30+15)+"q7 -4 14 0t8 0' fill='none' stroke='#a5d6d5' stroke-width='1.2' opacity='.7'/>";
+  const fill=colors[type][v],px=x*30,py=y*30;
+  tiles+="<rect "+(slot?"data-slot='"+slot+"' data-basefill='"+fill+"'":"")+" x='"+px+"' y='"+py+"' width='30' height='30' fill='"+(selected?"#d6c27b":fill)+"' fill-opacity='"+(selected?".65":".96")+"' stroke='"+(selected?"#fff0a8":"#17281d")+"' stroke-opacity='"+(selected?".98":".15")+"' stroke-width='"+(selected?"2.6":".65")+"' />";
+  if(type==="grass"){
+   for(let k=0;k<3;k++){const dx=hash(x,y,k+7)%27+1,dy=hash(x,y,k+17)%27+1;detail+="<path d='M"+(px+dx)+" "+(py+dy)+"l-2 -3m2 3l2 -3' stroke='#c5d58c' stroke-width='.65' opacity='.36'/>"}
+   if(hash(x,y,22)%19===0)fields+="<g opacity='.65'><path d='M"+(px+3)+" "+(py+23)+"l23 -13M"+(px+2)+" "+(py+27)+"l25 -14' stroke='#c9ad67' stroke-width='1.1'/><path d='M"+(px+6)+" "+(py+23)+"l-1 -3m7 0l-1 -3m8 -1l-1 -3' stroke='#d8c17e' stroke-width='1'/></g>";
+  }
+  if(type==="forest"&&hash(x,y,4)%5!==0){
+   const tx=px+7+hash(x,y,8)%17,ty=py+7+hash(x,y,9)%16,r=5+hash(x,y,10)%3;
+   trees+="<g><ellipse cx='"+tx+"' cy='"+(ty+8)+"' rx='"+(r+3)+"' ry='3' fill='#1b281b' opacity='.34'/><path d='M"+tx+" "+(ty+8)+"v7' stroke='#65472d' stroke-width='2.2'/><circle cx='"+(tx-2)+"' cy='"+(ty-1)+"' r='"+r+"' fill='#294c2c' stroke='#1c3b25' stroke-width='1'/><circle cx='"+(tx+3)+"' cy='"+(ty-3)+"' r='"+(r-1)+"' fill='#426b37' stroke='#24452b' stroke-width='.8'/><circle cx='"+(tx-1)+"' cy='"+(ty-5)+"' r='"+(r-2)+"' fill='#63834a' opacity='.72'/></g>";
+  }
+  if(type==="mountain"&&hash(x,y,12)%3!==0){
+   const h=9+hash(x,y,13)%13,rx=px+3,ry=py+27;
+   rocks+="<path d='M"+rx+" "+ry+"l7 -"+h+" 6 "+(h-6)+" 5 -"+(h-11)+" 7 "+(h+11)+"Z' fill='#746d5d' stroke='#4b4b40' stroke-width='1'/><path d='M"+(rx+7)+" "+(ry-h)+"l6 "+(h-6)+" -4 -2 -2 -"+(h-4)+"Z' fill='#c3b99e' opacity='.85'/><path d='M"+(rx+17)+" "+(ry-h+5)+"l4 6 -4 -1Z' fill='#e3dcc8' opacity='.75'/>";
+  }
+  if(type==="water"&&hash(x,y,14)%2===0){
+   waterLines+="<path d='M"+(px+3)+" "+(py+9+hash(x,y,15)%12)+"q7 -4 14 0t10 0' fill='none' stroke='#a6d5d0' stroke-width='1.1' opacity='.6'/>";
+  }
  }
  let resources="";
  for(let y=2;y<48;y++)for(let x=2;x<48;x++){
-  const t=worldTerrain(x,y),v=(x*37+y*19)%113;
-  if(t==="grass"&&v<3)resources+="<text x='"+(x*30+15)+"' y='"+(y*30+21)+"' text-anchor='middle' font-size='17'>"+(v===0?"🌾":v===1?"🪵":"⛏️")+"</text>";
-  if(t==="forest"&&v===4)resources+="<text x='"+(x*30+15)+"' y='"+(y*30+21)+"' text-anchor='middle' font-size='16'>🐺</text>";
+  const t=worldTerrain(x,y),v=hash(x,y,31)%137,cx=x*30+15,cy=y*30+16;
+  if(t==="grass"&&v<3){
+   const glyph=v===0?"⛏":v===1?"🌾":"🪵";
+   resources+="<g transform='translate("+cx+" "+cy+")'><ellipse cy='7' rx='8' ry='3' fill='#17251a' opacity='.4'/><circle r='7' fill='#2a3525' stroke='#c5ae76' stroke-width='1'/><text text-anchor='middle' y='4' font-size='12'>"+glyph+"</text></g>";
+  }
+  if(t==="forest"&&v===4)resources+="<g transform='translate("+cx+" "+cy+")'><ellipse cy='6' rx='8' ry='3' fill='#17251a' opacity='.4'/><text text-anchor='middle' y='5' font-size='15'>🐺</text></g>";
  }
  let rulers="";
  rulers+=mapCastle(10,10,"Kral Arslan","#2e86c1",true);
@@ -701,8 +720,12 @@ function mapHtml(){
   const p=slots[Number(S.outpostSlot)-1];
   rulers+=mapCastle(p.x,p.y,S.rulerName||"Sənin qalan","#d9a441",false);
  }
- let roads="<path d='M0 760 C280 680 360 820 620 720 S1120 640 1500 760' fill='none' stroke='#bba16c' stroke-width='9' opacity='.62'/><path d='M0 760 C280 680 360 820 620 720 S1120 640 1500 760' fill='none' stroke='#e7d3a2' stroke-width='2' stroke-dasharray='7 8' opacity='.65'/>";
- roads+="<path d='M730 0 C670 300 850 500 760 760 S690 1150 770 1500' fill='none' stroke='#bba16c' stroke-width='7' opacity='.48'/>";
+ const river="<path d='M0 690 C180 610 280 760 440 690 S700 600 850 680 S1110 790 1250 690 S1400 630 1500 700' fill='none' stroke='#263f42' stroke-width='29' opacity='.5'/><path d='M0 682 C180 602 280 752 440 682 S700 592 850 672 S1110 782 1250 682 S1400 622 1500 692' fill='none' stroke='#347c8a' stroke-width='23'/><path d='M0 677 C180 597 280 747 440 677 S700 587 850 667 S1110 777 1250 677 S1400 617 1500 687' fill='none' stroke='#76b3b0' stroke-width='2.2' opacity='.7'/>";
+ const roads="<path d='M0 1120 C260 1020 380 1180 570 1080 S920 980 1080 1090 S1320 1190 1500 1080' fill='none' stroke='#493b2b' stroke-width='13' opacity='.55'/><path d='M0 1116 C260 1016 380 1176 570 1076 S920 976 1080 1086 S1320 1186 1500 1076' fill='none' stroke='#b89a65' stroke-width='8' opacity='.92'/><path d='M0 1116 C260 1016 380 1176 570 1076 S920 976 1080 1086 S1320 1186 1500 1076' fill='none' stroke='#e1c895' stroke-width='1.2' stroke-dasharray='3 8' opacity='.7'/><path d='M420 0 C500 240 380 420 510 600 S650 930 590 1120 S510 1350 620 1500' fill='none' stroke='#55432e' stroke-width='11' opacity='.5'/><path d='M420 0 C500 240 380 420 510 600 S650 930 590 1120 S510 1350 620 1500' fill='none' stroke='#b99b68' stroke-width='6'/>";
+ let parcelGrid="";
+ for(let n=0;n<=50;n++){
+  parcelGrid+="<path d='M"+(n*30)+" 0V1500' stroke='#17291e' stroke-width='.55' opacity='.25'/><path d='M0 "+(n*30)+"H1500' stroke='#17291e' stroke-width='.55' opacity='.25'/>";
+ }
  let labels="";
  for(let i=0;i<=50;i+=5){labels+="<text x='"+(i*30+15)+"' y='14' font-size='10' fill='#fff0c7' stroke='#28371f' stroke-width='2' paint-order='stroke' text-anchor='middle'>"+i+"</text>";labels+="<text x='8' y='"+(i*30+20)+"' font-size='10' fill='#fff0c7' stroke='#28371f' stroke-width='2' paint-order='stroke'>"+i+"</text>"}
  const zoom=Math.round(mapZoom*1500);
@@ -710,9 +733,16 @@ function mapHtml(){
  const own=Number(S.outpostSlot)===selectedWorldSlot;
  return "<div class='map-tools'><button type='button' data-mapzoom='out' aria-label='Xəritəni kiçilt'>−</button><button type='button' data-mapzoom='reset'>100%</button><button type='button' data-mapzoom='in' aria-label='Xəritəni böyüt'>＋</button><span>Barmaqla sürüşdür · Xanalara toxun</span></div>"+
  "<div class='kingdom-world-map'><svg class='kingdom-world-svg' viewBox='0 0 1500 1500' width='"+zoom+"' height='"+zoom+"' role='img' aria-label='50 x 50 xanalı böyük krallıq xəritəsi'>"+
- "<defs><pattern id='world-grass-grain' width='30' height='30' patternUnits='userSpaceOnUse'><circle cx='5' cy='7' r='.8' fill='#d2dfa0' opacity='.18'/><circle cx='23' cy='19' r='.7' fill='#233c23' opacity='.2'/></pattern></defs>"+
- "<rect width='1500' height='1500' fill='#648b45'/>"+tiles+"<rect width='1500' height='1500' fill='url(#world-grass-grain)' pointer-events='none'/>"+
- "<g pointer-events='none'>"+roads+decor+resources+rulers+labels+"</g></svg></div>"+
+ "<defs>"+
+ "<linearGradient id='world-ground' x2='0' y2='1'><stop stop-color='#8ca65d'/><stop offset='.5' stop-color='#6d9149'/><stop offset='1' stop-color='#526f3b'/></linearGradient>"+
+ "<linearGradient id='world-water' x2='0' y2='1'><stop stop-color='#76b5b5'/><stop offset='.45' stop-color='#397f8e'/><stop offset='1' stop-color='#234f62'/></linearGradient>"+
+ "<pattern id='world-grass-grain' width='24' height='24' patternUnits='userSpaceOnUse'><circle cx='4' cy='6' r='1' fill='#d6df9a' opacity='.22'/><circle cx='17' cy='18' r='.8' fill='#263d26' opacity='.25'/><path d='M8 14l2 -3m-2 3l-2 -2' stroke='#d1d99a' stroke-width='.6' opacity='.24'/></pattern>"+
+ "<filter id='world-shadow' x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='3'/></filter>"+
+ "</defs>"+
+ "<rect width='1500' height='1500' fill='url(#world-ground)'/>"+tiles+
+ "<g pointer-events='none'>"+river+roads+fields+rocks+trees+detail+waterLines+parcelGrid+"</g>"+
+ "<rect width='1500' height='1500' fill='url(#world-grass-grain)' pointer-events='none' opacity='.7'/>"+
+ "<g pointer-events='none'>"+resources+rulers+labels+"</g></svg></div>"+
  "<div class='slot-info' id='slotInfo'>"+(selectedWorldSlot?"<b>🏰 Qala mövqeyi #"+selectedWorldSlot+"</b><span>Koordinat: X "+pos.x+" · Y "+pos.y+". "+(own?"Bu mövqe sənin cihazında ayrılıb.":"Bu torpaq sahəsi seçilib. Qalanı burada yerləşdirmək üçün ayır.")+"</span>"+(own?"<button type='button' data-world-action='release'>Yeri boşalt</button>":"<button type='button' data-world-action='claim'>Bu yerdə qala qur</button>"):"Xəritədə boş torpaq xanasına toxunaraq 1000 qala mövqeyindən birini seç.")+"</div>"+(S.march?"<div class='mut' id='mt' style='margin:8px 0'></div>":"");
 }
 function mapOld2(){
