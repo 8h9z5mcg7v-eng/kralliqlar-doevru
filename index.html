@@ -382,7 +382,7 @@ function attackKing(i){
  if(!my){lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";return}
  const kp=board().find(r=>r[3]===i)[1],win=effPower(KT[i])/kp*(.85+Math.random()*.3)>=1;
  const rate=win?.08+Math.random()*.12:.3+Math.random()*.2;
- let lost=0;for(const k in S.army){const l=Math.round(S.army[k]*rate);S.army[k]-=l;lost+=l}
+ let lost=0;for(const k of ["inf","arc","cav"]){const l=Math.min(S.army[k],Math.round(S.army[k]*rate));S.army[k]-=l;lost+=l;const hurt=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurt;}
  S.kcd[i]=Date.now()+120000;
  const up=gainXp(win?25+Math.round(kp/20):5),upT=up?" 👑 Sərkərdə "+S.hero.lv+". səviyyəyə yüksəldi!":"";
  if(win){S.stats.wins++;S.territories[i]={capturedAt:Date.now(),name:KINGS[i][0]};const m=1+.2*S.tech.loot+.05*S.hero.sk.loot,loot={food:Math.round(kp*.75*m),wood:Math.round(kp*.75*m),stone:Math.round(kp*.5*m),gold:Math.round(kp*.2*m)};for(const k in loot)S.res[k]+=loot[k];
@@ -931,11 +931,11 @@ function attack(i){
  let lost=0;
  for(const k in S.army){const l=Math.round(S.army[k]*rate);S.army[k]-=l;lost+=l}
  if(win){S.stats.wins++;const m=(i+1)*(1+.2*S.tech.loot+.05*S.hero.sk.loot);S.camps[i]++;const loot={food:Math.round(60*m),wood:Math.round(60*m),stone:Math.round(30*m),gold:Math.round(15*m)};for(const k in loot)S.res[k]+=loot[k];
-  lastMsg=`<span class="win">Qələbə!</span> ${E[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər.${upT}`}
- else lastMsg=`<span class="lose">Məğlubiyyət.</span> ${E[i][0]} çox güclü idi. İtki: ${lost} əsgər.${upT}`;
+  lastMsg=`<span class="win">Qələbə!</span> ${E[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər (${Math.floor(lost*.6)} yaralı, ${lost-Math.floor(lost*.6)} həlak).${upT}`}
+ else lastMsg=`<span class="lose">Məğlubiyyət.</span> ${E[i][0]} çox güclü idi. İtki: ${lost} əsgər (${Math.floor(lost*.6)} yaralı, ${lost-Math.floor(lost*.6)} həlak).${upT}`;
  const ev=Math.random();
  if(win&&ev<.2){const g=20*(i+1)+Math.round(Math.random()*30);S.res.gold+=g;lastMsg+=` 🎁 Düşərgədə sandıq tapdın: +🪙${g}!`}
- else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin.`}
+ else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
 }
 document.getElementById("main").addEventListener("click",e=>{
  const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
