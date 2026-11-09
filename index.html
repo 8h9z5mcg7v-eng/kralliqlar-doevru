@@ -899,7 +899,7 @@ function refresh(){
  document.getElementById("res").innerHTML=Object.keys(R).map(k=>`<div class="r" style="--c:${RC[k]}">${R[k][0]} ${Math.floor(S.res[k])}<small>+${p[k].toFixed(1)}/s</small></div>`).join("");
  document.querySelectorAll("button[data-a]").forEach(b=>{
   const a=b.dataset.a;
-  if(a==="up"||a==="rs")b.disabled=b.dataset.cap==="1"||b.dataset.lock==="1"||!afford(JSON.parse(b.dataset.c))||(a==="up"&&!!S.build);
+  if(a==="up"||a==="rs")b.disabled=b.dataset.cap==="1"||b.dataset.lock==="1"||(a==="rs"&&(!!S.researchJob||S.academyLevel<1))||!afford(JSON.parse(b.dataset.c))||(a==="up"&&!!S.build);
   if(a==="tr"){const n=+b.dataset.n;b.disabled=!afford(trCost(b.dataset.id,n))||armyN()+n>armyCap()}
  });
 }
