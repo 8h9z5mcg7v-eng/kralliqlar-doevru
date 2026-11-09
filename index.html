@@ -325,7 +325,7 @@ const hintHtml=()=>{const t=hint();return t?`<div class="card" style="margin-top
 function cap(){return Math.round(600*Math.pow(S.lv.castle,1.5)*(1+.25*S.lv.warehouse)*(1+.1*S.tech.store))}
 function addRes(k,v){const c=cap();if(S.res[k]<c)S.res[k]=Math.min(c,S.res[k]+v)}
 function ePow(i){return Math.round(E[i][1]*Math.pow(1.1,S.camps[i]))}
-function fmtDuration(sec){sec=Math.max(0,Math.ceil(sec));if(sec<60)return sec+" san";const d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60),r=sec%60;return (d?d+"g ":"")+(h?h+"s ":"")+(m?m+"dəq ":"")+(d||h||m?"":r+" san")}
+function fmtDuration(sec){sec=Math.max(0,Math.ceil(Number(sec)||0));const d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60),r=sec%60,p=n=>String(n).padStart(2,"0");const clock=(h||d)?p(h)+":"+p(m)+":"+p(r):p(m)+":"+p(r);return (d?d+" gün ":"")+(d||h?h+" saat ":"")+clock}
 function buildSec(id){return Math.max(5,Math.round(20*Math.pow(1.5,S.lv[id])*(id==="castle"?2:1)*(S.ally===2?.75:1)*(1-.05*S.tech.build)))}
 function speedCost(){return S.build?Math.max(1,Math.ceil((S.build.end-Date.now())/5000)):0}
 const buildHtml=()=>S.build?`<div class="card" style="margin-top:10px"><div class="ic">⏳</div><div class="in"><b>${B[S.build.id].n} yüksəldilir</b><div class="mut" id="bt"></div></div><button data-a="sp" id="bs"></button></div>`:"";
@@ -335,7 +335,7 @@ function tickBuild(){
  const left=S.build.end-Date.now();
  if(left<=0){const nid=S.build.id;S.lv[nid]++;S.build=null;save();render();const pe=document.querySelector('.b3[data-id="'+nid+'"],.bd[data-id="'+nid+'"]');if(pe)pe.classList.add("pulse");sfx("done");toast("🏗️ "+B[nid].n+" səviyyə "+S.lv[nid]+" oldu!");return}
  const bt=document.getElementById("bt"),bs=document.getElementById("bs");
- if(bt)bt.textContent="Qalan: "+Math.ceil(left/1000)+" san";
+ if(bt)bt.textContent="Qalan vaxt: "+fmtDuration(Math.ceil(left/1000));
  if(bs){bs.textContent="Sürətləndir 🪙"+speedCost();bs.disabled=S.res.gold<speedCost()}
 }
 let AC=null,muted=false;try{muted=localStorage.getItem("krallig_mute")==="1"}catch(e){}
@@ -684,13 +684,13 @@ function tickResearch(){
  if(S.academyBuild){
   const left=S.academyBuild.end-Date.now(),el=document.getElementById("academyTimer"),btn=document.getElementById("academySpeedBtn");
   if(left<=0){S.academyLevel++;S.academyBuild=null;save();render();toast("🏛️ Akademiya səviyyə "+S.academyLevel+" oldu!");return}
-  if(el)el.textContent="Tikintiyə qalıb: "+Math.ceil(left/1000)+" san";
+  if(el)el.textContent="Tikintiyə qalıb: "+fmtDuration(Math.ceil(left/1000));
   if(btn){btn.textContent="Sürətləndir 🪙"+academySpeedCost();btn.disabled=S.res.gold<academySpeedCost()}
  }
  if(S.researchJob){
   const left=S.researchJob.end-Date.now(),el=document.getElementById("researchTimer"),btn=document.getElementById("researchSpeedBtn"),bar=document.getElementById("researchProgress");
   if(left<=0){const id=S.researchJob.id;S.tech[id]=Math.min(maxTechLevel(id),(Number(S.tech[id])||0)+1);S.researchJob=null;save();render();sfx("done");toast("🔬 "+TECH[id].n+" tədqiqatı tamamlandı!");return}
-  if(el)el.textContent="Tədqiqata qalıb: "+Math.ceil(left/1000)+" san";
+  if(el)el.textContent="Tədqiqata qalıb: "+fmtDuration(Math.ceil(left/1000));
   if(btn){btn.textContent="Sürətləndir 🪙"+researchSpeedCost();btn.disabled=S.res.gold<researchSpeedCost()}
  }
 }
