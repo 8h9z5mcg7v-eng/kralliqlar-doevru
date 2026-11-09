@@ -382,12 +382,12 @@ function attackKing(i){
  if(!my){lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";return}
  const kp=board().find(r=>r[3]===i)[1],win=effPower(KT[i])/kp*(.85+Math.random()*.3)>=1;
  const rate=win?.08+Math.random()*.12:.3+Math.random()*.2;
- let lost=0;for(const k of ["inf","arc","cav"]){const l=Math.min(S.army[k],Math.round(S.army[k]*rate));S.army[k]-=l;lost+=l;const hurt=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurt;}
+ let lost=0;const lostBy={inf:0,arc:0,cav:0},hurtBy={inf:0,arc:0,cav:0};for(const k of ["inf","arc","cav"]){const l=Math.min(S.army[k],Math.round(S.army[k]*rate));S.army[k]-=l;lost+=l;lostBy[k]=l;hurtBy[k]=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurtBy[k];}
  S.kcd[i]=Date.now()+120000;
  const up=gainXp(win?25+Math.round(kp/20):5),upT=up?" 👑 Sərkərdə "+S.hero.lv+". səviyyəyə yüksəldi!":"";
  if(win){S.stats.wins++;S.territories[i]={capturedAt:Date.now(),name:KINGS[i][0]};const m=1+.2*S.tech.loot+.05*S.hero.sk.loot,loot={food:Math.round(kp*.75*m),wood:Math.round(kp*.75*m),stone:Math.round(kp*.5*m),gold:Math.round(kp*.2*m)};for(const k in loot)S.res[k]+=loot[k];
-  lastMsg=`<span class="win">Qələbə!</span> ${KINGS[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər.${upT}`;sfx("win")}
- else{lastMsg=`<span class="lose">Məğlubiyyət.</span> ${KINGS[i][0]} çox güclü idi. İtki: ${lost} əsgər.${upT}`;sfx("lose")}
+  lastMsg=`<span class="win">Qələbə!</span> ${KINGS[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər (${casualtyDetails(lostBy,hurtBy)}).${upT}`;sfx("win")}
+ else{lastMsg=`<span class="lose">Məğlubiyyət.</span> ${KINGS[i][0]} çox güclü idi. İtki: ${lost} əsgər (${casualtyDetails(lostBy,hurtBy)}).${upT}`;sfx("lose")}
  fx(win);toast(win?"⚔️ Qələbə!":"⚔️ Məğlubiyyət");
  try{window.scrollTo({top:0,behavior:"smooth"})}catch(e){}
 }
@@ -733,6 +733,7 @@ function monsterRespawnLeft(x,y){const t=Number(S.monstersDefeated[x+","+y])||0;
 function monsterRespawnText(ms){const sec=Math.max(0,Math.ceil(ms/1000));return Math.floor(sec/60)+" dəq "+(sec%60)+" san"}
 function monsterIsDefeated(x,y){return monsterRespawnLeft(x,y)>0}
 function monsterWoundedCount(){return ["inf","arc","cav"].reduce((n,k)=>n+(Number(S.wounded[k])||0),0)}
+function casualtyDetails(lost,hurt){const names={inf:"Piyada",arc:"Oxatan",cav:"Süvari"};return ["inf","arc","cav"].filter(k=>(lost[k]||0)>0).map(k=>names[k]+": "+lost[k]+" (yaralı "+(hurt[k]||0)+", həlak "+(lost[k]-(hurt[k]||0))+")").join(" · ")||"İtki yoxdur"}
 function worldSlots(){
  const land=[];
  for(let y=0;y<50;y++)for(let x=0;x<50;x++){
@@ -869,9 +870,9 @@ function tickMonster(){
  }
  if(m.phase==="back"){returnTroops(m.troops||{});S.monsterMarch=null;lastMsg="🏰 Ordu qalaya qayıtdı. Sağ qalan qoşunlar yenidən orduna qoşuldu.";save();if(tab==="map")render();return}
  const tactic=monsterTactic(m.troops||{},m.level),basePower=troopPower(m.troops||{}),my=Math.round(basePower*tactic.bonus),win=my>=m.enemy*(.85+Math.random()*.3);
- let lost=0;
- for(const k of ["inf","arc","cav"]){const rate=Math.max(.02,(win?.06+Math.random()*.10:.22+Math.random()*.20)-.04*S.tech.wall-.02*S.tech.scout),l=Math.min(m.troops[k],Math.round(m.troops[k]*rate));m.troops[k]-=l;lost+=l;const hurt=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurt;}
- if(win){S.monstersDefeated[m.x+","+m.y]=Date.now();const ml=Math.max(1,Number(m.level)||monsterLevelAt(m.x,m.y));if(ml===S.monsterLevelUnlocked&&S.monsterLevelUnlocked<50)S.monsterLevelUnlocked++;const mult=ml;const loot={food:(50+Math.floor(Math.random()*51))*mult,wood:(40+Math.floor(Math.random()*41))*mult,stone:(35+Math.floor(Math.random()*36))*mult,gold:(10+Math.floor(Math.random()*16))*mult};for(const k in loot)addRes(k,Math.round(loot[k]*(1+.2*S.tech.loot+.08*S.tech.scout)));gainXp(12*ml);let rare="";if(Math.random()<.18){const item=["relic","crystal","medal"][Math.floor(Math.random()*3)];S.monsterLoot[item]=(Number(S.monsterLoot[item])||0)+1;rare=item==="relic"?"Qədim relikviya":item==="crystal"?"Sehrli kristal":"Cəsarət medalı";rare=" 🎁 Nadir qənimət: "+rare+"!"}let gearDrop="";if(Math.random()<.24){const slot=["weapon","armor","amulet"][Math.floor(Math.random()*3)],names={weapon:"Əjdaha qılıncı",armor:"Mühafizə zirehi",amulet:"Qədim amulet"},before=Number(S.heroGear[slot])||0;if(ml>before){S.heroGear[slot]=Math.min(5,Math.ceil(ml/10));gearDrop=" 🛡️ Yeni avadanlıq tapıldı: "+names[slot]+" · Səviyyə "+ml+" (təchiz edildi)!";}else{S.heroGearFragments[slot]=(Number(S.heroGearFragments[slot])||0)+1;gearDrop=" 🧩 "+names[slot]+" fraqmenti tapıldı! Fraqment: "+S.heroGearFragments[slot]+"/3."}}lastMsg="🏆 <span class='win'>Qələbə!</span> "+ml+"-ci səviyyə canavarı məğlub edildi. Ordu gücü: "+my+" · Düşmən gücü: "+m.enemy+". "+(tactic.bonus>1?"<b>Taktiki üstünlük:</b> "+tactic.label+" (+20%). ":"")+(S.monsterLevelUnlocked>ml?"🔓 "+S.monsterLevelUnlocked+"-ci səviyyə açıldı! ":"")+"Qənimət: "+fmtC(loot)+". İtki: "+lost+" əsgər."+rare+gearDrop}
+ let lost=0;const lostBy={inf:0,arc:0,cav:0},hurtBy={inf:0,arc:0,cav:0};
+ for(const k of ["inf","arc","cav"]){const rate=Math.max(.02,(win?.06+Math.random()*.10:.22+Math.random()*.20)-.04*S.tech.wall-.02*S.tech.scout),l=Math.min(m.troops[k],Math.round(m.troops[k]*rate));m.troops[k]-=l;lost+=l;lostBy[k]=l;const hurt=Math.floor(l*.6);hurtBy[k]=hurt;S.wounded[k]=(Number(S.wounded[k])||0)+hurt;}
+ if(win){S.monstersDefeated[m.x+","+m.y]=Date.now();const ml=Math.max(1,Number(m.level)||monsterLevelAt(m.x,m.y));if(ml===S.monsterLevelUnlocked&&S.monsterLevelUnlocked<50)S.monsterLevelUnlocked++;const mult=ml;const loot={food:(50+Math.floor(Math.random()*51))*mult,wood:(40+Math.floor(Math.random()*41))*mult,stone:(35+Math.floor(Math.random()*36))*mult,gold:(10+Math.floor(Math.random()*16))*mult};for(const k in loot)addRes(k,Math.round(loot[k]*(1+.2*S.tech.loot+.08*S.tech.scout)));gainXp(12*ml);let rare="";if(Math.random()<.18){const item=["relic","crystal","medal"][Math.floor(Math.random()*3)];S.monsterLoot[item]=(Number(S.monsterLoot[item])||0)+1;rare=item==="relic"?"Qədim relikviya":item==="crystal"?"Sehrli kristal":"Cəsarət medalı";rare=" 🎁 Nadir qənimət: "+rare+"!"}let gearDrop="";if(Math.random()<.24){const slot=["weapon","armor","amulet"][Math.floor(Math.random()*3)],names={weapon:"Əjdaha qılıncı",armor:"Mühafizə zirehi",amulet:"Qədim amulet"},before=Number(S.heroGear[slot])||0;if(ml>before){S.heroGear[slot]=Math.min(5,Math.ceil(ml/10));gearDrop=" 🛡️ Yeni avadanlıq tapıldı: "+names[slot]+" · Səviyyə "+ml+" (təchiz edildi)!";}else{S.heroGearFragments[slot]=(Number(S.heroGearFragments[slot])||0)+1;gearDrop=" 🧩 "+names[slot]+" fraqmenti tapıldı! Fraqment: "+S.heroGearFragments[slot]+"/3."}}lastMsg="🏆 <span class='win'>Qələbə!</span> "+ml+"-ci səviyyə canavarı məğlub edildi. Ordu gücü: "+my+" · Düşmən gücü: "+m.enemy+". "+(tactic.bonus>1?"<b>Taktiki üstünlük:</b> "+tactic.label+" (+20%). ":"")+(S.monsterLevelUnlocked>ml?"🔓 "+S.monsterLevelUnlocked+"-ci səviyyə açıldı! ":"")+"Qənimət: "+fmtC(loot)+". İtki: "+lost+" əsgər ("+casualtyDetails(lostBy,hurtBy)+")."+rare+gearDrop}
  else{gainXp(4);lastMsg="⚔️ <span class='lose'>Məğlubiyyət.</span> Canavarlar ordunu geri oturtdu. Ordu gücü: "+my+" · Düşmən gücü: "+m.enemy+". "+(tactic.bonus>1?"Taktiki üstünlük tətbiq edildi: "+tactic.label+". ":"")+"İtki: "+lost+" əsgər."}
  m.phase="back";m.end=Date.now()+m.sec*1000;save();if(tab==="map")render();
 }
@@ -928,14 +929,14 @@ function attack(i){
  const ratio=effPower(ETYPE[i])/ePow(i)*(.85+Math.random()*.3),win=ratio>=1;
  const rate=win?.08+Math.random()*.12:.3+Math.random()*.2;
  const up=gainXp(win?15*(i+1):5),upT=up?" 👑 Sərkərdə "+S.hero.lv+". səviyyəyə yüksəldi!":"";
- let lost=0;
- for(const k in S.army){const l=Math.round(S.army[k]*rate);S.army[k]-=l;lost+=l}
+ let lost=0;const lostBy={inf:0,arc:0,cav:0},hurtBy={inf:0,arc:0,cav:0};
+ for(const k of ["inf","arc","cav"]){const l=Math.min(S.army[k],Math.round(S.army[k]*rate));S.army[k]-=l;lost+=l;lostBy[k]=l;hurtBy[k]=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurtBy[k]}
  if(win){S.stats.wins++;const m=(i+1)*(1+.2*S.tech.loot+.05*S.hero.sk.loot);S.camps[i]++;const loot={food:Math.round(60*m),wood:Math.round(60*m),stone:Math.round(30*m),gold:Math.round(15*m)};for(const k in loot)S.res[k]+=loot[k];
-  lastMsg=`<span class="win">Qələbə!</span> ${E[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər (${Math.floor(lost*.6)} yaralı, ${lost-Math.floor(lost*.6)} həlak).${upT}`}
+  lastMsg=`<span class="win">Qələbə!</span> ${E[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər (${casualtyDetails(lostBy,hurtBy)}).${upT}`}
  else lastMsg=`<span class="lose">Məğlubiyyət.</span> ${E[i][0]} çox güclü idi. İtki: ${lost} əsgər (${Math.floor(lost*.6)} yaralı, ${lost-Math.floor(lost*.6)} həlak).${upT}`;
  const ev=Math.random();
  if(win&&ev<.2){const g=20*(i+1)+Math.round(Math.random()*30);S.res.gold+=g;lastMsg+=` 🎁 Düşərgədə sandıq tapdın: +🪙${g}!`}
- else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
+ else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=Math.min(S.army[k],r);S.army[k]-=d;r-=d;lostBy[k]+=d;hurtBy[k]+=Math.floor(d*.6);S.wounded[k]=(Number(S.wounded[k])||0)+Math.floor(d*.6)}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
 }
 document.getElementById("main").addEventListener("click",e=>{
  const cb=e.target.closest(".b3[data-camp]");if(cb){selC=+cb.dataset.camp;render();return}
