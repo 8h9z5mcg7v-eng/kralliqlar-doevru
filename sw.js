@@ -1,4 +1,4 @@
-const CACHE_NAME = "kralliq-pwa-v86";
+const CACHE_NAME = "kralliq-pwa-v87";
 const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", event => {
