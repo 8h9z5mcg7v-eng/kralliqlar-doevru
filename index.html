@@ -180,6 +180,7 @@ body.map-open{max-width:none;padding:0;overflow:hidden}body.map-open #top,body.m
 
 .map-tools.map-gesture-hint{position:absolute;z-index:4;top:7px;left:8px;margin:0;padding:7px 10px;border-radius:10px;background:#201d17d9;border:1px solid #96703d;box-shadow:0 3px 10px #0007;pointer-events:none}.map-tools.map-gesture-hint span{font-size:10px;color:#f2dcae}.kingdom-world-map{touch-action:pan-x pan-y}
 .tech-branch{margin:12px 0 16px;padding:10px;border:1px solid #9a7541;border-radius:14px;background:linear-gradient(145deg,#3d3020,#263322)}.tech-branch h3{margin:2px 0 5px;color:#ffe29a;font:700 16px Georgia,serif}.tech-branch-note{margin-bottom:8px}.tech-branch .card{margin-bottom:7px}.tech-branch .pips{letter-spacing:1px;font-size:10px;color:#ffd16d}.tech-branch .card button{min-width:86px}
+.tech-chain{display:flex;flex-direction:column;align-items:stretch;gap:0}.tech-node{padding:10px;margin:0;border:1px solid #8c754e;border-radius:12px;background:linear-gradient(145deg,#403322,#263322);box-shadow:inset 0 1px 0 #ffffff16}.tech-node.is-locked{opacity:.68;border-style:dashed;filter:saturate(.65)}.tech-node-top{display:flex;gap:10px;align-items:flex-start}.tech-node-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:10px;background:#1119;font-size:24px}.tech-node-info{min-width:0;flex:1}.tech-node-info>b{display:inline-block;margin:2px 8px 3px 0}.tech-node .lv{float:right}.tech-node .pips{font-size:11px;letter-spacing:2px;color:#ffd16d;margin-top:5px}.tech-requirement{font-size:11px;color:#d8c59d;margin:5px 0}.tech-node>button{width:100%;margin-top:7px}.tech-connector{height:25px;display:flex;align-items:center;justify-content:center;color:#e7bd68;font-size:20px;position:relative}.tech-connector:before{content:"";position:absolute;top:0;bottom:0;width:2px;background:#b18b4e66}.tech-connector span{z-index:1;background:#2c3325;border:1px solid #987a48;border-radius:50%;width:21px;height:21px;line-height:18px;text-align:center;font-size:15px}
 </style>
 </head>
 <body>
@@ -259,7 +260,7 @@ const fmtC=c=>Object.keys(c).map(k=>R[k][0]+c[k]).join(" ");
 const armyN=()=>S.army.inf+S.army.arc+S.army.cav;
 const armyCap=()=>10+20*S.lv.barracks+5*S.tech.training;
 const power=()=>Math.round(Object.keys(T).reduce((a,k)=>a+S.army[k]*T[k].pw*(1+.04*S.lv[MIL[k]]),0)*(1+.1*S.tech.pow+.05*S.tech.march+.03*(S.hero.lv-1)+.04*S.hero.sk.atk+(S.ally===1?.06:0))*relicBonus()*gearBonus());
-const TECH={prod:{n:"Əkinçilik",i:"🌱",d:"Bütün resurs istehsalı +15% / səviyyə",branch:"eco",c:{wood:200,stone:100}},store:{n:"Anbarçılıq",i:"🏚️",d:"Resurs saxlama limiti +10% / səviyyə",branch:"eco",c:{wood:220,stone:130}},gather:{n:"Toplayıcılıq",i:"⛏️",d:"Xəritədən resurs toplama +10% / səviyyə",branch:"eco",c:{food:180,wood:180}},pow:{n:"Hərbi təlim",i:"🎖️",d:"Ordu gücü +10% / səviyyə",branch:"army",c:{food:200,gold:60}},march:{n:"Yürüş taktikası",i:"🐎",d:"Yürüş ordusunun gücü +5% / səviyyə",branch:"army",c:{food:240,gold:90}},training:{n:"Çağırış sistemi",i:"🛡️",d:"Ordu limiti +5 əsgər / səviyyə",branch:"army",c:{food:260,wood:120}},wall:{n:"Möhkəmləndirilmiş divarlar",i:"🧱",d:"Canavar döyüşlərində itkilər −4% / səviyyə",branch:"def",c:{stone:240,wood:160}},hospital:{n:"Tibb bilikləri",i:"🏥",d:"Yaralıların müalicə xərci −8% / səviyyə",branch:"def",c:{food:260,gold:100}},scout:{n:"Kəşfiyyat",i:"🦅",d:"Canavar qəniməti +8% / səviyyə",branch:"def",c:{wood:220,gold:110}},cheap:{n:"Təchizat",i:"📦",d:"Əsgər qiyməti −6% / səviyyə",branch:"dev",c:{food:250,stone:150}},build:{n:"Memarlıq",i:"🏗️",d:"Bina tikinti vaxtı −5% / səviyyə",branch:"dev",c:{wood:260,stone:180}},research:{n:"Elmi metod",i:"📚",d:"Texnologiya tədqiqatı xərci −5% / səviyyə",branch:"dev",c:{gold:130,stone:220}}};
+const TECH={prod:{n:"Əkinçilik",i:"🌱",d:"Bütün resurs istehsalı +15% / səviyyə",branch:"eco",c:{wood:200,stone:100}},store:{n:"Anbarçılıq",i:"🏚️",d:"Resurs saxlama limiti +10% / səviyyə",branch:"eco",c:{wood:220,stone:130}},gather:{n:"Toplayıcılıq",i:"⛏️",d:"Xəritədən resurs toplama +10% / səviyyə",branch:"eco",c:{food:180,wood:180}},pow:{n:"Hərbi təlim",i:"🎖️",d:"Ordu gücü +10% / səviyyə",branch:"army",c:{food:200,gold:60}},march:{n:"Yürüş taktikası",i:"🐎",d:"Yürüş ordusunun gücü +5% / səviyyə",branch:"army",c:{food:240,gold:90}},training:{n:"Çağırış sistemi",i:"🛡️",d:"Ordu limiti +5 əsgər / səviyyə",branch:"army",c:{food:260,wood:120}},wall:{n:"Möhkəmləndirilmiş divarlar",i:"🧱",d:"Canavar döyüşlərində itkilər −4% / səviyyə",branch:"def",c:{stone:240,wood:160}},hospital:{n:"Tibb bilikləri",i:"🏥",d:"Yaralıların müalicə xərci −8% / səviyyə",branch:"def",c:{food:260,gold:100}},scout:{n:"Kəşfiyyat",i:"🦅",d:"Canavar qəniməti +8% / səviyyə",branch:"def",c:{wood:220,gold:110}},loot:{n:"Qarət sənəti",i:"💰",d:"Düşərgə döyüşlərindən qənimət +20% / səviyyə",branch:"army",c:{wood:150,gold:80}},cheap:{n:"Təchizat",i:"📦",d:"Əsgər qiyməti −6% / səviyyə",branch:"dev",c:{food:250,stone:150}},build:{n:"Memarlıq",i:"🏗️",d:"Bina tikinti vaxtı −5% / səviyyə",branch:"dev",c:{wood:260,stone:180}},research:{n:"Elmi metod",i:"📚",d:"Texnologiya tədqiqatı xərci −5% / səviyyə",branch:"dev",c:{gold:130,stone:220}}};
 const TECH_BRANCHES=[["eco","🌾 İqtisadiyyat",["prod","store","gather"]],["army","⚔️ Ordu",["pow","march","training","loot"]],["def","🏰 Müdafiə",["wall","hospital","scout"]],["dev","🔬 İnkişaf",["cheap","build","research"]]];
 const MAXT=8;
 const tCost=k=>{const o={};for(const r in TECH[k].c)o[r]=Math.ceil(TECH[k].c[r]*Math.pow(1.7,S.tech[k])*(1-.05*S.tech.research));return o};
@@ -634,13 +635,18 @@ function heroCard(){
  return `<div class="card"><div class="ic">${bsv("hero",46)}</div><div class="in"><b>Sərkərdə</b><span class="lv">Səv. ${h.lv}</span><div class="mut">Ordu gücü +${3*(h.lv-1)}% · Təcrübə ${h.xp}/${heroNeed()}</div><div class="mut">⚔️ Silah: ${g.weapon||"—"} səv. · 🛡️ Zireh: ${g.armor||"—"} səv. · 📿 Amulet: ${g.amulet||"—"} səv.</div><div class="mut">Avadanlıq bonusu: +${Math.round((gearBonus()-1)*100)}% ordu gücü</div></div></div>`+skillHtml();
 }
 function gainXp(x){const h=S.hero;h.xp+=x;let up=0;while(h.xp>=heroNeed()){h.xp-=heroNeed();h.lv++;up++}return up}
+function techPrerequisite(k){
+ const branch=TECH_BRANCHES.find(x=>x[2].includes(k)),i=branch?branch[2].indexOf(k):-1;
+ return i>0?branch[2][i-1]:null;
+}
 function techCard(k){
- const t=TECH[k],l=S.tech[k],c=tCost(k),mx=l>=MAXT;
- return `<div class="card"><div class="ic">${t.i}</div><div class="in"><b>${t.n}</b><span class="lv">${l}/${MAXT}</span><div class="mut">${t.d}</div><div class="pips">${"●".repeat(Math.min(l,MAXT))}${"○".repeat(Math.max(0,MAXT-l))}</div></div>
- <button data-a="rs" data-id="${k}" data-cap="${mx?1:0}" data-c='${JSON.stringify(c)}'>${mx?"Maksimum":"Öyrən"}<small>${mx?"":fmtC(c)}</small></button></div>`;
+ const t=TECH[k],l=Number(S.tech[k])||0,c=tCost(k),mx=l>=MAXT,pre=techPrerequisite(k),locked=!!(pre&&(Number(S.tech[pre])||0)<1);
+ const need=locked?"Açmaq üçün əvvəlcə "+TECH[pre].n+" səviyyə 1 olmalıdır":pre?"Ön şərt: "+TECH[pre].n+" səviyyə 1":"İlkin texnologiya · tədqiqata hazır";
+ return `<div class="tech-node ${locked?"is-locked":""}"><div class="tech-node-top"><span class="tech-node-icon">${t.i}</span><div class="tech-node-info"><b>${t.n}</b><span class="lv">${l}/${MAXT}</span><div class="mut">${t.d}</div><div class="pips">${"●".repeat(Math.min(l,MAXT))}${"○".repeat(Math.max(0,MAXT-l))}</div><div class="tech-requirement">${locked?"🔒 ":"🔗 "}${need}</div></div></div>
+ <button data-a="rs" data-id="${k}" data-cap="${mx?1:0}" data-lock="${locked?1:0}" data-c='${JSON.stringify(c)}'>${mx?"Maksimum":locked?"Kilidli":"Araşdır"}<small>${mx||locked?"":fmtC(c)}</small></button></div>`;
 }
 function techTreeHtml(){
- return TECH_BRANCHES.map(([id,title,keys])=>`<section class="tech-branch"><h3>${title}</h3><div class="mut tech-branch-note">Bu istiqamətdə hər texnologiyanı ayrıca inkişaf etdir.</div>${keys.map(techCard).join("")}</section>`).join("");
+ return TECH_BRANCHES.map(([id,title,keys])=>`<section class="tech-branch"><h3>${title}</h3><div class="mut tech-branch-note">Hər növbəti texnologiya üçün əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır.</div><div class="tech-chain">${keys.map((k,i)=>(i?`<div class="tech-connector"><span>↓</span></div>`:"")+techCard(k)).join("")}</div></section>`).join("");
 }
 const POS=E.map((_,i)=>{const a=i/6*Math.PI*2+.4,u=.5+.42*Math.cos(a),v=.5+.42*Math.sin(a);return [50+(u-v)*46,12+(u+v)*40]});
 const CP=E.map((_,i)=>{const a=i/6*Math.PI*2+.4;return [150+95*Math.cos(a),150+95*Math.sin(a)]});
@@ -851,7 +857,7 @@ function render(){
  let h="";
  if(tab==="city")h=skyHtml()+(notice?`<div id="msg">${notice}</div>`:"")+buildHtml()+hintHtml()+actionsHtml()+panelHtml()+sheetHtml();
  if(tab==="army")h=`<h2>Ordu (${armyN()}/${armyCap()})</h2><div class="mut" style="margin-bottom:8px">Ümumi güc: ${power()}. 🛡️ atlıya, 🐎 oxatana, 🏹 piyadaya qarşı +30% güclüdür (tərsi −25%). Quldur basqınları üçün ordu lazımdır.</div>`+heroCard()+`<div class="card" style="margin:10px 0"><div class="ic">🏥</div><div class="in"><b>Səhra xəstəxanası</b><div class="mut">Yaralı əsgər: ${monsterWoundedCount()} · Müalicə: hər əsgərə 2 yemək + 1 qızıl</div></div><button type="button" data-heal-wounded ${monsterWoundedCount()===0?"disabled":""}>Müalicə et</button></div><div class="card"><div class="ic">🎒</div><div class="in"><b>Nadir qənimət inventarı</b><div class="mut">🏺 Qədim relikviya: <b>${S.monsterLoot.relic}</b> — hər biri daimi +2% ordu gücü.</div><div class="mut">💎 Sehrli kristal: <b>${S.monsterLoot.crystal}</b> — hər biri daimi +1% resurs istehsalı.</div><div class="mut">🏅 Cəsarət medalı: <b>${S.monsterLoot.medal}</b> — hər biri daimi +3% canavar yürüşü gücü.</div><div class="mut" style="color:var(--gold)">Aktiv bonuslar: ⚔️ Ordu +${Math.round((relicBonus()-1)*100)}% · 📦 İstehsal +${Math.round((crystalBonus()-1)*100)}% · 🐺 Ov +${Math.round((medalBonus()-1)*100)}%</div><div style="margin-top:10px;padding-top:9px;border-top:1px solid var(--line)"><b>🔨 Dəmirçi emalatxanası</b><div class="mut">3 eyni fraqment və qızıl xərcləyərək avadanlığı 1 səviyyə artır. Maksimum səviyyə 5.</div>${[["weapon","⚔️ Silah"],["armor","🛡️ Zireh"],["amulet","📿 Amulet"]].map(([k,n])=>`<div class="map-panel-item"><span>${n} · Səv. ${S.heroGear[k]} · Fraqment ${S.heroGearFragments[k]}/3</span><button type="button" data-forge="${k}" ${S.heroGear[k]>=5||S.heroGearFragments[k]<3||S.res.gold<100*(S.heroGear[k]+1)?"disabled":""}>Yüksəlt · 🪙 ${100*(S.heroGear[k]+1)}</button></div>`).join("")}</div></div></div>`+Object.keys(T).map(tCard).join("");
- if(tab==="tech")h="<h2>🔬 Texnologiya ağacı</h2><div class=\"mut\">13 texnologiya · 4 inkişaf istiqaməti · hər biri 8 səviyyə</div>"+techTreeHtml();
+ if(tab==="tech")h="<h2>🔬 Texnologiya ağacı</h2><div class=\"mut\">13 texnologiya · 4 inkişaf istiqaməti · 8 səviyyə · hər biri 8 səviyyə</div>"+techTreeHtml();
  if(tab==="map")h=`<section class="map-screen-full"><header class="map-screen-head"><button type="button" data-map-close>‹ Geri</button><div><b>🗺️ Krallıq xəritəsi</b><small>${escHtml(S.kingdomName)} · Güc ${power()}</small></div><span class="map-coord-hint">X/Y koordinatları</span></header><div class="map-screen-canvas">${mapHtml()}</div>${lastMsg?'<div class="map-result-toast">'+lastMsg+'</div>':''}</section>`;
  document.getElementById("main").innerHTML=h;
  document.body.classList.toggle("map-open",tab==="map");
@@ -865,7 +871,7 @@ function refresh(){
  document.getElementById("res").innerHTML=Object.keys(R).map(k=>`<div class="r" style="--c:${RC[k]}">${R[k][0]} ${Math.floor(S.res[k])}<small>+${p[k].toFixed(1)}/s</small></div>`).join("");
  document.querySelectorAll("button[data-a]").forEach(b=>{
   const a=b.dataset.a;
-  if(a==="up"||a==="rs")b.disabled=b.dataset.cap==="1"||!afford(JSON.parse(b.dataset.c))||(a==="up"&&!!S.build);
+  if(a==="up"||a==="rs")b.disabled=b.dataset.cap==="1"||b.dataset.lock==="1"||!afford(JSON.parse(b.dataset.c))||(a==="up"&&!!S.build);
   if(a==="tr"){const n=+b.dataset.n;b.disabled=!afford(trCost(b.dataset.id,n))||armyN()+n>armyCap()}
  });
 }
@@ -893,7 +899,7 @@ document.getElementById("main").addEventListener("click",e=>{
  const a=b.dataset.a,id=b.dataset.id;
  if(a==="up"){if(S.build)return;const c=cost(id);if(!afford(c)||capped(id))return;for(const k in c)S.res[k]-=c[k];S.build={id,end:Date.now()+buildSec(id)*1000};sel=null}
  if(a==="tr"){const n=+b.dataset.n,c=trCost(id,n);if(!afford(c)||armyN()+n>armyCap())return;for(const k in c)S.res[k]-=c[k];S.army[id]+=n;S.stats.trained+=n;popId=id;popN=n}
- if(a==="rs"){const c=tCost(id);if(S.tech[id]>=MAXT||!afford(c))return;for(const k in c)S.res[k]-=c[k];S.tech[id]++}
+ if(a==="rs"){const pre=techPrerequisite(id);if((pre&&(Number(S.tech[pre])||0)<1)||S.tech[id]>=MAXT){toast("🔒 Əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır");return}const c=tCost(id);if(!afford(c))return;for(const k in c)S.res[k]-=c[k];S.tech[id]++}
  if(a==="rst"){if(!rstArm){rstArm=true;render();return}nosave=true;try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}
  if(a==="sk"&&SK[id]&&skPts()>0)S.hero.sk[id]++;
  if(a==="pn"){panel=panel===id?null:id;render();return}
