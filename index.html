@@ -310,13 +310,14 @@ body.city-home-fixed nav{flex:0 0 auto}
 <div id="toast"></div><button id="mu">🔊</button>
 <nav><div><button data-tab="city"><b>🏰</b>Şəhər</button><button data-tab="army"><b>⚔️</b>Ordu</button><button data-tab="tech"><b>🔬</b>Tədqiqat</button><button data-tab="map"><b>🗺️</b>Xəritə</button></div></nav>
 <script>
-const R={food:["🌾","Yemək"],wood:["🪵","Odun"],stone:["🪨","Daş"],gold:["🪙","Qızıl"]};
+const R={food:["🌾","Yemək"],wood:["🪵","Odun"],stone:["🪨","Daş"],iron:["⛏️","Dəmir"],gold:["🪙","Qızıl"]};
 const B={
  castle:{n:"Qala",i:"🏰",c:{wood:100,stone:100}},
  farm:{n:"Ferma",i:"🌾",c:{wood:60},p:"food",r:1},
  saw:{n:"Mişar",i:"🪵",c:{food:60},p:"wood",r:1},
  quarry:{n:"Daş karxanası",i:"🪨",c:{wood:80,food:40},p:"stone",r:.6},
  mine:{n:"Qızıl mədəni",i:"🪙",c:{wood:120,stone:80},p:"gold",r:.3},
+ ironMine:{n:"Dəmir mədəni",i:"⛏️",c:{wood:180,stone:120},p:"iron",r:.25},
  barracks:{n:"Kazarma",i:"⚔️",c:{wood:150,stone:100}},
  warehouse:{n:"Anbar",i:"📦",c:{wood:120,stone:60}},
  wall:{n:"Divar",i:"🧱",c:{wood:100,stone:150}},
@@ -337,9 +338,10 @@ let S={res:{food:300,wood:300,stone:150,gold:60},lv:{castle:1,farm:1,saw:1,quarr
 let tab="city",lastMsg="",mapPanel="monsters",techPage="";
 
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
+S.lv.ironMine=Math.max(0,Math.min(30,Number(S.lv.ironMine)||0));S.res.iron=Math.max(0,Number(S.res.iron)||0);
 S.lv.tent=Math.max(0,Math.min(30,Number(S.lv.tent)||0));
 S.tentCount=Math.max(1,Math.min(8,Number(S.tentCount)||1));
-S.lv.hospital=Math.max(0,Math.min(30,Number(S.lv.hospital)||0));S.hospitalCount=Math.max(1,Math.min(4,Number(S.hospitalCount)||1));S.resourceCount=Object.assign({farm:S.lv.farm>0?1:0,saw:S.lv.saw>0?1:0,quarry:S.lv.quarry>0?1:0,mine:S.lv.mine>0?1:0},S.resourceCount||{});for(const k of ["farm","saw","quarry","mine"])S.resourceCount[k]=Math.max(S.lv[k]>0?1:0,Math.min(2,Number(S.resourceCount[k])||0));
+S.lv.hospital=Math.max(0,Math.min(30,Number(S.lv.hospital)||0));S.hospitalCount=Math.max(1,Math.min(4,Number(S.hospitalCount)||1));S.resourceCount=Object.assign({farm:S.lv.farm>0?1:0,saw:S.lv.saw>0?1:0,mine:S.lv.mine>0?1:0,ironMine:S.lv.ironMine>0?1:0},S.resourceCount||{});for(const k of ["farm","saw","mine","ironMine"])S.resourceCount[k]=Math.max(S.lv[k]>0?1:0,Math.min(2,Number(S.resourceCount[k])||0));
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0,store:0,gather:0,march:0,training:0,wall:0,hospital:0,scout:0,build:0,research:0,foodcraft:0,woodcraft:0,stonecraft:0,infantry:0,archery:0,cavalry:0,swift:0},S.tech||{});
 S.troops=S.troops||{};for(const k of ["inf","arc","cav"]){if(!Array.isArray(S.troops[k])){S.troops[k]=Array(10).fill(0);S.troops[k][0]=Math.max(0,Number(S.army[k])||0)}else{S.troops[k]=Array.from({length:10},(_,i)=>Math.max(0,Number(S.troops[k][i])||0))}S.army[k]=S.troops[k].reduce((a,b)=>a+b,0)}
@@ -353,7 +355,7 @@ const relicBonus=()=>1+.02*(Number(S.monsterLoot.relic)||0);
 const crystalBonus=()=>1+.01*(Number(S.monsterLoot.crystal)||0);
 const medalBonus=()=>1+.03*(Number(S.monsterLoot.medal)||0);
 const gearBonus=()=>1+.02*(Number(S.heroGear.weapon)||0)+.015*(Number(S.heroGear.armor)||0)+.01*(Number(S.heroGear.amulet)||0);
-const prod=()=>{const p={food:0,wood:0,stone:0,gold:0},tb=territoryBonus()*crystalBonus();for(const id in B){const b=B[id];if(b.p){const spec=b.p==="food"?1+.08*S.tech.foodcraft:b.p==="wood"?1+.08*S.tech.woodcraft:b.p==="stone"?1+.08*S.tech.stonecraft:1,count=Math.max(1,Number(S.resourceCount?.[id])||1);p[b.p]+=b.r*S.lv[id]*count*(1+.15*S.tech.prod+.03*S.hero.sk.eco+(S.ally===0?.08:0))*spec*tb}}return p};
+const prod=()=>{const p={food:0,wood:0,stone:0,iron:0,gold:0},tb=territoryBonus()*crystalBonus();for(const id in B){const b=B[id];if(b.p){const spec=b.p==="food"?1+.08*S.tech.foodcraft:b.p==="wood"?1+.08*S.tech.woodcraft:b.p==="stone"?1+.08*S.tech.stonecraft:1,count=Math.max(1,Number(S.resourceCount?.[id])||1);p[b.p]+=b.r*S.lv[id]*count*(1+.15*S.tech.prod+.03*S.hero.sk.eco+(S.ally===0?.08:0))*spec*tb}}return p};
 (function offline(){const s=Math.min(Math.max((Date.now()-S.t)/1000,0),8*3600),p=prod();for(const k in p)addRes(k,p[k]*s);S.t=Date.now()})();
 
 const cost=id=>{const o={};for(const k in B[id].c)o[k]=Math.ceil(B[id].c[k]*Math.pow(1.6,S.lv[id]));return o};
@@ -564,7 +566,7 @@ function attackKing(i){
  fx(win);toast(win?"⚔️ Qələbə!":"⚔️ Məğlubiyyət");
  try{window.scrollTo({top:0,behavior:"smooth"})}catch(e){}
 }
-const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",gold:"#fbc02d"};
+const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fbc02d"};
 const SLOT={
  castle:[150/300,150/300],
  barracks:[70/300,102/300],range:[230/300,102/300],
@@ -749,6 +751,7 @@ const GM={
  saw:()=>{gB(-12,-12,0,26,24,13,'#8b5a2b',1);gG(-12,-12,13,26,24,10,'#4e3a2a');gB(-3,12,0,9,.8,10,'#2f1f10');for(let r=0;r<3;r++)for(let c=0;c<=2-r;c++)gB(-30+c*7+r*3.5,-6,r*5,6,16,5,'#a0622d',1);gB(18,8,0,3,3,16,'#6b4a2a');gB(14,8,12,12,2,3,'#9aa0a6',0)},
  quarry:()=>{gB(-20,-12,0,22,22,20,'#9aa3a8',0);gB(3,-8,0,20,18,12,'#b0b8bc',0);gB(-8,8,0,14,10,7,'#868e92',0);gB(-26,4,0,8,8,10,'#a1a9ad',0);gB(20,10,0,3,3,24,'#6b4a2a');gB(14,10,22,14,2,3,'#6b4a2a')},
  mine:()=>{gK(0,0,0,30,5,34,'#7a6f64',9,0);gB(-8,16,0,16,5,13,'#241912');gB(-10,15,0,3,6,15,'#6b4a2a',1);gB(7,15,0,3,6,15,'#6b4a2a',1);gB(-10,15,13,20,6,3,'#6b4a2a',1);for(let i=0;i<4;i++)gB(-14+i*8,22,0,4,4,4,'#f2c230',0);gB(14,12,0,10,7,6,'#5a5a5a',0)},
+ ironMine:()=>py(0,0,0,42,34,"#777d82")+bx(-8,15,0,16,4,14,"#343a40")+bx(-12,18,0,5,5,5,"#b0bec5")+bx(8,18,0,5,5,5,"#b0bec5")+bx(-3,20,0,6,5,8,"#8d989f"),
  barracks:()=>{gB(-26,-14,0,52,28,18,'#a89a82');gG(-26,-14,18,52,28,13,'#47525f');gB(-4,14,0,8,.8,12,'#43301c');for(let i=0;i<4;i++)gB(-21+i*13,14.2,9,4,.8,6,'#ffd27a');gB(-24,14.2,3,5,.8,13,'#b22222');gB(19,14.2,3,5,.8,13,'#b22222');gB(-.8,-.8,31,1.6,1.6,18,'#3b2a14');gB(.8,-.8,40,13,.8,8,'#b22222')},
  warehouse:()=>{gB(-22,-14,0,44,28,15,'#9a7b50',1);gG(-22,-14,15,44,28,11,'#5e4228');gB(-8,14,0,16,.8,12,'#5a3b1e',1);gB(-26,10,0,10,10,10,'#c9985a',1);gB(-26,10,10,10,10,8,'#b9884a',1);gK(26,10,0,5,5,9,'#7a5a35',10,1);gK(26,-4,0,5,5,9,'#7a5a35',10,1)},
  wall:()=>{gB(-30,-6,0,60,12,17,'#a9a99f');for(let i=0;i<8;i++)gB(-30+i*8,-6,17,4,3,4,'#a9a99f');[[-32,0],[32,0]].forEach(([x,y])=>{gK(x,y,0,9,9,30,'#9b9b90',12);gK(x,y,30,10.5,10.5,3,'#85857b',12);gK(x,y,33,11,0,15,'#4d5560',12,2)});gB(-7,5.2,0,14,1,13,'#43301c')},
@@ -898,7 +901,7 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
   const resourceSlots=[
    {id:'farm',x:48,z:42,name:'Ferma sahəsi'},
    {id:'saw',x:48,z:258,name:'Taxta sahəsi'},
-   {id:'quarry',x:252,z:42,name:'Dəmir sahəsi'},
+   {id:'ironMine',x:252,z:42,name:'Dəmir sahəsi'},
    {id:'mine',x:252,z:258,name:'Qızıl sahəsi'}
   ];
   resourceSlots.forEach(p=>{
