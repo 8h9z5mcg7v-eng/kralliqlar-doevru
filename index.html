@@ -642,10 +642,10 @@ function techPrerequisite(k){
  return i>0?branch[2][i-1]:null;
 }
 function techCard(k){
- const t=TECH[k],l=Number(S.tech[k])||0,c=tCost(k),mx=l>=MAXT,pre=techPrerequisite(k),locked=!!(pre&&(Number(S.tech[pre])||0)<1);
- const need=locked?"Açmaq üçün əvvəlcə "+TECH[pre].n+" səviyyə 1 olmalıdır":pre?"Ön şərt: "+TECH[pre].n+" səviyyə 1":"İlkin texnologiya · tədqiqata hazır";
- return `<div class="tech-node ${locked?"is-locked":""}" id="tech-${k}"><div class="tech-node-top"><span class="tech-node-icon">${t.i}</span><div class="tech-node-info"><b>${t.n}</b><span class="lv">${l}/${MAXT}</span><div class="mut">${t.d}</div><div class="pips">${"●".repeat(Math.min(l,MAXT))}${"○".repeat(Math.max(0,MAXT-l))}</div><div class="tech-requirement">${locked?"🔒 ":"🔗 "}${need}</div></div></div>
- <button data-a="rs" data-id="${k}" data-cap="${mx?1:0}" data-lock="${locked?1:0}" data-c='${JSON.stringify(c)}'>${mx?"Maksimum":locked?"Kilidli":"Araşdır"}<small>${mx||locked?"":fmtC(c)}</small></button></div>`;
+ const t=TECH[k],l=Number(S.tech[k])||0,c=tCost(k),mx=l>=MAXT,pre=techPrerequisite(k),locked=!!(pre&&(Number(S.tech[pre])||0)<1),academyBlocked=!mx&&l>=S.academyLevel;
+ const need=locked?"Açmaq üçün əvvəlcə "+TECH[pre].n+" səviyyə 1 olmalıdır":academyBlocked?"Bu səviyyə üçün Elmi Akademiya "+(l+1)+"-ci səviyyə olmalıdır":pre?"Ön şərt: "+TECH[pre].n+" səviyyə 1":"İlkin texnologiya · tədqiqata hazır";
+ return `<div class="tech-node ${locked||academyBlocked?"is-locked":""}" id="tech-${k}"><div class="tech-node-top"><span class="tech-node-icon">${t.i}</span><div class="tech-node-info"><b>${t.n}</b><span class="lv">${l}/${MAXT}</span><div class="mut">${t.d}</div><div class="pips">${"●".repeat(Math.min(l,MAXT))}${"○".repeat(Math.max(0,MAXT-l))}</div><div class="tech-requirement">${locked?"🔒 ":academyBlocked?"🏛️ ":"🔗 "}${need}</div></div></div>
+ <button data-a="rs" data-id="${k}" data-cap="${mx?1:0}" data-lock="${locked?1:0}" data-academy-lock="${academyBlocked?1:0}" data-c='${JSON.stringify(c)}'>${mx?"Maksimum":locked?"Kilidli":academyBlocked?"Akademiyanı yüksəlt":"Araşdır"}<small>${mx||locked||academyBlocked?"":fmtC(c)}</small></button></div>`;
 }
 function academyCost(){const l=S.academyLevel;return {wood:Math.ceil(260*Math.pow(1.65,l)),stone:Math.ceil(180*Math.pow(1.65,l)),gold:Math.ceil(45*Math.pow(1.55,l))}}
 function academySeconds(){return Math.max(20,Math.round(35*Math.pow(1.55,S.academyLevel)))}
@@ -899,7 +899,7 @@ function refresh(){
  document.getElementById("res").innerHTML=Object.keys(R).map(k=>`<div class="r" style="--c:${RC[k]}">${R[k][0]} ${Math.floor(S.res[k])}<small>+${p[k].toFixed(1)}/s</small></div>`).join("");
  document.querySelectorAll("button[data-a]").forEach(b=>{
   const a=b.dataset.a;
-  if(a==="up"||a==="rs")b.disabled=b.dataset.cap==="1"||b.dataset.lock==="1"||(a==="rs"&&(!!S.researchJob||S.academyLevel<1))||!afford(JSON.parse(b.dataset.c))||(a==="up"&&!!S.build);
+  if(a==="up"||a==="rs")b.disabled=b.dataset.cap==="1"||b.dataset.lock==="1"||b.dataset.academyLock==="1"||(a==="rs"&&(!!S.researchJob||S.academyLevel<1))||!afford(JSON.parse(b.dataset.c))||(a==="up"&&!!S.build);
   if(a==="tr"){const n=+b.dataset.n;b.disabled=!afford(trCost(b.dataset.id,n))||armyN()+n>armyCap()}
  });
 }
@@ -927,7 +927,7 @@ document.getElementById("main").addEventListener("click",e=>{
  const a=b.dataset.a,id=b.dataset.id;
  if(a==="up"){if(S.build)return;const c=cost(id);if(!afford(c)||capped(id))return;for(const k in c)S.res[k]-=c[k];S.build={id,end:Date.now()+buildSec(id)*1000};sel=null}
  if(a==="tr"){const n=+b.dataset.n,c=trCost(id,n);if(!afford(c)||armyN()+n>armyCap())return;for(const k in c)S.res[k]-=c[k];S.army[id]+=n;S.stats.trained+=n;popId=id;popN=n}
- if(a==="rs"){const pre=techPrerequisite(id);if(S.academyLevel<1){toast("Əvvəlcə Elmi Akademiyanı tik");return}if(S.researchJob){toast("Başqa tədqiqat artıq davam edir");return}if((pre&&(Number(S.tech[pre])||0)<1)||S.tech[id]>=MAXT){toast("🔒 Əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır");return}const c=tCost(id);if(!afford(c))return;for(const k in c)S.res[k]-=c[k];S.researchJob={id,started:Date.now(),end:Date.now()+researchSeconds(id)*1000};toast("🔬 Tədqiqat başladı: "+TECH[id].n)}
+ if(a==="rs"){const pre=techPrerequisite(id),level=Number(S.tech[id])||0;if(S.academyLevel<1){toast("Əvvəlcə Elmi Akademiyanı tik");return}if(S.researchJob){toast("Başqa tədqiqat artıq davam edir");return}if(level>=S.academyLevel){toast("🏛️ Bu tədqiqatın "+(level+1)+"-ci səviyyəsi üçün Elmi Akademiyanı "+(level+1)+"-ci səviyyəyə yüksəlt");return}if((pre&&(Number(S.tech[pre])||0)<1)||level>=MAXT){toast("🔒 Əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır");return}const c=tCost(id);if(!afford(c))return;for(const k in c)S.res[k]-=c[k];S.researchJob={id,started:Date.now(),end:Date.now()+researchSeconds(id)*1000};toast("🔬 Tədqiqat başladı: "+TECH[id].n)}
  if(a==="rst"){if(!rstArm){rstArm=true;render();return}nosave=true;try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}
  if(a==="sk"&&SK[id]&&skPts()>0)S.hero.sk[id]++;
  if(a==="pn"){panel=panel===id?null:id;render();return}
