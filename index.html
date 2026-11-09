@@ -285,7 +285,7 @@ const troopTierOpen=(k,t)=>Number(S.lv[k==="inf"?"barracks":k==="arc"?"range":"s
 const troopTierPower=(k,t)=>T[k].pw*Math.pow(1.2,t-1);
 const troopTierCost=(k,t,n)=>{const o={},m=(1-.06*S.tech.cheap)*Math.pow(1.65,t-1);for(const r in T[k].c)o[r]=Math.ceil(T[k].c[r]*n*m);return o};
 const trCost=(k,n,t=1)=>troopTierCost(k,t,n);
-const trainingSeconds=(k,n,t=1)=>Math.max(5,Math.ceil(n*(k==="cav"?14:k==="arc"?10:8)*Math.pow(1.28,t-1)/(1+.08*S.tech.training+.05*S.lv.drill+.015*(S.lv[k==="inf"?"barracks":k==="arc"?"range":"stable"]||0))));
+const trainingSeconds=(k,n,t=1)=>Math.max(5,Math.ceil(n*(k==="cav"?14:k==="arc"?10:8)*Math.pow(1.28,t-1)/(1+.08*S.tech.training+.05*S.lv.drill+.015*(S.lv[k==="inf"?"barracks":k==="arc"?"range":"stable"]||0)+.01*tentSpeedBonus())));
 const syncArmy=k=>{S.army[k]=S.troops[k].reduce((a,b)=>a+b,0);return S.army[k]};
 const tierArmyPower=k=>S.troops[k].reduce((a,n,i)=>a+n*troopTierPower(k,i+1)*(1+.04*S.lv[MIL[k]])*troopTech(k),0);
 const removeTierTroops=(k,n)=>{let left=Math.min(syncArmy(k),Math.max(0,n));const removed=Array(10).fill(0);for(let i=0;i<10&&left>0;i++){const take=Math.min(S.troops[k][i],left);S.troops[k][i]-=take;removed[i]=take;left-=take}syncArmy(k);return removed};
