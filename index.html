@@ -92,7 +92,9 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .bk{position:fixed;inset:0;z-index:7;background:rgba(0,0,0,.4)}
 .dotb::after{content:"";display:inline-block;width:9px;height:9px;border-radius:5px;background:#e53935;margin-left:6px}
 .ghost svg{opacity:.55}
-.s3{perspective:1500px;height:760px}
+.s3{perspective:1500px;height:760px;overflow:visible}
+.tent-yard{position:absolute;left:132px;top:-112px;width:96px;height:68px;border:2px solid #9b7a43;border-radius:9px;background:linear-gradient(145deg,#72964a,#3d6b35);box-shadow:inset 0 0 0 3px #a8a06a,0 5px 8px #17220f88;transform:translateZ(1px);display:flex;align-items:flex-start;justify-content:center;pointer-events:none}
+.tent-yard span{font:700 7px Arial,sans-serif;letter-spacing:1px;color:#f5e6bf;background:#354c2b;padding:2px 4px;border-radius:3px;margin-top:3px}
 .w3{position:absolute;left:50%;top:50%;width:360px;height:360px;margin:-180px 0 0 -180px;transform-style:preserve-3d;transform:scale(var(--map-scale,2.5)) rotateX(58deg) rotateZ(45deg);animation:none;background:radial-gradient(ellipse at 22% 25%,rgba(45,105,43,.9) 0 9%,transparent 20%),radial-gradient(ellipse at 76% 22%,rgba(55,119,48,.85) 0 10%,transparent 22%),radial-gradient(ellipse at 78% 78%,rgba(36,91,40,.85) 0 11%,transparent 23%),repeating-linear-gradient(0deg,rgba(255,255,255,.11) 0 1px,transparent 1px 30px),repeating-linear-gradient(90deg,rgba(0,0,0,.11) 0 1px,transparent 1px 30px),radial-gradient(circle,#8bc65e,#3d7d35)}
  .world-expansion{position:absolute;inset:0;width:600px;height:600px;pointer-events:none;z-index:0}.world-expansion circle[data-slot]{pointer-events:all;cursor:pointer}.kingdom-profile{margin:9px 0 12px;padding:12px;border:1px solid #94703e;border-radius:12px;background:linear-gradient(115deg,#3d3020,#293b2b);color:#f5e5c2}.kingdom-profile>b{display:block;margin-bottom:9px}.profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.profile-fields label{display:block;font-size:11px;color:#dbc9a4}.profile-fields input{box-sizing:border-box;width:100%;min-width:0;margin-top:4px;padding:9px 8px;border:1px solid #9a7845;border-radius:8px;background:#211c15;color:#fff0c9;font-size:13px}.kingdom-profile button{margin-top:9px;padding:9px 12px;border:1px solid #d4ae67;border-radius:8px;background:#73502b;color:#fff0c9;font-weight:700}.kingdom-profile small{display:block;margin-top:7px;color:#d9c9a8}.slot-info{margin:8px 0 12px;padding:10px 12px;border:1px solid #94703e;border-radius:10px;background:linear-gradient(110deg,#3c3020,#273522);color:#f4e3bd;font-size:12px}.slot-info b,.slot-info span{display:block}.slot-info span{margin-top:4px;color:#d7c9a9}.slot-info button{margin-top:8px;padding:8px 11px;border:1px solid #d4ae67;border-radius:8px;background:#73502b;color:#fff0c9;font-weight:700}.world-core{position:absolute;left:150px;top:150px;width:300px;height:300px;z-index:2}.territory-layer{position:absolute;inset:0;width:300px;height:300px;pointer-events:none;z-index:0;overflow:visible}.w3>.territory-layer{transform:translateZ(.2px)}.w3 i{position:absolute;display:block}
 .w3 .sl{background:#4a2f17}
@@ -231,6 +233,7 @@ const B={
  stable:{n:"Ahır",i:"🐴",c:{wood:140,food:80},mil:"cav"},
  range:{n:"Atış meydanı",i:"🎯",c:{wood:140,stone:60},mil:"arc"},
  drill:{n:"Məşq meydanı",i:"🗡️",c:{wood:100,stone:100},mil:"inf"},
+ tent:{n:"Hərbi çadır",i:"⛺",c:{wood:130,stone:70}},
 };
 const T={
  inf:{n:"Piyada",i:"🛡️",c:{food:30,wood:10},pw:5},
@@ -243,7 +246,7 @@ let S={res:{food:300,wood:300,stone:150,gold:60},lv:{castle:1,farm:1,saw:1,quarr
 let tab="city",lastMsg="",mapPanel="monsters",techPage="";
 
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
-delete S.lv.tent;if(S.build?.id==="tent")S.build=null;
+S.lv.tent=Math.max(0,Math.min(30,Number(S.lv.tent)||0));
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0,store:0,gather:0,march:0,training:0,wall:0,hospital:0,scout:0,build:0,research:0,foodcraft:0,woodcraft:0,stonecraft:0,infantry:0,archery:0,cavalry:0,swift:0},S.tech||{});
 S.troops=S.troops||{};for(const k of ["inf","arc","cav"]){if(!Array.isArray(S.troops[k])){S.troops[k]=Array(10).fill(0);S.troops[k][0]=Math.max(0,Number(S.army[k])||0)}else{S.troops[k]=Array.from({length:10},(_,i)=>Math.max(0,Number(S.troops[k][i])||0))}S.army[k]=S.troops[k].reduce((a,b)=>a+b,0)}
@@ -265,8 +268,9 @@ const afford=c=>Object.keys(c).every(k=>S.res[k]>=c[k]);
 const fmtC=c=>Object.keys(c).map(k=>R[k][0]+c[k]).join(" ");
 const armyN=()=>["inf","arc","cav"].reduce((a,k)=>a+syncArmy(k),0);
 const armyCap=()=>10+20*S.lv.barracks+5*S.tech.training;
-const trainingVolume=()=>160;
-const tentSpeedBonus=()=>0;
+const TENT_VOLUME=[0,10,10,20,20,30,30,40,40,50,50,60,60,70,70,80,80,90,90,100,100,110,110,120,120,130,130,140,140,150,160];
+const trainingVolume=()=>S.lv.tent>0?TENT_VOLUME[S.lv.tent]:160;
+const tentSpeedBonus=()=>S.lv.tent>0?Math.ceil(S.lv.tent/2):0;
 function trainingOrderLimit(){return Math.max(0,Math.min(trainingVolume(),armyCap()-armyN()-pendingTrainingCount()))}
 function trainingOrderCount(button){const input=button.dataset.orderInput?document.getElementById(button.dataset.orderInput):null,limit=trainingOrderLimit();return Math.max(1,Math.min(limit,Math.floor(Number(input?input.value:button.dataset.n)||1)))}
 function updateTrainingOrderPreview(input){const row=input.closest(".map-panel-item"),button=row?.querySelector("button[data-a=tr]"),preview=row?.querySelector("[data-order-preview]");if(!button||!preview)return;const limit=trainingOrderLimit(),n=Math.max(1,Math.min(limit,Math.floor(Number(input.value)||1))),tier=Number(button.dataset.tier)||1,k=button.dataset.id;if(limit<1){preview.textContent="Ordu limiti dolub";return}input.max=limit;input.value=n;preview.textContent=n+" əsgər · "+fmtC(trCost(k,n,tier))+" · "+fmtDuration(trainingSeconds(k,n,tier));}
@@ -299,6 +303,7 @@ function buildingDetailHtml(id){
  if(B[id].p)html="<h3>📈 İstehsal</h3>"+rows([["Hazırkı istehsal",(B[id].r*l).toFixed(1)+" "+R[B[id].p][1]+"/san"],["Növbəti səviyyədə",(B[id].r*next*(1+.15*S.tech.prod+.03*S.hero.sk.eco)).toFixed(1)+" "+R[B[id].p][1]+"/san"],["Baza artımı","+"+B[id].r.toFixed(1)+" "+R[B[id].p][1]+"/san"]])+"<div class='mut'>İstehsal texnologiya və digər bonuslarla artır.</div>";
  if(id==="castle")html="<h3>🏰 Qala səviyyəsi</h3>"+rows([["Hazırkı səviyyə",l+"/30"],["Binalar üçün maksimum səviyyə",l],["Növbəti səviyyə","Bütün binaların inkişaf limitini artırır"]]);
  if(id==="warehouse")html="<h3>📦 Anbar tutumu</h3>"+rows([["Hazırkı bonus","+"+(25*l)+"%"],["Növbəti səviyyə","Anbar tutumu +25%"],["Təsir","Resursların saxlanma limitini artırır"]]);
+ if(id==="tent")html="<h3>⛺ Hərbi düşərgə</h3>"+rows([["Hazırkı səviyyə",l+"/30"],["Bir sifarişdə təlim həcmi",trainingVolume()+" əsgərədək"],["Təlim sürəti bonusu","+"+tentSpeedBonus()+"%"],["Növbəti səviyyə","Təlim həcmi və sürəti artır"]]);
  if(id==="wall")html="<h3>🧱 Müdafiə</h3>"+rows([["Hazırkı müdafiə","+"+(5*l)+"%"],["Basqın itkilərinin azalması","−"+(2*l)+"%"],["Növbəti səviyyə","Müdafiə +5%, itki −2%"]]);
  if(["barracks","range","stable"].includes(id)){
   const k=id==="barracks"?"inf":id==="range"?"arc":"cav",capacity=Math.max(0,armyCap()-armyN()-pendingTrainingCount()),unlocked=TROOP_TIER_UNLOCK.filter(v=>v<=l).length,volume=trainingOrderLimit();
@@ -441,7 +446,7 @@ function attackKing(i){
 }
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",gold:"#fbc02d"};
 const RING=["mine","quarry","wall","saw","range","barracks","drill","stable","farm","warehouse"];
-const SLOT={castle:[.5,.5]};RING.forEach((id,i)=>{const a=i/RING.length*Math.PI*2+.3;SLOT[id]=[.5+.46*Math.cos(a),.5+.46*Math.sin(a)]});
+const SLOT={castle:[.5,.5]};RING.forEach((id,i)=>{const a=i/RING.length*Math.PI*2+.3;SLOT[id]=[.5+.46*Math.cos(a),.5+.46*Math.sin(a)]});SLOT.tent=[.5,-.22];
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
 const sh=(c,f)=>{const n=parseInt(c.slice(1),16),m=v=>Math.min(255,Math.round(v*f));return `rgb(${m(n>>16)},${m(n>>8&255)},${m(n&255)})`};
@@ -459,14 +464,15 @@ const M={
  stable:()=>bx(-18,-12,0,36,26,16,'#8b6b3d')+py(0,1,16,38,14,'#5b3d22')+bx(-6,14,0,12,1,11,'#3b2a14')+bx(-3,14,12,6,1,3,'#f1c40f'),
  range:()=>bx(-3,-3,0,6,6,22,'#6b4a2a')+bx(-12,0,10,24,2,24,'#f5f0e0')+bx(-6,2,16,12,1,12,'#c0392b')+bx(14,-10,0,14,14,12,'#8b5a2b'),
  drill:()=>bx(-24,-18,0,48,36,3,'#c9a56a')+bx(-3,-3,3,6,6,34,'#8b5a2b')+bx(-16,-3,27,32,6,6,'#a06a35')+bx(14,0,5,12,2,14,'#2e86c1'),
+ tent:()=>'<svg xmlns="http://www.w3.org/2000/svg" width="58" height="48" viewBox="0 0 58 48" style="overflow:visible;filter:drop-shadow(0 3px 2px rgba(0,0,0,.28))"><ellipse cx="29" cy="41" rx="25" ry="5" fill="#26351d" opacity=".35"/><path d="M5 39 29 5 53 39Z" fill="#8b6b3d" stroke="#4d3824" stroke-width="2"/><path d="M29 5 29 39 5 39Z" fill="#b98b4d"/><path d="M29 5 29 39 53 39Z" fill="#79552f"/><path d="M24 39 29 26 34 39Z" fill="#33251a"/><path d="M29 5V1" stroke="#e4cf9a" stroke-width="2"/></svg>',
  
  site:()=>bx(-14,-14,0,28,28,3,'#c9a56a')+bx(-14,-14,0,3,3,22,'#8b5a2b')+bx(11,-14,0,3,3,22,'#8b5a2b')+bx(-14,11,0,3,3,22,'#8b5a2b')+bx(11,11,0,3,3,22,'#8b5a2b')
 };
 function glPh(k){return `<div class="sky gl" data-k="${k}"></div>`}
 function skyHtml(){return GLOK?glPh('city'):skyCss()}
 function skyCss(){
- const H={castle:96,farm:34,saw:30,quarry:34,mine:46,barracks:42,warehouse:36,wall:44,stable:34,range:44,drill:42};
- let h=`<div class='sky s3'><div class='w3'><i class='sl' style='left:0;top:360px;width:360px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:360px;top:0;width:360px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
+ const H={castle:96,farm:34,saw:30,quarry:34,mine:46,barracks:42,warehouse:36,wall:44,stable:34,range:44,drill:42,tent:48};
+ let h=`<div class='sky s3'><div class='w3'><div class='tent-yard' style='left:132px;top:-112px'><span>HƏRBİ DÜŞƏRGƏ</span></div><i class='sl' style='left:0;top:360px;width:360px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:360px;top:0;width:360px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
  [[18,18],[342,18],[18,342],[342,342],[180,8],[8,180]].forEach(t=>{h+=`<div class='p3' style='left:${t[0]}px;top:${t[1]}px'>${bx(-2,-2,0,4,4,8,'#7a4a22')}${py(0,0,6,18,22,'#2f7d32')}</div>`});
  Object.keys(SLOT).forEach(id=>{
   const bu=S.build&&S.build.id===id,l=S.lv[id],cx=SLOT[id][0]*360,cy=SLOT[id][1]*360,k=(id==='castle'?.85:1)*(1+Math.min(l,8)*.02);
