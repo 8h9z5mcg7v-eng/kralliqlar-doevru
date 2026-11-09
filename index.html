@@ -448,8 +448,9 @@ function attackKing(i){
  try{window.scrollTo({top:0,behavior:"smooth"})}catch(e){}
 }
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",gold:"#fbc02d"};
-const RING=["mine","quarry","wall","saw","range","barracks","drill","stable","farm","warehouse","tent"];
+const RING=["mine","quarry","wall","saw","range","barracks","drill","stable","farm","warehouse"];
 const SLOT={castle:[.5,.5]};RING.forEach((id,i)=>{const a=i/RING.length*Math.PI*2+.3;SLOT[id]=[.5+.42*Math.cos(a),.5+.42*Math.sin(a)]});
+SLOT.tent=[.37,.12];
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
 const sh=(c,f)=>{const n=parseInt(c.slice(1),16),m=v=>Math.min(255,Math.round(v*f));return `rgb(${m(n>>16)},${m(n>>8&255)},${m(n&255)})`};
 function bx(x,y,z,w,d,h,c){return `<div class='p3' style='left:${x}px;top:${y}px;transform:translateZ(${z}px)'><i style='width:${w}px;height:${d}px;transform:translateZ(${h}px);background:${sh(c,1.2)}'></i><i style='width:${w}px;height:${h}px;top:${d}px;transform-origin:0 0;transform:rotateX(90deg);background:${c}'></i><i style='width:${d}px;height:${h}px;left:${w}px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:${sh(c,.7)}'></i></div>`}
