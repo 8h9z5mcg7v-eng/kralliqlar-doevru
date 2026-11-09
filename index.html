@@ -231,7 +231,6 @@ const B={
  stable:{n:"Ahır",i:"🐴",c:{wood:140,food:80},mil:"cav"},
  range:{n:"Atış meydanı",i:"🎯",c:{wood:140,stone:60},mil:"arc"},
  drill:{n:"Məşq meydanı",i:"🗡️",c:{wood:100,stone:100},mil:"inf"},
- tent:{n:"Hərbi çadır",i:"⛺",c:{wood:130,stone:70}}
 };
 const T={
  inf:{n:"Piyada",i:"🛡️",c:{food:30,wood:10},pw:5},
@@ -244,7 +243,7 @@ let S={res:{food:300,wood:300,stone:150,gold:60},lv:{castle:1,farm:1,saw:1,quarr
 let tab="city",lastMsg="",mapPanel="monsters",techPage="";
 
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.res&&d.lv&&d.army){S=d}}catch(e){}
-S.lv.tent=Math.max(0,Math.min(30,Number(S.lv.tent)||0));if(S.build?.id==="tent")S.build=null;
+delete S.lv.tent;if(S.build?.id==="tent")S.build=null;
 S.worldPage=Math.max(1,Math.min(10,Number(S.worldPage)||1));S.kingdomName=S.kingdomName||"Mənim Krallığım";S.rulerName=S.rulerName||"Adsız Sərkərdə";S.playerAlliance=S.playerAlliance||null;S.territories=S.territories||{};
 S.tech=Object.assign({prod:0,pow:0,loot:0,cheap:0,store:0,gather:0,march:0,training:0,wall:0,hospital:0,scout:0,build:0,research:0,foodcraft:0,woodcraft:0,stonecraft:0,infantry:0,archery:0,cavalry:0,swift:0},S.tech||{});
 S.troops=S.troops||{};for(const k of ["inf","arc","cav"]){if(!Array.isArray(S.troops[k])){S.troops[k]=Array(10).fill(0);S.troops[k][0]=Math.max(0,Number(S.army[k])||0)}else{S.troops[k]=Array.from({length:10},(_,i)=>Math.max(0,Number(S.troops[k][i])||0))}S.army[k]=S.troops[k].reduce((a,b)=>a+b,0)}
@@ -266,9 +265,8 @@ const afford=c=>Object.keys(c).every(k=>S.res[k]>=c[k]);
 const fmtC=c=>Object.keys(c).map(k=>R[k][0]+c[k]).join(" ");
 const armyN=()=>["inf","arc","cav"].reduce((a,k)=>a+syncArmy(k),0);
 const armyCap=()=>10+20*S.lv.barracks+5*S.tech.training;
-const TENT_VOLUME=[0,10,10,20,20,30,30,40,40,50,50,60,60,70,70,80,80,90,90,100,100,110,110,120,120,130,130,140,140,150,160];
-const trainingVolume=()=>S.lv.tent>0?TENT_VOLUME[S.lv.tent]:160;
-const tentSpeedBonus=()=>S.lv.tent>0?Math.ceil(S.lv.tent/2):0;
+const trainingVolume=()=>160;
+const tentSpeedBonus=()=>0;
 function trainingOrderLimit(){return Math.max(0,Math.min(trainingVolume(),armyCap()-armyN()-pendingTrainingCount()))}
 function trainingOrderCount(button){const input=button.dataset.orderInput?document.getElementById(button.dataset.orderInput):null,limit=trainingOrderLimit();return Math.max(1,Math.min(limit,Math.floor(Number(input?input.value:button.dataset.n)||1)))}
 function updateTrainingOrderPreview(input){const row=input.closest(".map-panel-item"),button=row?.querySelector("button[data-a=tr]"),preview=row?.querySelector("[data-order-preview]");if(!button||!preview)return;const limit=trainingOrderLimit(),n=Math.max(1,Math.min(limit,Math.floor(Number(input.value)||1))),tier=Number(button.dataset.tier)||1,k=button.dataset.id;if(limit<1){preview.textContent="Ordu limiti dolub";return}input.max=limit;input.value=n;preview.textContent=n+" əsgər · "+fmtC(trCost(k,n,tier))+" · "+fmtDuration(trainingSeconds(k,n,tier));}
@@ -442,7 +440,7 @@ function attackKing(i){
  try{window.scrollTo({top:0,behavior:"smooth"})}catch(e){}
 }
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",gold:"#fbc02d"};
-const RING=["mine","quarry","wall","saw","range","barracks","drill","stable","farm","warehouse","tent"];
+const RING=["mine","quarry","wall","saw","range","barracks","drill","stable","farm","warehouse"];
 const SLOT={castle:[.5,.5]};RING.forEach((id,i)=>{const a=i/RING.length*Math.PI*2+.3;SLOT[id]=[.5+.46*Math.cos(a),.5+.46*Math.sin(a)]});
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
@@ -461,14 +459,13 @@ const M={
  stable:()=>bx(-18,-12,0,36,26,16,'#8b6b3d')+py(0,1,16,38,14,'#5b3d22')+bx(-6,14,0,12,1,11,'#3b2a14')+bx(-3,14,12,6,1,3,'#f1c40f'),
  range:()=>bx(-3,-3,0,6,6,22,'#6b4a2a')+bx(-12,0,10,24,2,24,'#f5f0e0')+bx(-6,2,16,12,1,12,'#c0392b')+bx(14,-10,0,14,14,12,'#8b5a2b'),
  drill:()=>bx(-24,-18,0,48,36,3,'#c9a56a')+bx(-3,-3,3,6,6,34,'#8b5a2b')+bx(-16,-3,27,32,6,6,'#a06a35')+bx(14,0,5,12,2,14,'#2e86c1'),
- tent:()=>`<svg xmlns="http://www.w3.org/2000/svg" width="58" height="48" viewBox="0 0 58 48" style="overflow:visible;filter:drop-shadow(0 3px 2px rgba(0,0,0,.28))"><ellipse cx="29" cy="41" rx="25" ry="5" fill="#26351d" opacity=".35"/><path d="M5 39 29 5 53 39Z" fill="#8b6b3d" stroke="#4d3824" stroke-width="2"/><path d="M29 5 29 39 5 39Z" fill="#b98b4d"/><path d="M29 5 29 39 53 39Z" fill="#79552f"/><path d="M24 39 29 26 34 39Z" fill="#33251a"/><path d="M29 5V1" stroke="#e4cf9a" stroke-width="2"/></svg>`,
  
  site:()=>bx(-14,-14,0,28,28,3,'#c9a56a')+bx(-14,-14,0,3,3,22,'#8b5a2b')+bx(11,-14,0,3,3,22,'#8b5a2b')+bx(-14,11,0,3,3,22,'#8b5a2b')+bx(11,11,0,3,3,22,'#8b5a2b')
 };
 function glPh(k){return `<div class="sky gl" data-k="${k}"></div>`}
 function skyHtml(){return GLOK?glPh('city'):skyCss()}
 function skyCss(){
- const H={castle:96,farm:34,saw:30,quarry:34,mine:46,barracks:42,warehouse:36,wall:44,stable:34,range:44,drill:42,tent:48};
+ const H={castle:96,farm:34,saw:30,quarry:34,mine:46,barracks:42,warehouse:36,wall:44,stable:34,range:44,drill:42};
  let h=`<div class='sky s3'><div class='w3'><i class='sl' style='left:0;top:360px;width:360px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:360px;top:0;width:360px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
  [[18,18],[342,18],[18,342],[342,342],[180,8],[8,180]].forEach(t=>{h+=`<div class='p3' style='left:${t[0]}px;top:${t[1]}px'>${bx(-2,-2,0,4,4,8,'#7a4a22')}${py(0,0,6,18,22,'#2f7d32')}</div>`});
  Object.keys(SLOT).forEach(id=>{
