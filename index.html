@@ -276,7 +276,7 @@ function bCard(id){
  const b=B[id],l=S.lv[id],c=cost(id),cp=capped(id);
  const info=b.p?`+${(b.r*l).toFixed(1)} ${R[b.p][1]}/san`:b.mil?`${T[b.mil].n} gücü +${4*l}%`:id==="warehouse"?`Resurs limiti +${25*l}%`:id==="wall"?`Basqın itkisi −${2*l}%, müdafiə +${5*l}%`:id==="barracks"?`Ordu limiti: ${armyCap()}`:"Digər binaların səviyyə limiti";
  return `<div class="card" id="c-${id}"><div class="ic">${bsv(id,42)}</div><div class="in"><b>${b.n}</b><span class="lv">Səv. ${l}</span><div class="pips">${"●".repeat(Math.min(l,10))}${"○".repeat(Math.max(0,Math.min(S.lv.castle,10)-l))}</div><div class="mut">${info}</div></div>
- <button data-a="up" data-id="${id}" data-cap="${cp?1:0}" data-c='${JSON.stringify(c)}'>${cp?"Qalanı yüksəlt":(l?"Yüksəlt":"Tik")}<small>${cp?"":fmtC(c)+" · "+buildSec(id)+"s"}</small></button></div>`;
+ <button data-a="up" data-id="${id}" data-cap="${cp?1:0}" data-c='${JSON.stringify(c)}'>${cp?"Qalanı yüksəlt":(l?"Yüksəlt":"Tik")}<small>${cp?"":fmtC(c)+" · "+fmtDuration(buildSec(id))}</small></button></div>`;
 }
 function tCard(k){
  const t=T[k];
@@ -320,7 +320,8 @@ const hintHtml=()=>{const t=hint();return t?`<div class="card" style="margin-top
 function cap(){return Math.round(600*Math.pow(S.lv.castle,1.5)*(1+.25*S.lv.warehouse)*(1+.1*S.tech.store))}
 function addRes(k,v){const c=cap();if(S.res[k]<c)S.res[k]=Math.min(c,S.res[k]+v)}
 function ePow(i){return Math.round(E[i][1]*Math.pow(1.1,S.camps[i]))}
-function buildSec(id){return Math.max(2,Math.round(5*Math.pow(1.5,S.lv[id])*(id==="castle"?2:1)*(S.ally===2?.75:1)*(1-.05*S.tech.build)))}
+function fmtDuration(sec){sec=Math.max(0,Math.ceil(sec));if(sec<60)return sec+" san";const d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60),r=sec%60;return (d?d+"g ":"")+(h?h+"s ":"")+(m?m+"dəq ":"")+(d||h||m?"":r+" san")}
+function buildSec(id){return Math.max(5,Math.round(20*Math.pow(1.5,S.lv[id])*(id==="castle"?2:1)*(S.ally===2?.75:1)*(1-.05*S.tech.build)))}
 function speedCost(){return S.build?Math.max(1,Math.ceil((S.build.end-Date.now())/5000)):0}
 const buildHtml=()=>S.build?`<div class="card" style="margin-top:10px"><div class="ic">⏳</div><div class="in"><b>${B[S.build.id].n} yüksəldilir</b><div class="mut" id="bt"></div></div><button data-a="sp" id="bs"></button></div>`:"";
 function tickBuild(){
@@ -647,18 +648,19 @@ function techPrerequisite(k){
 function techCard(k){
  const t=TECH[k],l=Number(S.tech[k])||0,max=maxTechLevel(k),c=tCost(k),mx=l>=max,pre=techPrerequisite(k),locked=!!(pre&&(Number(S.tech[pre])||0)<1),academyBlocked=!mx&&l>=S.academyLevel;
  const need=locked?"Açmaq üçün əvvəlcə "+TECH[pre].n+" səviyyə 1 olmalıdır":academyBlocked?"Bu səviyyə üçün Elmi Akademiya "+(l+1)+"-ci səviyyə olmalıdır":pre?"Ön şərt: "+TECH[pre].n+" səviyyə 1":"İlkin texnologiya · tədqiqata hazır";
- return `<div class="tech-node ${locked||academyBlocked?"is-locked":""}" id="tech-${k}"><div class="tech-node-top"><span class="tech-node-icon">${t.i}</span><div class="tech-node-info"><b>${t.n}</b><span class="lv">${l}/${max}</span><div class="mut">${t.d}</div><div class="pips">${"●".repeat(Math.min(l,max))}${"○".repeat(Math.max(0,max-l))}</div><div class="tech-requirement">${locked?"🔒 ":academyBlocked?"🏛️ ":"🔗 "}${need}</div></div></div>
+ return `<div class="tech-node ${locked||academyBlocked?"is-locked":""}" id="tech-${k}"><div class="tech-node-top"><span class="tech-node-icon">${t.i}</span><div class="tech-node-info"><b>${t.n}</b><span class="lv">${l}/${max}</span><div class="mut">${t.d}</div><div class="mut">Növbəti səviyyə üçün vaxt: ${fmtDuration(researchSeconds(k))}</div><div class="pips">${"●".repeat(Math.min(l,max))}${"○".repeat(Math.max(0,max-l))}</div><div class="tech-requirement">${locked?"🔒 ":academyBlocked?"🏛️ ":"🔗 "}${need}</div></div></div>
  <button data-a="rs" data-id="${k}" data-cap="${mx?1:0}" data-lock="${locked?1:0}" data-academy-lock="${academyBlocked?1:0}" data-c='${JSON.stringify(c)}'>${mx?"Maksimum":locked?"Kilidli":academyBlocked?"Akademiyanı yüksəlt":"Araşdır"}<small>${mx||locked||academyBlocked?"":fmtC(c)}</small></button></div>`;
 }
 function academyCost(){const l=S.academyLevel;return {wood:Math.ceil(260*Math.pow(1.65,l)),stone:Math.ceil(180*Math.pow(1.65,l)),gold:Math.ceil(45*Math.pow(1.55,l))}}
-function academySeconds(){return Math.max(20,Math.round(35*Math.pow(1.55,S.academyLevel)))}
-function researchSeconds(k){return Math.max(12,Math.round(45*Math.pow(1.42,S.tech[k])/(1+.12*S.academyLevel)))}
+const COK_COLLEGE_BUILD=[65,209,465,884,2298,5378,10640,14896,17875,20926];
+function academySeconds(){const target=S.academyLevel+1;const base=target<=10?COK_COLLEGE_BUILD[target-1]:COK_COLLEGE_BUILD[9]*Math.pow(1.25,target-10);return Math.max(10,Math.round(base/5))}
+function researchSeconds(k){const next=(Number(S.tech[k])||0)+1,base=k==="training"?861*Math.pow(1.42,next-4):45*Math.pow(1.42,next);return Math.max(12,Math.round(base/(1+.12*S.academyLevel)))}
 function researchSpeedCost(){return S.researchJob?Math.max(1,Math.ceil((S.researchJob.end-Date.now())/5000)):0}
 function academySpeedCost(){return S.academyBuild?Math.max(1,Math.ceil((S.academyBuild.end-Date.now())/5000)):0}
 function academyHtml(){
  const c=academyCost(),busy=!!S.academyBuild,ready=S.academyLevel>0;
- return `<section class="academy-card"><div class="academy-head"><span class="academy-emblem">🏛️</span><div><b>Elmi Akademiya</b><div class="mut">Səviyyə ${S.academyLevel}/30 · Hər səviyyə tədqiqatı 12% sürətləndirir</div></div></div>
- ${busy?`<div class="academy-progress" id="academyTimer">Akademiya tikilir…</div><button data-a="academySpeed" id="academySpeedBtn">Sürətləndir</button>`:S.academyLevel>=30?`<div class="mut">Akademiya maksimum səviyyədədir.</div>`:`<div class="mut">${ready?"Akademiyanı təkmilləşdir":"Texnologiyaları araşdırmaq üçün əvvəlcə akademiya tik."} · ${fmtC(c)} · ${academySeconds()} san</div><button data-a="academy">${ready?"Akademiyanı yüksəlt":"Akademiya tik"}<small>${fmtC(c)}</small></button>`}
+ return `<section class="academy-card"><div class="academy-head"><span class="academy-emblem">🏛️</span><div><b>Elmi Akademiya</b><div class="mut">Səviyyə ${S.academyLevel}/30 · Tədqiqat vaxtı hər səviyyədə 12% azalır · Tikinti vaxtları CoK College cədvəlinə uyğunlaşdırılıb</div></div></div>
+ ${busy?`<div class="academy-progress" id="academyTimer">Akademiya tikilir…</div><button data-a="academySpeed" id="academySpeedBtn">Sürətləndir</button>`:S.academyLevel>=30?`<div class="mut">Akademiya maksimum səviyyədədir.</div>`:`<div class="mut">${ready?"Akademiyanı təkmilləşdir":"Texnologiyaları araşdırmaq üçün əvvəlcə akademiya tik."} · ${fmtC(c)} · ${fmtDuration(academySeconds())}</div><button data-a="academy">${ready?"Akademiyanı yüksəlt":"Akademiya tik"}<small>${fmtC(c)}</small></button>`}
  ${S.researchJob?`<div class="research-active"><b>🔬 Hazırda araşdırılır: ${TECH[S.researchJob.id].n}</b><div class="mut" id="researchTimer">Qalan vaxt hesablanır…</div><div class="research-track"><i id="researchProgress"></i></div><button data-a="researchSpeed" id="researchSpeedBtn">Sürətləndir</button></div>`:ready?`<div class="mut academy-ready">Akademiya hazırdır. Texnologiya seçib tədqiqata başla.</div>`:`<div class="mut academy-ready">Akademiya olmadan tədqiqat başlamaq mümkün deyil.</div>`}
  </section>`;
 }
