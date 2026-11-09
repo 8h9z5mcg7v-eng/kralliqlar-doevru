@@ -447,10 +447,10 @@ function attackKing(i){
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",gold:"#fbc02d"};
 const SLOT={
  castle:[.5,115/300],
- farm:[60/300,45/300],tent:[.5,45/300],quarry:[240/300,45/300],
- saw:[60/300,115/300],mine:[240/300,115/300],
- range:[60/300,185/300],drill:[.5,185/300],stable:[240/300,185/300],
- barracks:[60/300,255/300],warehouse:[.5,255/300],wall:[240/300,255/300]
+ farm:[25/300,25/300],tent:[.5,25/300],quarry:[275/300,25/300],
+ saw:[25/300,100/300],mine:[275/300,100/300],
+ range:[25/300,205/300],drill:[.5,205/300],stable:[275/300,205/300],
+ barracks:[25/300,275/300],warehouse:[.5,275/300],wall:[275/300,275/300]
 };
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
@@ -651,9 +651,9 @@ function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4
 function dbuild(k){VB=[];pk=[];pkr=[];lbl=[];const lab=(t,p)=>{const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:p})};
  if(k==='city'){
   /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
-  road(25,18,25,282,7,7.25);road(275,18,275,282,7,7.25);
-  [80,150,220].forEach(z=>road(25,z,275,z,7,7.25));
-  Object.keys(SLOT).forEach(id=>{if(id==='castle')return;const x=SLOT[id][0]*300,z=SLOT[id][1]*300,lane=z<150?80:220,dir=lane>z?1:-1,start=z+dir*(id==='tent'?30:19);if(Math.abs(lane-start)>3)road(x,start,x,lane,4,7.1)});
+  road(8,10,8,290,7,7.25);road(292,10,292,290,7,7.25);
+  [60,160,240].forEach(z=>road(8,z,292,z,7,7.25));
+  Object.keys(SLOT).forEach(id=>{if(id==='castle')return;const x=SLOT[id][0]*300,z=SLOT[id][1]*300,lane=z<150?60:240,dir=lane>z?1:-1,start=z+dir*(id==='tent'?30:19);if(Math.abs(lane-start)>3)road(x,start,x,lane,4,7.1)});
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300,y=hh(x,z),s=(id==='castle'?1.08:1.02)*(1+Math.min(l,8)*.02);TR={x,y,z,s};const a0=VB.length/12;if(l)GM[id](l);else GM.site();pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});pk.push({k:'b',id,min:[x-38*s,y,z-38*s],max:[x+38*s,y+(id==='castle'?100:58)*s,z+38*s]});lab((bu?'🔨 ':'')+(l>=5?'★':'')+(l||(bu?'':'+')),[x,y+(id==='castle'?108:65)*s,z])})}
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
   E.forEach((e,i)=>{const x=CP[i][0],z=CP[i][1],y=hh(x,z);TR={x,y,z,s:1};const a0=VB.length/12;GC[i]();pkr.push({k:'c',id:i,a:a0,n:VB.length/12-a0});pk.push({k:'c',id:i,min:[x-26,y,z-26],max:[x+26,y+60,z+26]});lab(ePow(i),[x,y+70,z])});
