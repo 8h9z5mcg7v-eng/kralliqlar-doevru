@@ -213,6 +213,41 @@ body.map-open{max-width:none;padding:0;overflow:hidden}body.map-open #top,body.m
 .sky.s3 .w3{transform:scale(1.22) rotateX(58deg) rotateZ(45deg);}
 @media(max-height:760px){.sky.s3 .w3{transform:scale(1.12) rotateX(58deg) rotateZ(45deg)}}
 @media(min-width:600px){.sky.s3 .w3{transform:scale(1.35) rotateX(58deg) rotateZ(45deg)}}
+
+/* CoK-inspired building detail panel */
+.sheet.building-sheet{box-sizing:border-box;width:min(100%,560px);padding:7px 14px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#59432b 0%,#302317 100%);border:1px solid #b98b48;border-bottom:0;border-radius:19px 19px 0 0;box-shadow:0 -9px 28px #0009;max-height:min(72dvh,690px);display:flex;flex-direction:column;gap:9px}
+.sheet-grab{width:38px;height:4px;border-radius:8px;background:#d9bd87;opacity:.75;margin:0 auto 2px;flex:none}
+.building-sheet-head{display:flex;align-items:center;gap:11px;padding:2px 2px 10px;border-bottom:1px solid #a77b453d;flex:none}
+.building-sheet-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,#7b6039,#44301d);border:1px solid #c69b58;box-shadow:inset 0 1px #ffffff22}
+.building-sheet-name{min-width:0;flex:1;color:#fff0c8}
+.building-sheet-name b{display:block;font:700 18px Georgia,serif;letter-spacing:.15px}
+.building-sheet-name small{display:block;margin-top:3px;color:#d6c19a;font-size:11px}
+.building-sheet-head .x{border:1px solid #a8875c;background:#3b2b1d;color:#f8e8c7;border-radius:8px;font-size:17px;min-width:34px;height:34px}
+.building-sheet-content{overflow-y:auto;min-height:0;overscroll-behavior:contain;scrollbar-width:thin;padding:0 1px 4px}
+.building-card-modern{color:#f3e3c3}
+.building-level-line{display:flex;justify-content:space-between;align-items:center;color:#cdb58b;font-size:10px;font-weight:800;letter-spacing:.8px}
+.building-level-line b{font-size:16px;color:#ffe2a1}.building-level-line b i{font-style:normal;color:#bca47d;font-size:11px}
+.building-level-track{margin:6px 0 10px;height:7px;overflow:hidden;border-radius:8px;background:#241b13;color:#d7a54c;letter-spacing:3px;font-size:9px;line-height:7px;white-space:nowrap}
+.building-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 10px}
+.building-stat-grid>div{min-width:0;padding:9px 10px;border:1px solid #94704488;border-radius:9px;background:linear-gradient(135deg,#59452e,#3d3022)}
+.building-stat-grid small{display:block;color:#cbb58e;font-size:9px;font-weight:800;letter-spacing:.45px;margin-bottom:5px}
+.building-stat-grid b{display:block;color:#fff0cb;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.building-upgrade-cost{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;margin-top:9px;padding:10px;border:1px solid #9b7948;border-radius:10px;background:linear-gradient(110deg,#493822,#302519)}
+.building-upgrade-cost span{font-size:11px;color:#d9c49c}.building-upgrade-cost b{font-size:12px;color:#ffe4a7;text-align:right}
+.building-upgrade-cost small{grid-column:1/-1;color:#cbb58e;font-size:11px}
+.building-upgrade-btn,.build-speed-btn{width:100%;min-height:43px;margin-top:8px;border:1px solid #e1b85f;border-radius:9px;background:linear-gradient(180deg,#c58b35,#87551f);color:#fff4d8;font-weight:800;font-size:14px;text-shadow:0 1px 2px #44230c;box-shadow:inset 0 1px #ffffff40,0 3px 0 #3c2919}
+.building-upgrade-btn[aria-disabled="true"]{filter:grayscale(.75);opacity:.55}
+.building-lock-note,.building-active-inline{padding:10px;border:1px solid #9c7749;border-radius:9px;background:#392b1e;color:#e8c98f;font-size:12px;margin-top:8px}
+.building-details{margin-top:12px;padding:10px 0 8px;border-top:1px solid #b58b4b66;color:#f1dfbd}
+.building-details h3{margin:0 0 7px;color:#f3cf83;font:700 14px Georgia,serif}
+.building-details .map-panel-item{padding:7px 9px;margin:4px 0;border:1px solid #85663d66;border-radius:7px;background:#ffffff08;color:#e9d8b6}
+.building-details .map-panel-item b{color:#ffe2a1}
+.build-panel-card{padding:10px;border:1px solid #c0934f;border-radius:11px;background:linear-gradient(110deg,#51402a,#30271d);flex:none}
+.build-panel-title{display:flex;align-items:center;gap:8px;color:#ffedc6}.build-panel-title>span{font-size:21px}.build-panel-title>div{flex:1;min-width:0}.build-panel-title b{display:block;font-size:13px}.build-panel-title small{display:block;color:#d3bd92;font-size:10px;margin-top:2px}.build-panel-title em{font-style:normal;color:#f5d58d;font-weight:800;font-size:12px}
+.build-panel-progress{height:7px;margin:9px 0 6px;border-radius:8px;background:#211a13;overflow:hidden}.build-panel-progress i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#b57b2c,#f3d17a);transition:width .5s}
+.build-panel-time{font-size:11px;color:#f0d9a9}
+.build-speed-btn{min-height:37px;margin-top:7px;font-size:12px}
+@media(max-width:380px){.sheet.building-sheet{padding-left:10px;padding-right:10px}.building-sheet-name b{font-size:16px}.building-stat-grid{gap:5px}.building-stat-grid>div{padding:8px}}
 </style>
 </head>
 <body>
@@ -342,9 +377,18 @@ function buildingDetailHtml(id){
  return "<div class='building-details'>"+html+"</div>";
 }
 function bCard(id){
- const b=B[id],l=S.lv[id],c=cost(id),cp=capped(id),info=b.p?`+${(b.r*l).toFixed(1)} ${R[b.p][1]}/san`:b.mil?`${T[b.mil].n} gücü +${4*l}%`:id==="warehouse"?`Resurs limiti +${25*l}%`:id==="wall"?`Basqın itkisi −${2*l}%, müdafiə +${5*l}%`:id==="barracks"?`Ordu limiti: ${armyCap()}`:"Binanın funksiyaları və səviyyə bonusları";
- const nextInfo=["barracks","range","stable"].includes(id)?("Növbəti əsgər dərəcəsi: "+(TROOP_TIER_UNLOCK.find(v=>v>l)||"son dərəcə")):b.p?("Növbəti istehsal: "+(b.r*(l+1)).toFixed(1)+" "+R[b.p][1]+"/san"):id==="warehouse"?"Növbəti səviyyə: anbar tutumu +25%":id==="wall"?"Növbəti səviyyə: müdafiə +5%":"Növbəti səviyyə bonusları";
- return `<div class="card" id="c-${id}"><div class="ic">${bsv(id,42)}</div><div class="in"><b>${b.n}</b><span class="lv">${"Səv. "+l}</span><div class="pips">${"●".repeat(Math.min(l,10))}${"○".repeat(Math.max(0,Math.min(S.lv.castle,10)-l))}</div><div class="mut">${info}</div><div class="mut">${nextInfo}</div></div><button data-a="up" data-id="${id}" data-cap="${cp?1:0}" data-c='${JSON.stringify(c)}'>${cp?"Qalanı yüksəlt":(l?"Yüksəlt":"Tik")}<small>${cp?"":fmtC(c)+" · "+fmtDuration(buildSec(id))}</small></button></div>${buildingDetailHtml(id)}`;
+ const b=B[id],l=Number(S.lv[id])||0,c=cost(id),cp=capped(id),active=S.build&&S.build.id===id;
+ const info=b.p?`+${(b.r*l).toFixed(1)} ${R[b.p][1]}/san`:b.mil?`${T[b.mil].n} gücü +${4*l}%`:id==="warehouse"?`Resurs limiti +${25*l}%`:id==="wall"?`Basqın itkisi −${2*l}%, müdafiə +${5*l}%`:id==="barracks"?`Ordu limiti: ${armyCap()}`:"Binanın funksiyaları və səviyyə bonusları";
+ const nextInfo=["barracks","range","stable"].includes(id)?("Növbəti əsgər dərəcəsi: "+(TROOP_TIER_UNLOCK.find(v=>v>l)||"son dərəcə")):b.p?("Növbəti istehsal: "+(b.r*(l+1)).toFixed(1)+" "+R[b.p][1]+"/san"):id==="warehouse"?"Anbar tutumu +25%":id==="wall"?"Müdafiə +5%":"Növbəti səviyyə bonusları";
+ const dots="●".repeat(Math.min(l,10))+"○".repeat(Math.max(0,Math.min(S.lv.castle,10)-l));
+ const action=active?`<div class="building-active-inline">🔨 Bu bina hazırda yüksəldilir</div>`:cp?`<div class="building-lock-note">🔒 Yüksəltmək üçün əvvəlcə qalanın səviyyəsini artır</div>`:`<div class="building-upgrade-cost"><span>🧱 Tələb olunan resurslar</span><b>${fmtC(c)}</b><small>⏱️ Tikinti vaxtı: ${fmtDuration(buildSec(id))}</small></div><button class="building-upgrade-btn" data-a="up" data-id="${id}" data-cap="0" data-c='${JSON.stringify(c)}'>${l?"⬆️ Yüksəlt":"🏗️ Tikintiyə başla"}</button>`;
+ return `<section class="building-card-modern">
+  <div class="building-level-line"><span>HAZIRKI SƏVİYYƏ</span><b>${l} <i>/ ${S.lv.castle}</i></b></div>
+  <div class="building-level-track">${dots}</div>
+  <div class="building-stat-grid"><div><small>İNDİKİ GÖSTƏRİCİ</small><b>${info}</b></div><div><small>NÖVBƏTİ SƏVİYYƏ</small><b>${nextInfo}</b></div></div>
+  ${action}
+  ${buildingDetailHtml(id)}
+ </section>`;
 }
 function pendingTrainingCount(){return (S.trainingJob?S.trainingJob.count:0)+S.trainingQueue.reduce((n,j)=>n+(Number(j.count)||0),0)}
 function trainingQueueHtml(){const j=S.trainingJob,left=j?Math.max(0,j.end-Date.now()):0,bonus=S.tech.training*8+S.lv.drill*5;return `<div class="card" style="margin:10px 0"><div class="ic">⏳</div><div class="in"><b>Təlim növbəsi · ${j?1:0}/${S.trainingQueue.length+ (j?1:0)} aktiv</b><div class="mut">${j?`Hazırlanır: ${(T[j.id]?.n||"Ordu")+" T"+(j.tier||1)+" "+(j.tier?troopTierName(j.id,j.tier):"")} · ${j.count} əsgər · <span id="trainingTimer">${fmtDuration(Math.ceil(left/1000))}</span>`:"Hazırda təlim yoxdur"}</div><div class="mut">Gözləyən sifarişlər: ${S.trainingQueue.length}/4 · Sürət bonusu: +${bonus}%</div>${j?`<button type="button" data-a="ts" id="trainingSpeedBtn">Dərhal bitir 🪙${trainingSpeedCost()}</button>`:""}${S.trainingQueue.map((q,i)=>`<div class="map-panel-item" style="padding-top:5px"><span>${i+1}. ${T[q.id]?.n||"Ordu"} — ${q.count} əsgər · ${fmtDuration(trainingSeconds(q.id,q.count,q.tier||1))}</span><button type="button" data-a="tc" data-id="${i}">Ləğv et</button></div>`).join("")}</div><span class="badge">${j?"Təlimdə":"Hazır"}</span></div>`}
@@ -415,8 +459,9 @@ function tickBuild(){
  const left=S.build.end-Date.now();
  if(left<=0){const nid=S.build.id;S.lv[nid]++;S.build=null;save();render();const pe=document.querySelector('.b3[data-id="'+nid+'"],.bd[data-id="'+nid+'"]');if(pe)pe.classList.add("pulse");sfx("done");toast("🏗️ "+B[nid].n+" səviyyə "+S.lv[nid]+" oldu!");return}
  const bt=document.getElementById("bt"),bs=document.getElementById("bs");
- if(bt)bt.textContent="Qalan vaxt: "+fmtDuration(Math.ceil(left/1000));
- if(bs){bs.textContent="⚡ Sürətləndir · 🪙"+speedCost();bs.disabled=S.res.gold<speedCost()}
+ if(bt)bt.textContent="⏳ Qalan vaxt: "+fmtDuration(Math.ceil(left/1000));
+ if(bs){bs.textContent="⚡ Dərhal tamamla · 🪙"+speedCost();bs.disabled=S.res.gold<speedCost()}
+ const pf=document.getElementById("buildProgressFill");if(pf){const total=buildSec(S.build.id)*1000;pf.style.width=Math.max(0,Math.min(100,(1-left/total)*100))+"%"}
 }
 let AC=null,muted=false;try{muted=localStorage.getItem("krallig_mute")==="1"}catch(e){}
 function sfx(t){
@@ -589,7 +634,19 @@ function actionsHtml(){return "";}
 const panelHtml=()=>{if(!panel)return "";const title=panel==="quests"?"🎯 Tapşırıqlar":panel==="alliance"?"🛡️ İttifaq":"⚙️ Ayarlar";const body=panel==="quests"?questHtml():panel==="settings"?resetHtml():panel==="alliance"?allyHtml():"";return `<div class="feature-backdrop" data-panel-close></div><section class="feature-panel"><div class="feature-head"><b>${title}</b><button type="button" class="x" data-a="x">✕</button></div><div class="feature-body">${body}</div></section>`};
 function sheetHtml(){
  if(!sel)return "";
- const active=S.build?`<div class="build-panel-card"><div class="build-panel-title"><span>🔨</span><div><b>${B[S.build.id].n} yüksəldilir</b><small>Hazırkı səviyyə ${S.lv[S.build.id]} → ${S.lv[S.build.id]+1}</small></div></div><div class="build-panel-time" id="bt">Qalan vaxt: ${fmtDuration(Math.max(0,Math.ceil((S.build.end-Date.now())/1000)))}</div><button type="button" class="build-speed-btn" data-a="sp" id="bs">⚡ Sürətləndir · 🪙${speedCost()}</button><small class="build-panel-note">Sürətləndirmə qızıl hesabına aparılır</small></div>`:"";return `<div class="bk"></div><div class="sheet"><div class="shh"><b>${B[sel].n}</b><button data-a="x" class="x">✕</button></div>${active}${bCard(sel)}</div>`;
+ const b=B[sel],active=S.build?S.build:null,left=active?Math.max(0,active.end-Date.now()):0,progress=active?Math.max(0,Math.min(100,Math.round((1-left/(buildSec(active.id)*1000))*100))):0;
+ const activeHtml=active?`<div class="build-panel-card">
+  <div class="build-panel-title"><span>⚒️</span><div><b>${B[active.id].n} yüksəldilir</b><small>${S.lv[active.id]} → ${S.lv[active.id]+1}. səviyyə</small></div><em>${progress}%</em></div>
+  <div class="build-panel-progress"><i id="buildProgressFill" style="width:${progress}%"></i></div>
+  <div class="build-panel-time" id="bt">⏳ Qalan vaxt: ${fmtDuration(Math.ceil(left/1000))}</div>
+  <button type="button" class="build-speed-btn" data-a="sp" id="bs">⚡ Dərhal tamamla · 🪙${speedCost()}</button>
+ </div>`:"";
+ return `<div class="bk"></div><section class="sheet building-sheet">
+  <div class="sheet-grab"></div>
+  <header class="building-sheet-head"><div class="building-sheet-icon">${bsv(sel,46)}</div><div class="building-sheet-name"><b>${b.n}</b><small>${l? "Şəhər infrastrukturu":"Yeni tikinti"} · ${S.lv[sel]}-ci səviyyə</small></div><button data-a="x" class="x" aria-label="Bağla">✕</button></header>
+  ${activeHtml}
+  <div class="building-sheet-content">${bCard(sel)}</div>
+ </section>`;
 }
 /* ===== WebGL engine ===== */
 let GLOK=false,gl,cv,PM,PS,PI,pkr=[],lastVP=null,smT,smF,atl,SB=null,DB=null,MB=null,VB=[],pk=[],lbl=[],yawB=.85,pitch=.62,dragX=null,moved=0,TR={x:0,y:0,z:0,s:1},LV=null;
