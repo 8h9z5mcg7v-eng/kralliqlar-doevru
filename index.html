@@ -1056,6 +1056,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   resourceSlots.forEach(p=>{
    const built=p.id==='ironMine'?(p.slot===0?S.lv.ironMine>0:(Number(S.resourceCount?.[p.id])||0)>=2):(Number(S.resourceCount?.[p.id])||0)>=2,requiredCastle=p.id==='ironMine'&&p.slot===0?10:1;
    if(!built&&S.lv.castle<requiredCastle)return;
+   if(!built&&p.slot===1&&S.lv[p.id]<=0)return;
    const sc=.68,pw=44,pd=36,instance=p.id+':resource:'+p.slot,y=addCityPad(p.x,p.z,sc,pw,pd,instance);
    TR={x:p.x,y,z:p.z,s:sc};const wood='#76502e',stone='#a99a7d';
    gB(-pw/2,-pd/2,.55,pw,2,1.3,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.3,wood,0);
