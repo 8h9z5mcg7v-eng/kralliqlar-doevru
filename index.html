@@ -791,6 +791,35 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
  if(k==='city'){
   /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
   /* Şəhərə canlılıq verən bağlar, ağaclar, fənərlər və bayraqlar */
+  /* Divarların kənarında təbii yaşıllıq və kiçik dekorativ ağac qrupları */
+  [[18,18],[282,18],[18,282],[282,282],[28,36],[272,36],[28,264],[272,264]].forEach(([x,z],i)=>tree(x,z,i%2?.68:.82,i%3===0));
+  const cityProp=(x,z,fn)=>{TR={x,y:hh(x,z),z,s:1};fn()};
+  /* Ferma yanında araba, kisələr və məhsul yeşikləri */
+  cityProp(53,94,()=>{
+   gK(-8,-5,0,3.2,3.2,3,'#3b3026',10,0);gK(8,-5,0,3.2,3.2,3,'#3b3026',10,0);
+   gB(-11,-6,3,22,12,2.5,'#8b6038',0);gB(-8,-3,5.5,6,5,5,'#c6a05c',0);
+   gB(1,-3,5.5,6,5,5,'#b88a49',0);gB(-2,7,0,4,3,10,'#65452b',0);
+  });
+  /* Mişar sexinin yanında səliqəli taxta ehtiyatı */
+  cityProp(53,211,()=>{
+   for(let r=0;r<3;r++){gB(-10,-7+r*5,0,20,3.5,4,'#87552d',1);gB(-10,-7+r*5,4,20,3.5,3.5,'#a16a37',1)}
+   gB(-12,-9,0,2,18,9,'#604126',0);gB(10,-9,0,2,18,9,'#604126',0);
+  });
+  /* Daş karxanası və qızıl mədəni üçün filiz yığınları */
+  cityProp(247,94,()=>{
+   [[-7,-3,5,'#858b8b'],[2,-5,6,'#a4a9a4'],[8,4,4,'#737b7d']].forEach(([x,z,h,c])=>gK(x,z,0,5,1.2,h,c,7,0));
+   gB(-12,8,0,24,2,2,'#70563a',0);
+  });
+  cityProp(247,211,()=>{
+   gB(-11,-7,0,22,14,2,'#76502e',0);
+   [[-6,-3],[0,-4],[6,-2],[-3,4],[5,4]].forEach(([x,z],i)=>gK(x,z,2,3.2,0,4+i%2,'#c49a32',8,0));
+   gB(-12,8,0,24,2,2,'#59442c',0);
+  });
+  /* Əsas prospektin kənarında daş bordürlər və giriş məşəlləri */
+  for(let z=190;z<=250;z+=10){cityProp(141,z,()=>gB(-1.2,-1.8,0,2.4,3.6,1.4,'#9b9586',0));cityProp(159,z,()=>gB(-1.2,-1.8,0,2.4,3.6,1.4,'#9b9586',0))}
+  [[140,230],[160,230]].forEach(([x,z])=>cityProp(x,z,()=>{
+   gB(-1,-1,0,2,2,15,'#59452d',0);gB(-2,-2,14,4,4,2,'#a88c60',0);gK(0,0,16,1.7,0,4,'#e5a94b',8,0);
+  }));
   [[48,142],[252,142],[48,178],[252,178],[82,292],[218,292],[82,8],[218,8]].forEach(([x,z],i)=>{
    tree(x,z,i%3===0?1.05:.82,i%2===0);
   });
