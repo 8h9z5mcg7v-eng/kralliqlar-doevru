@@ -675,10 +675,11 @@ const SLOT={
  castle:[150/300,150/300],
  barracks:[72/300,100/300],range:[228/300,100/300],
  stable:[72/300,200/300],drill:[228/300,200/300],
- hospital:[150/300,70/300],tent:[150/300,230/300],
- farm:[12/300,25/300],saw:[12/300,280/300],
- quarry:[288/300,25/300],mine:[288/300,280/300],
- warehouse:[150/300,12/300],wall:[150/300,264/300]
+ hospital:[150/300,70/300],tent:[150/300,222/300],
+ /* Resurs zonları: fermalar və mişarlar qərb, filiz və qızıl mədənləri şərq sırasındadır */
+ farm:[0/300,75/300],saw:[0/300,195/300],
+ quarry:[292/300,15/300],mine:[292/300,195/300],
+ warehouse:[72/300,150/300],wall:[150/300,264/300]
 };
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
@@ -779,7 +780,7 @@ const AL=[["Qızıl Şirlər","🦁","İstehsal +8%"],["Qara Qartallar","🦅","
 function allyHtml(){
  return `<h2>🛡️ İttifaq</h2>`+AL.map((a,i)=>`<div class="card"><div class="ic">${a[1]}</div><div class="in"><b>${a[0]}</b><div class="mut">${a[2]}</div></div><button data-a="jn" data-id="${i}" ${S.ally===i?"disabled":""}>${S.ally===i?"Üzvsən":"Qoşul"}</button></div>`).join("");
 }
-let sel=null,panel=null,selC=null,selK=null;
+let sel=null,panel=null,selC=null,selK=null,selInstance=null;
 function kingSheet(){
  if(selK===null)return '';
  const k=board().find(r=>r[3]===selK),cd=(S.kcd[selK]||0)>Date.now();
@@ -888,7 +889,10 @@ function mkBuf(a){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.
 function sbuild(){VB=[];terr();water();for(let i=0;i<90;i++){const a=grn()*6.283,r=140+grn()*45,x=150+Math.cos(a)*r,z=150+Math.sin(a)*r;if(hh(x,z)<1.2)continue;tree(x,z,.8+grn()*.7,grn()<.55)}SB=mkBuf(VB)}
 function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4,'#2e86c1'],[6,-3,'#c0392b']].forEach(([x,y,c])=>{gK(x,y,0,2.2,2.2,9,c,8,3);gK(x,y,9,2,0,2,'#e8c9a0',8,3)});gB(10,0,0,1.2,1.2,22,'#6b4a2a');gB(11,0,14,9,.8,6,'#f1c40f');MB=mkBuf(VB);VB=sv}
 function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
- const addCityPad=(x,z,scale,w,d)=>{const inside=x>44&&x<256&&z>44&&z<256,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};const lab=(t,p,id)=>{if(id&&sel!==id)return;const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
+ const cityFootprints=[];
+ const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>44&&x<256&&z>44&&z<256,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d});gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};
+ const lab=(t,p,id,instance=id)=>{if(id&&sel!==id)return;if(id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
+ const validateCityFootprints=()=>{const collisions=[];for(let i=0;i<cityFootprints.length;i++)for(let j=i+1;j<cityFootprints.length;j++){const a=cityFootprints[i],b=cityFootprints[j];if(Math.abs(a.x-b.x)<(a.w+b.w)/2&&Math.abs(a.z-b.z)<(a.d+b.d)/2)collisions.push(a.instance+' ↔ '+b.instance)}if(collisions.length)console.warn('Şəhər binalarında üst-üstə düşmə aşkarlandı:',collisions);else console.info('Şəhər yerləşim yoxlaması: '+cityFootprints.length+' sahə, kəsişmə yoxdur');return collisions};
  if(k==='city'){
   /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
   /* Şəhərə canlılıq verən bağlar, ağaclar, fənərlər və bayraqlar */
@@ -1003,61 +1007,64 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   /* Qapının üstündə daş gerb */
   gK(0,-5,wallH+17,4,1,5,'#d6ad45',8,0);
   gB(-1.2,-5,wallH+21,2.4,.8,8,'#c0392b',0);
-  pkr.push({k:'b',id:'wall',a:ga,n:VB.length/12-ga});
+  pkr.push({k:'b',id:'wall',instance:'wall:main',a:ga,n:VB.length/12-ga});
   pk.push({k:'b',id:'wall',min:[gx-32,gy,gz-8],max:[gx+32,gy+43,gz+8]});
-  lab(`Qala divarı · Lv.${S.lv.wall||1}`,[gx,gy+49,gz],'wall');
+  lab(`Qala divarı · Lv.${S.lv.wall||1}`,[gx,gy+49,gz],'wall','wall:main');
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300;
    if(id==='wall')return;
    const core=['barracks','range','stable','drill','hospital','tent'].includes(id);
    const s=(id==='castle'?1.10:(core?.85:1.04))*(1+Math.min(l,8)*.02);
-   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(military?68:(core?70:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68))),pd=id==='castle'?78:(military?46:(core?60:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
-   const y=addCityPad(x,z,s,pw,pd);TR={x,y,z,s};const a0=VB.length/12;
+   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?76:(military?68:(core?70:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68)))),pd=id==='castle'?78:(military?46:(core?60:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
+   const y=addCityPad(x,z,s,pw,pd,id+':main');TR={x,y,z,s};const a0=VB.length/12;
    if(l)GM[id](l);else GM.site();
-   pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});
+   pkr.push({k:'b',id,instance:id+':main',a:a0,n:VB.length/12-a0});
    pk.push({k:'b',id,min:[x-32*s,y,z-32*s],max:[x+32*s,y+(id==='castle'?102:62)*s,z+32*s]});
-   lab(`${B[id]?.n||id} · Lv.${l||0}`,[x,y+(id==='castle'?108:65)*s,z],id);}) 
+   lab(`${B[id]?.n||id} · Lv.${l||0}`,[x,y+(id==='castle'?108:65)*s,z],id,id+':main');}) 
   /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
   const fieldSlots=[
-   ...[[78,16],[222,16],[60,284],[110,284],[222,284],[18,85],[282,85]].map(([x,z])=>({x,z,id:'tent',name:'Çadır sahəsi'})),
-   ...[[150,284],[18,220],[282,220]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
+   ...[[55,16],[114,16],[173,16],[232,16],[55,290],[159,290],[263,290]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
+   ...[[107,290],[211,290],[230,150]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
   ];
   fieldSlots.forEach((p,i)=>{
-   const built=p.id==='tent'?i<7&&i<S.tentCount-1:(i-7)<Math.max(0,S.hospitalCount-1);
-   const sc=.72,pw=52,pd=44,y=addCityPad(p.x,p.z,sc,pw,pd);
+   const isTent=p.id==='tent',slotIndex=isTent?i:i-7,built=isTent?slotIndex<Math.max(0,S.tentCount-1):slotIndex<Math.max(0,S.hospitalCount-1);
+   const sc=isTent?.62:.72,pw=isTent?56:48,pd=isTent?44:40,instance=p.id+':field:'+slotIndex,y=addCityPad(p.x,p.z,sc,pw,pd,instance);
    TR={x:p.x,y,z:p.z,s:sc};
    const wood='#76502e',stone='#a99a7d';
    gB(-pw/2,-pd/2,.55,pw,2,1.5,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.5,wood,0);
    gB(-pw/2,-pd/2,.55,2,pd,1.5,wood,0);gB(pw/2-2,-pd/2,.55,2,pd,1.5,wood,0);
-   [[-22,-18],[22,-18],[-22,18],[22,18]].forEach(([a,b])=>gK(a,b,1.8,1.3,1.3,4,stone,6,0));
+   [[-pw/2+4,-pd/2+4],[pw/2-4,-pd/2+4],[-pw/2+4,pd/2-4],[pw/2-4,pd/2-4]].forEach(([a,b])=>gK(a,b,1.8,1.3,1.3,4,stone,6,0));
    const a0=VB.length/12;
-   if(built){if(p.id==='tent')GM.tent();else GM.hospital();pkr.push({k:'b',id:p.id,a:a0,n:VB.length/12-a0})}
+   if(built){if(isTent)GM.tent();else GM.hospital();pkr.push({k:'b',id:p.id,instance,a:a0,n:VB.length/12-a0})}
    else{
     gB(-8,-7,1.9,16,1.5,1.2,'#b69b70',0);
     gB(-8,5,1.9,16,1.5,1.2,'#b69b70',0);
     gB(-8,-7,1.9,1.5,13,1.2,'#b69b70',0);
     gB(6,-7,1.9,1.5,13,1.2,'#b69b70',0);
    }
-   pk.push({k:'b',id:p.id,min:[p.x-29,y,p.z-25],max:[p.x+29,y+43,p.z+25]});
-   lab(built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:p.name,[p.x,y+(built?31:9),p.z],p.id);
+   pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+43*sc,p.z+pd/2+2]});
+   lab(built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:p.name,[p.x,y+(built?31*sc:9),p.z],p.id,instance);
   });
-  /* Əlavə resurs sahələri: ferma, mişar, daş və qızıl */
+  /* Resurs binaları dörd səliqəli qrupda: ferma, taxta, dəmir və qızıl */
   const resourceSlots=[
-   {id:'farm',x:18,z:150,name:'Ferma sahəsi'},
-   {id:'saw',x:18,z:180,name:'Taxta sahəsi'},
-   {id:'ironMine',x:282,z:150,name:'Dəmir sahəsi'},
-   {id:'mine',x:282,z:180,name:'Qızıl sahəsi'}
+   {id:'farm',x:8,z:135,slot:1,name:'Ferma sırası'},
+   {id:'saw',x:8,z:250,slot:1,name:'Mişar sırası'},
+   {id:'ironMine',x:292,z:75,slot:0,name:'Dəmir mədəni sırası'},
+   {id:'ironMine',x:292,z:135,slot:1,name:'Dəmir mədəni sırası'},
+   {id:'mine',x:292,z:250,slot:1,name:'Qızıl mədəni sırası'}
   ];
   resourceSlots.forEach(p=>{
-   const built=(Number(S.resourceCount?.[p.id])||0)>=2,sc=.36,pw=36,pd=30,y=addCityPad(p.x,p.z,sc,pw,pd);
+   const built=p.id==='ironMine'?(p.slot===0?S.lv.ironMine>0:(Number(S.resourceCount?.[p.id])||0)>=2):(Number(S.resourceCount?.[p.id])||0)>=2;
+   const sc=.68,pw=44,pd=36,instance=p.id+':resource:'+p.slot,y=addCityPad(p.x,p.z,sc,pw,pd,instance);
    TR={x:p.x,y,z:p.z,s:sc};const wood='#76502e',stone='#a99a7d';
    gB(-pw/2,-pd/2,.55,pw,2,1.3,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.3,wood,0);
    gB(-pw/2,-pd/2,.55,2,pd,1.3,wood,0);gB(pw/2-2,-pd/2,.55,2,pd,1.3,wood,0);
    const a0=VB.length/12;
-   if(built){GM[p.id](S.lv[p.id]);pkr.push({k:'b',id:p.id,a:a0,n:VB.length/12-a0})}
+   if(built){GM[p.id](S.lv[p.id]);pkr.push({k:'b',id:p.id,instance,a:a0,n:VB.length/12-a0})}
    else{gB(-7,-6,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,4,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,-6,1.7,1.4,12,1.2,'#b69b70',0);gB(5,-6,1.7,1.4,12,1.2,'#b69b70',0)}
-   pk.push({k:'b',id:p.id,min:[p.x-19,y,p.z-16],max:[p.x+19,y+30,p.z+16]});
-   lab(built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:p.name,[p.x,y+(built?29:8),p.z],p.id);
+   pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+30*sc,p.z+pd/2+2]});
+   lab(built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:p.name,[p.x,y+(built?29*sc:8),p.z],p.id,instance);
   });
+  validateCityFootprints();
  }
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
   E.forEach((e,i)=>{const x=CP[i][0],z=CP[i][1],y=hh(x,z);TR={x,y,z,s:1};const a0=VB.length/12;GC[i]();pkr.push({k:'c',id:i,a:a0,n:VB.length/12-a0});pk.push({k:'c',id:i,min:[x-26,y,z-26],max:[x+26,y+60,z+26]});lab(ePow(i),[x,y+70,z])});
@@ -1096,8 +1103,8 @@ function pickAt(e){if(!lastVP||!DB)return null;const r=cv.getBoundingClientRect(
  gl.bindBuffer(gl.ARRAY_BUFFER,DB.b);[[0,3,0],[1,3,12],[2,3,24],[3,2,36],[4,1,44]].forEach(([i,n,o])=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,n,gl.FLOAT,false,48,o)});
  pkr.forEach((o,i)=>{gl.uniform3f(ul('uCol'),(i+1)/255,0,0);gl.drawArrays(gl.TRIANGLES,o.a,o.n)});
  const q=new Uint8Array(4);gl.readPixels(px,py,1,1,gl.RGBA,gl.UNSIGNED_BYTE,q);gl.disable(gl.SCISSOR_TEST);if(!e.keep)draw();return pkr[q[0]-1]||null}
-function onPick(e){const o=pickAt(e);if(!o)return;if(o.k==='b')sel=o.id;else if(o.k==='c')selC=o.id;else selK=o.id;render()}
-function onPickOld(e){const r=cv.getBoundingClientRect(),nx=(e.clientX-r.left)/r.width*2-1,ny=1-(e.clientY-r.top)/r.height*2,c=cam(r.width/r.height),t=Math.tan(c.fov/2),dir=v3.nz([0,1,2].map(i=>c.f[i]+c.r[i]*nx*c.a*t+c.u[i]*ny*t));let best=null,bd=1e9;pk.forEach(o=>{const d=rayBox(c.e,dir,o.min,o.max);if(d!==null&&d<bd){bd=d;best=o}});if(!best)return;if(best.k==='b')sel=best.id;else if(best.k==='c')selC=best.id;else selK=best.id;render()}
+function onPick(e){const o=pickAt(e);if(!o)return;if(o.k==='b'){sel=o.id;selInstance=o.instance||o.id}else if(o.k==='c')selC=o.id;else selK=o.id;render()}
+function onPickOld(e){const r=cv.getBoundingClientRect(),nx=(e.clientX-r.left)/r.width*2-1,ny=1-(e.clientY-r.top)/r.height*2,c=cam(r.width/r.height),t=Math.tan(c.fov/2),dir=v3.nz([0,1,2].map(i=>c.f[i]+c.r[i]*nx*c.a*t+c.u[i]*ny*t));let best=null,bd=1e9;pk.forEach(o=>{const d=rayBox(c.e,dir,o.min,o.max);if(d!==null&&d<bd){bd=d;best=o}});if(!best)return;if(best.k==='b'){sel=best.id;selInstance=best.instance||best.id}else if(best.k==='c')selC=best.id;else selK=best.id;render()}
 function attachGL(){if(!GLOK)return;const ph=document.querySelector('.sky.gl');if(!ph)return;if(DB)gl.deleteBuffer(DB.b);dbuild(ph.dataset.k);DB=mkBuf(VB);if(!MB)mbuild();shadowPass();ph.appendChild(cv);const lo=document.createElement('div');lo.className='glo';lbl.forEach(l=>lo.appendChild(l.el));ph.appendChild(lo)}
 function GLinit(){try{cv=document.createElement('canvas');cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;display:block';cv.addEventListener('webglcontextlost',e=>{e.preventDefault();GLOK=false;render()});gl=cv.getContext('webgl',{antialias:true,alpha:false});if(!gl)return;
  const mkP=(v,f)=>{const p=gl.createProgram();gl.attachShader(p,glsh(gl.VERTEX_SHADER,v));gl.attachShader(p,glsh(gl.FRAGMENT_SHADER,f));['aP','aN','aC','aU','aT'].forEach((n,i)=>gl.bindAttribLocation(p,i,n));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw 'link';return p};
