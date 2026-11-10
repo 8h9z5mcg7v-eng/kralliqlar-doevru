@@ -405,6 +405,21 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}#main{width:100%;max-width
  #res .res-values>small{font-size:5px!important}
 }
 
+
+/* v180: all five resources on one horizontal row */
+#res{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px!important;width:100%!important;min-width:0!important}
+#res .r{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:0!important;min-width:0!important;width:100%!important;height:25px!important;min-height:25px!important;padding:1px 0!important;overflow:hidden!important;box-sizing:border-box!important}
+#res .res-icon{font-size:10px!important;line-height:10px!important}
+#res .res-values{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;min-width:0!important;max-width:100%!important;line-height:1!important}
+#res .res-values>b{font-size:7px!important;line-height:9px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important}
+#res .res-values>small{display:none!important}
+@media(max-width:390px){
+ #res{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px!important}
+ #res .r{height:23px!important;min-height:23px!important}
+ #res .res-icon{font-size:9px!important;line-height:9px!important}
+ #res .res-values>b{font-size:6.5px!important;line-height:8px!important}
+}
+
 </style>
 </head>
 <body>
