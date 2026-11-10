@@ -891,7 +891,7 @@ function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4
 function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
  const cityFootprints=[];
  const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>44&&x<256&&z>44&&z<256,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d});gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};
- const lab=(t,p,id,instance=id,always=false)=>{if(!always&&id&&sel!==id)return;if(!always&&id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2'+(always?' site-action':'');el.textContent=t;if(always){el.dataset.buildId=id||'';el.dataset.buildInstance=instance||'';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label',t+' — tikintiyə başla')}lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
+ const lab=(t,p,id,instance=id,always=false,actionable=always)=>{if(!always&&id&&sel!==id)return;if(!always&&id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2'+(actionable?' site-action':'');el.textContent=t;if(actionable){el.dataset.buildId=id||'';el.dataset.buildInstance=instance||'';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label',t+' — tikintiyə başla')}lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
  const validateCityFootprints=()=>{const collisions=[];for(let i=0;i<cityFootprints.length;i++)for(let j=i+1;j<cityFootprints.length;j++){const a=cityFootprints[i],b=cityFootprints[j];if(Math.abs(a.x-b.x)<(a.w+b.w)/2&&Math.abs(a.z-b.z)<(a.d+b.d)/2)collisions.push(a.instance+' ↔ '+b.instance)}if(collisions.length)console.warn('Şəhər binalarında üst-üstə düşmə aşkarlandı:',collisions);else console.info('Şəhər yerləşim yoxlaması: '+cityFootprints.length+' sahə, kəsişmə yoxdur');return collisions};
  if(k==='city'){
   /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
@@ -1019,7 +1019,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    if(l)GM[id](l);else GM.site();
    pkr.push({k:'b',id,instance:id+':main',a:a0,n:VB.length/12-a0});
    pk.push({k:'b',id,min:[x-32*s,y,z-32*s],max:[x+32*s,y+(id==='castle'?102:62)*s,z+32*s]});
-   const siteLocked=id==='ironMine'&&S.lv.castle<10&&!l&&!bu;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?'🔒 Qala 10':'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu);}) 
+   const siteNeed=id==='ironMine'?10:1,siteLocked=!l&&!bu&&S.lv.castle<siteNeed;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?`🔒 Qala ${siteNeed}`:'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu,!l&&!bu&&!siteLocked);}) 
   /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
   const fieldSlots=[
    ...[[55,16],[114,16],[173,16],[232,16],[55,290],[159,290],[263,290]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
@@ -1042,7 +1042,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
     gB(6,-7,1.9,1.5,13,1.2,'#b69b70',0);
    }
    pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+43*sc,p.z+pd/2+2]});
-   const canBuildSite=isTent?(S.lv.tent>0&&slotIndex<maxTentCount()-1):(S.lv.hospital>0&&slotIndex<maxHospitalCount()-1);const siteText=built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:canBuildSite?'TİK':'🔒 Qala səviyyəsi';lab(siteText,[p.x,y+(built?31*sc:9),p.z],p.id,instance,!built);
+   const requiredCastle=isTent?1+slotIndex*3:6+slotIndex*5,castleOpen=S.lv.castle>=requiredCastle,mainOpen=S.lv[p.id]>0,capacityOpen=slotIndex<(isTent?maxTentCount()-1:maxHospitalCount()-1),canBuildSite=castleOpen&&mainOpen&&capacityOpen;const siteText=built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:!castleOpen?`🔒 Qala ${requiredCastle}`:!mainOpen?'🔒 Əvvəlcə əsas bina':canBuildSite?'TİK':'🔒 Sahə açılmayıb';lab(siteText,[p.x,y+(built?31*sc:9),p.z],p.id,instance,!built,!built&&canBuildSite);
   });
   /* Resurs binaları dörd səliqəli qrupda: ferma, taxta, dəmir və qızıl */
   const resourceSlots=[
@@ -1062,7 +1062,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    if(built){GM[p.id](S.lv[p.id]);pkr.push({k:'b',id:p.id,instance,a:a0,n:VB.length/12-a0})}
    else{gB(-7,-6,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,4,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,-6,1.7,1.4,12,1.2,'#b69b70',0);gB(5,-6,1.7,1.4,12,1.2,'#b69b70',0)}
    pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+30*sc,p.z+pd/2+2]});
-   const canBuildSite=p.slot===0?(p.id!=='ironMine'||S.lv.castle>=10):(S.lv[p.id]>0&&(Number(S.resourceCount?.[p.id])||0)<2);const siteText=built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:canBuildSite?'TİK':p.id==='ironMine'&&S.lv.castle<10?'🔒 Qala 10':'🔒 Əvvəlcə əsas bina';lab(siteText,[p.x,y+(built?29*sc:8),p.z],p.id,instance,!built);
+   const requiredCastle=p.id==='ironMine'&&p.slot===0?10:1,castleOpen=S.lv.castle>=requiredCastle,mainOpen=S.lv[p.id]>0,canBuildSite=p.slot===0?(castleOpen&&p.id!=='ironMine'||castleOpen&&p.id==='ironMine'):(castleOpen&&mainOpen&&(Number(S.resourceCount?.[p.id])||0)<2);const siteText=built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:!castleOpen?`🔒 Qala ${requiredCastle}`:!mainOpen&&p.slot===1?'🔒 Əvvəlcə əsas bina':canBuildSite?'TİK':'🔒 Sahə artıq açılıb';lab(siteText,[p.x,y+(built?29*sc:8),p.z],p.id,instance,!built,!built&&canBuildSite);
   });
   validateCityFootprints();
  }
