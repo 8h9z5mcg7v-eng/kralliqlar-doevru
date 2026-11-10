@@ -872,14 +872,14 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
    if(face==='north'||face==='south'){
     const side=face==='north'?6:-6;
     gB(-.8,side-.8,wallH,1.6,1.6,19,'#59452d',0);
-    gB(-.8,side+(face==='north'?0:-9),wallH+8,1.6,9,9,color,0);
-    gB(-1,side+(face==='north'?0:-9),wallH+16,2,9,1.2,'#d6ad45',0);
+    gB(-4.5,side+(face==='north'?0:-9),wallH+8,9,1.6,9,color,0);
+    gB(-4.5,side+(face==='north'?0:-9),wallH+16,9,1.6,1.2,'#d6ad45',0);
     gK(0,side+(face==='north'?4:-5),wallH+12,1.8,0,2.8,'#e7c66d',8,0);
    }else{
     const side=face==='west'?6:-6;
     gB(side-.8,-.8,wallH,1.6,1.6,19,'#59452d',0);
-    gB(side+(face==='west'?0:-9),-.8,wallH+8,9,1.6,9,color,0);
-    gB(side+(face==='west'?0:-9),-1,wallH+16,9,2,1.2,'#d6ad45',0);
+    gB(side+(face==='west'?0:-9),-4.5,wallH+8,1.6,9,9,color,0);
+    gB(side+(face==='west'?0:-9),-4.5,wallH+16,1.6,9,1.2,'#d6ad45',0);
     gK(side+(face==='west'?4:-5),0,wallH+12,0,1.8,2.8,'#e7c66d',8,0);
    }
   };
