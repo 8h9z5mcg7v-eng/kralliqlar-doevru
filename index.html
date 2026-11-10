@@ -278,6 +278,32 @@ body.city-home-fixed nav{flex:0 0 auto}
 @media(max-width:390px){.city-stage>.sky{height:clamp(410px,53dvh,475px)!important;min-height:410px!important}.city-icon-btn{width:40px!important;height:42px!important}.city-quick-left{left:6px!important}.city-quick-right{right:6px!important}}
 
 html,body{width:100%;max-width:100%;overflow-x:hidden}#main{width:100%;max-width:100%;overflow-x:hidden}.city-stage{width:100%;max-width:100%;min-width:0}.city-stage>.sky{width:100%;max-width:100%}
+
+/* v164: responsive Clash-style city layout for short and tall phones */
+@media(max-width:600px){
+ body.city-home-fixed{height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:calc(68px + env(safe-area-inset-bottom,0px));}
+ body.city-home-fixed #top{flex:0 0 auto;width:100%;max-width:100%;}
+ body.city-home-fixed #main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:0 0 2px;}
+ body.city-home-fixed .city-stage{flex:1 1 auto;min-height:0;height:auto;display:flex;flex-direction:column;overflow:hidden!important;margin:4px 0 2px!important;}
+ body.city-home-fixed .city-stage>.sky.gl{flex:1 1 auto;width:100%;height:auto!important;min-height:250px!important;max-height:none!important;min-width:0;overflow:hidden!important;}
+ body.city-home-fixed .city-quick{top:8px!important;gap:5px!important;}
+ body.city-home-fixed .city-icon-btn{width:39px!important;height:40px!important;padding:2px!important;}
+ body.city-home-fixed .city-icon-btn b{font-size:17px!important;}
+ body.city-home-fixed .city-icon-btn small{font-size:7px!important;}
+ body.city-home-fixed .city-status-card{flex:0 0 auto;margin:5px 3px 2px!important;padding:6px 8px!important;}
+ body.city-home-fixed .city-status-main{margin:0 0 4px!important;}
+ body.city-home-fixed .city-economy{flex:0 0 auto;margin:3px 3px 0!important;padding:5px 8px!important;}
+ body.city-home-fixed .city-economy>summary{font-size:10px!important;}
+ body.city-home-fixed nav{height:calc(64px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);}
+}
+@media(max-height:700px) and (max-width:600px){
+ body.city-home-fixed .city-stage>.sky.gl{min-height:210px!important;}
+ body.city-home-fixed .city-status-card{padding:5px 7px!important;}
+ body.city-home-fixed .city-status-main>span{font-size:18px!important;}
+ body.city-home-fixed .city-status-main b{font-size:11px!important;}
+ body.city-home-fixed .city-status-main small{font-size:9px!important;}
+ body.city-home-fixed .city-status-foot{font-size:9px!important;padding-top:4px!important;}
+}
 </style>
 </head>
 <body>
