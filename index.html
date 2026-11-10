@@ -866,6 +866,24 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
    for(let p=-len/2+4;p<len/2-2;p+=10)gB(alongX?p-2:-6,alongX?-6:p-2,wallH,4,4,5,capStone,0);
   };
   fortWall(150,42,220,true);fortWall(42,150,216,false);fortWall(258,150,216,false);
+  /* Divarların iç üzündə krallıq bayraqları və gerb lövhələri */
+  const wallBanner=(x,z,face,color)=>{
+   TR={x,y:Math.max(hh(x,z),-.8)+.35,z,s:1};
+   if(face==='north'||face==='south'){
+    const side=face==='north'?6:-6;
+    gB(-.8,side-.8,wallH,1.6,1.6,19,'#59452d',0);
+    gB(-.8,side+(face==='north'?0:-9),wallH+8,1.6,9,9,color,0);
+    gB(-1,side+(face==='north'?0:-9),wallH+16,2,9,1.2,'#d6ad45',0);
+    gK(0,side+(face==='north'?4:-5),wallH+12,1.8,0,2.8,'#e7c66d',8,0);
+   }else{
+    const side=face==='west'?6:-6;
+    gB(side-.8,-.8,wallH,1.6,1.6,19,'#59452d',0);
+    gB(side+(face==='west'?0:-9),-.8,wallH+8,9,1.6,9,color,0);
+    gB(side+(face==='west'?0:-9),-1,wallH+16,9,2,1.2,'#d6ad45',0);
+    gK(side+(face==='west'?4:-5),0,wallH+12,0,1.8,2.8,'#e7c66d',8,0);
+   }
+  };
+  [[100,42,'north'],[200,42,'north'],[42,100,'west'],[42,200,'west'],[258,100,'east'],[258,200,'east'],[100,258,'south'],[200,258,'south']].forEach(([x,z,face],i)=>wallBanner(x,z,face,i%2?'#a93232':'#244f78'));
   /* Ön divar iki hissəyə ayrılır ki, əsas darvazanın keçidi açıq qalsın */
   fortWall(81,258,78,true);fortWall(219,258,78,true);
   /* Künc qüllələri və bayraqlar */
