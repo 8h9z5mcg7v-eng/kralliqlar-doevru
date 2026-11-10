@@ -326,6 +326,13 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}#main{width:100%;max-width
 .building-resource-row .short,.building-resource-summary.short{color:#ff9b7e}
 .building-resource-row .enough,.building-resource-summary.enough{color:#b9d58d}
 .building-resource-summary{font-size:11px;font-weight:800;margin:5px 0 8px}
+
+/* v168: explicit next-level benefit comparison */
+.building-next-benefit{margin:9px 0;padding:10px;border:1px solid #b58b4b66;border-radius:10px;background:linear-gradient(120deg,#30271d,#211b15)}
+.building-next-benefit>b{display:block;margin-bottom:7px;color:#f2ce83;font-size:10px;letter-spacing:.6px}
+.building-next-benefit>div{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0;border-top:1px solid #ffffff12;font-size:11px}
+.building-next-benefit span{color:#cbb895;flex:0 0 42%}
+.building-next-benefit strong{color:#fff0c5;text-align:right;font-weight:800;min-width:0}
 </style>
 </head>
 <body>
@@ -477,6 +484,36 @@ function buildingDetailHtml(id){
  if(!html)html="<h3>ℹ️ Binanın təsiri</h3>"+rows([["Hazırkı səviyyə",l],["Növbəti səviyyə","Binanın əsas göstəricilərini artırır"],["Tikinti qaydası","Eyni anda yalnız bir bina yüksəldilə bilər"]]);
  return "<div class='building-details'>"+html+"</div>";
 }
+function buildingNextBenefitHtml(id,l){
+ const n=Math.min(30,l+1),count=Math.max(1,Number(S.resourceCount?.[id])||1),rows=[];
+ if(B[id].p){
+  const mult=1+.15*(Number(S.tech?.prod)||0)+.03*(Number(S.hero?.sk?.eco)||0),now=B[id].r*l*count*mult,next=B[id].r*n*count*mult;
+  rows.push(["İstehsal",now.toFixed(1)+" → "+next.toFixed(1)+" "+R[B[id].p][1]+"/san"],["Əlavə qazanc","+"+(next-now).toFixed(1)+" "+R[B[id].p][1]+"/san"]);
+ }else if(id==="warehouse"){
+  const now=cap(),next=Math.round(600*Math.pow(S.lv.castle,1.5)*(1+.25*n)*(1+.1*S.tech.store));
+  rows.push(["Anbar tutumu",now.toLocaleString("az-AZ")+" → "+next.toLocaleString("az-AZ")],["Əlavə tutum","+"+(next-now).toLocaleString("az-AZ")+" hər resurs üçün"]);
+ }else if(id==="hospital"){
+  const now=hospitalCapacity(),next=HOSPITAL_CAPACITY[n]*Math.max(1,Number(S.hospitalCount)||1);
+  rows.push(["Yaralı tutumu",now.toLocaleString("az-AZ")+" → "+next.toLocaleString("az-AZ")],["Əlavə yer","+"+(next-now).toLocaleString("az-AZ")+" yaralı"]);
+ }else if(id==="drill"){
+  const now=armyCap(),next=DRILL_MARCH_CAP[n];
+  rows.push(["Yürüş tutumu",now.toLocaleString("az-AZ")+" → "+next.toLocaleString("az-AZ")+" əsgər"],["Tutum artımı","+"+(next-now).toLocaleString("az-AZ")+" əsgər"]);
+ }else if(id==="wall"){
+  rows.push(["Müdafiə bonusu","+"+(5*l)+"% → +"+(5*n)+"%"],["Basqın itkisi","−"+(2*l)+"% → −"+(2*n)+"%"],["Əlavə qazanc","+5% müdafiə · −2% itki"]);
+ }else if(id==="tent"){
+  const now=trainingVolume(),next=TENT_VOLUME[n]*Math.max(1,Number(S.tentCount)||1);
+  rows.push(["Bir sifarişdə təlim",now+" → "+next+" əsgərədək"],["Təlim sürəti bonusu","+"+tentSpeedBonus()+"% → +"+(TENT_SPEED[n]*Math.max(1,Number(S.tentCount)||1))+"%"]);
+ }else if(["barracks","range","stable"].includes(id)){
+  const tier=TROOP_TIER_UNLOCK.find(v=>v>l&&v<=n),k=id==="barracks"?"inf":id==="range"?"arc":"cav";
+  rows.push(["Qoşun təlim sürəti","+"+(1.5*l).toFixed(1)+"% → +"+(1.5*n).toFixed(1)+"%"]);
+  rows.push(tier?["Yeni əsgər dərəcəsi","T"+(TROOP_TIER_UNLOCK.indexOf(tier)+1)+" · "+TROOP_TIER_NAMES[k][TROOP_TIER_UNLOCK.indexOf(tier)]+" açılır"]:["Əsgər gücü","+"+(4*l)+"% → +"+(4*n)+"%"]);
+ }else if(id==="castle"){
+  rows.push(["Bina inkişaf limiti",l+" → "+n],["Açılan imkan","Digər binalar "+n+"-ci səviyyəyədək yüksələ bilər"]);
+ }else{
+  rows.push(["Səviyyə",l+" → "+n],["Təsir","Binanın göstəricisi növbəti səviyyəyə yüksəlir"]);
+ }
+ return "<div class='building-next-benefit'><b>✨ NÖVBƏTİ SƏVİYYƏNİN QAZANCI</b>"+rows.map(x=>"<div><span>"+x[0]+"</span><strong>"+x[1]+"</strong></div>").join("")+"</div>";
+}
 function bCard(id){
  const b=B[id],l=Number(S.lv[id])||0,c=cost(id),cp=capped(id),active=S.build&&S.build.id===id;
  const info=id==="hospital"?`Yaralı tutumu: ${hospitalCapacity().toLocaleString("az-AZ")}`:id==="drill"?`Yürüş tutumu: ${armyCap().toLocaleString("az-AZ")}`:b.p?`+${(b.r*l*Math.max(1,Number(S.resourceCount?.[id])||1)).toFixed(1)} ${R[b.p][1]}/san`:b.mil?`${T[b.mil].n} gücü +${4*l}%`:id==="warehouse"?`Resurs limiti +${25*l}%`:id==="wall"?`Basqın itkisi −${2*l}%, müdafiə +${5*l}%`:id==="barracks"?"Piyada dərəcələri və təlim":"Binanın funksiyaları və səviyyə bonusları";
@@ -490,6 +527,7 @@ function bCard(id){
   <div class="building-level-line"><span>HAZIRKI SƏVİYYƏ</span><b>${l} <i>/ ${S.lv.castle}</i></b></div>
   <div class="building-level-track">${dots}</div>
   <div class="building-stat-grid"><div><small>İNDİKİ GÖSTƏRİCİ</small><b>${info}</b></div><div><small>NÖVBƏTİ SƏVİYYƏ</small><b>${nextInfo}</b></div></div>
+  ${buildingNextBenefitHtml(id,l)}
   ${action}
   ${buildingDetailHtml(id)}
  </section>`;
