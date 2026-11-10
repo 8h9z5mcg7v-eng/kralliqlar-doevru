@@ -1259,6 +1259,7 @@ function cityHomeHtml(){
    <div style="padding:8px;background:#ffffff0a;border-radius:8px"><small style="color:#bdb09a">Anbar doluluğu</small><b data-economy-capacity style="display:block;font-size:15px">—</b></div>
   </div>
   <div data-economy-resources style="margin-top:6px"></div>
+  <details style="margin-top:8px;border-top:1px solid #ffffff20;padding-top:7px"><summary style="cursor:pointer;font-size:11px;color:#e4ce9e">🏭 İstehsal binalarının payı</summary><div data-economy-buildings style="margin-top:6px"></div></details>
   <div style="display:flex;justify-content:space-between;gap:8px;margin-top:7px;font-size:11px;color:#c5b89f"><span>⏳ Toplanmış əlavə ehtiyat</span><b data-economy-reserve>—</b></div>
  </details>`;
 }
@@ -1299,11 +1300,12 @@ function refresh(){
  const econ=document.querySelector(".city-economy");
  if(econ){
   const capNow=cap(),totalStored=Object.keys(R).reduce((n,k)=>n+Math.max(0,Number(S.res[k])||0),0),totalCap=capNow*Object.keys(R).length,reserveTotal=Object.values(S.resourceReserve||{}).reduce((n,v)=>n+Math.max(0,Number(v)||0),0);
-  const hour=document.querySelector("[data-economy-hour]"),capacity=document.querySelector("[data-economy-capacity]"),reserve=document.querySelector("[data-economy-reserve]"),list=document.querySelector("[data-economy-resources]");
+  const hour=document.querySelector("[data-economy-hour]"),capacity=document.querySelector("[data-economy-capacity]"),reserve=document.querySelector("[data-economy-reserve]"),list=document.querySelector("[data-economy-resources]"),buildings=document.querySelector("[data-economy-buildings]");
   if(hour)hour.textContent=Object.values(p).reduce((a,v)=>a+v,0).toFixed(1)+" res/s · "+(Object.values(p).reduce((a,v)=>a+v,0)*3600).toFixed(0)+"/saat";
   if(capacity)capacity.textContent=Math.floor(totalStored/totalCap*100)+"% · "+Math.floor(totalStored).toLocaleString("az-AZ")+"/"+totalCap.toLocaleString("az-AZ");
   if(reserve)reserve.textContent=Math.floor(reserveTotal).toLocaleString("az-AZ");
   if(list)list.innerHTML=Object.keys(R).map(k=>{const v=Math.max(0,Number(S.res[k])||0),pct=Math.min(100,v/capNow*100);return "<div style='margin-top:7px'><div style='display:flex;justify-content:space-between;gap:6px;font-size:11px'><span>"+R[k][0]+" "+R[k][1]+"</span><b>"+Math.floor(v).toLocaleString("az-AZ")+" / "+capNow.toLocaleString("az-AZ")+" · +"+p[k].toFixed(2)+"/s</b></div><div style='height:5px;background:#ffffff20;border-radius:9px;overflow:hidden;margin-top:4px'><i style='display:block;height:100%;width:"+pct+"%;background:"+(pct>=95?"#d66b4f":"linear-gradient(90deg,#779c4e,#d7b76c)")+"'></i></div></div>"}).join("");
+  if(buildings){const sources=Object.keys(B).filter(id=>B[id].p&&(Number(S.lv[id])||0)>0).map(id=>({id,rate:resourceReserveRate(id)/.1})).sort((a,b)=>b.rate-a.rate);buildings.innerHTML=sources.length?sources.map(x=>{const b=B[x.id],count=Math.max(1,Number(S.resourceCount?.[x.id])||1);return "<div style='display:flex;justify-content:space-between;gap:8px;padding:6px 2px;border-bottom:1px solid #ffffff12;font-size:11px'><span>"+(b.p==="food"?"🌾":b.p==="wood"?"🪵":b.p==="stone"?"🪨":b.p==="iron"?"⛏️":"🪙")+" "+b.n+" · Səv. "+S.lv[x.id]+(count>1?" ×"+count:"")+"</span><b style='white-space:nowrap'>+"+x.rate.toFixed(2)+"/s</b></div>"}).join(""):"<small style='color:#bdb09a'>İstehsal binası hələ tikilməyib.</small>";}
  }
  document.querySelectorAll("button[data-a='resourceCollect']").forEach(b=>{const id=b.dataset.id,stock=Number(S.resourceReserve?.[id])||0;b.disabled=stock<1;const label=b.querySelector("span")||b;b.textContent="📥 Topla · "+Math.floor(stock)+" "+(R[B[id]?.p]?.[1]||"");});
  document.querySelectorAll("[data-resource-stock]").forEach(el=>{const id=el.dataset.resourceStock;el.textContent=Math.floor(Number(S.resourceReserve?.[id])||0)+" "+R[B[id].p][1]});
