@@ -572,9 +572,9 @@ function attackKing(i){
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fbc02d"};
 const SLOT={
  castle:[150/300,150/300],
- barracks:[78/300,122/300],range:[222/300,122/300],
- stable:[78/300,178/300],drill:[222/300,178/300],
- hospital:[150/300,72/300],tent:[150/300,228/300],
+ barracks:[85/300,105/300],range:[215/300,105/300],
+ stable:[85/300,195/300],drill:[215/300,195/300],
+ hospital:[150/300,75/300],tent:[150/300,225/300],
  farm:[12/300,90/300],saw:[12/300,210/300],
  quarry:[288/300,90/300],mine:[288/300,210/300],
  warehouse:[150/300,12/300],wall:[150/300,264/300]
@@ -787,7 +787,7 @@ function mkBuf(a){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.
 function sbuild(){VB=[];terr();water();for(let i=0;i<90;i++){const a=grn()*6.283,r=140+grn()*45,x=150+Math.cos(a)*r,z=150+Math.sin(a)*r;if(hh(x,z)<1.2)continue;tree(x,z,.8+grn()*.7,grn()<.55)}SB=mkBuf(VB)}
 function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4,'#2e86c1'],[6,-3,'#c0392b']].forEach(([x,y,c])=>{gK(x,y,0,2.2,2.2,9,c,8,3);gK(x,y,9,2,0,2,'#e8c9a0',8,3)});gB(10,0,0,1.2,1.2,22,'#6b4a2a');gB(11,0,14,9,.8,6,'#f1c40f');MB=mkBuf(VB);VB=sv}
 function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
- const addCityPad=(x,z,scale,w,d)=>{const ground=Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};gB(-w/2,-d/2,-1.5,w,d,1.5,'#795638',3);gB(-w/2+2,-d/2+2,0,w-4,d-4,.55,'#66864b',3);return ground+.55;};const lab=(t,p)=>{const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
+ const addCityPad=(x,z,scale,w,d)=>{const inside=x>44&&x<256&&z>44&&z<256,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};const lab=(t,p)=>{const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
  if(k==='city'){
   /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
   /* Şəhərə canlılıq verən bağlar, ağaclar, fənərlər və bayraqlar */
@@ -823,33 +823,25 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
   [[48,142],[252,142],[48,178],[252,178],[82,292],[218,292],[82,8],[218,8]].forEach(([x,z],i)=>{
    tree(x,z,i%3===0?1.05:.82,i%2===0);
   });
-  [[104,34],[196,34],[104,105],[196,105],[104,205],[196,205],[104,276],[196,276]].forEach(([x,z],i)=>{
-   TR={x,y:hh(x,z),z,s:1};
-   gB(-7,-6,0,14,12,1.2,'#496b37',3);
-   [[-4,-3],[4,-3],[-4,3],[4,3]].forEach(([a,b],j)=>gK(a,b,1.2,1.7,1.2,2.5,['#d8b64b','#c66b49','#e6d5a2'][j%3],7,3));
-   gK(0,0,1.2,2.8,1.8,3.5,i%2?'#397b3b':'#4b8c43',8,3);
-  });
-  [[34,60],[266,60],[34,160],[266,160],[34,240],[266,240],[150,60],[150,240]].forEach(([x,z])=>{
+
+  [[34,60],[266,60],[34,160],[266,160],[34,240],[266,240]].forEach(([x,z])=>{
    TR={x,y:hh(x,z),z,s:1};
    gK(0,0,0,3.2,2.4,2.2,'#82735e',8,0);
    gB(-.8,-.8,2,1.6,1.6,19,'#59452d',1);
    gB(.8,-.8,17,5,.8,3,'#e5bd58',0);
    gK(1.5,-.8,20,1.4,0,2,'#ffe6a0',8,3);
   });
-  /* Mərkəzi meydan və qala girişinə daş döşəmə */
-  road(150,84,150,145,12,7.35);
-  road(126,115,174,115,10,7.35);
-  /* Şəhər darvazasından əsas qalaya aparan daş prospekt və daxili keçidlər */
-  road(150,258,150,180,15,7.4);
-  road(150,180,150,172,11,7.4);
-  road(150,205,96,205,8,7.35);road(204,205,150,205,8,7.35);
-  road(150,95,96,95,8,7.35);road(204,95,150,95,8,7.35);
-  [[140,106],[160,106],[140,126],[160,126]].forEach(([x,z])=>{
-   TR={x,y:hh(x,z),z,s:1};gK(0,0,7.3,2.1,2.1,.8,'#c6b38d',8,0);
-  });
-  road(8,10,8,290,7,7.25);road(292,10,292,290,7,7.25);
-  [60,160,240].forEach(z=>road(8,z,292,z,7,7.25));
-  Object.keys(SLOT).forEach(id=>{if(id==='castle'||id==='wall')return;const x=SLOT[id][0]*300,z=SLOT[id][1]*300,lane=z<150?60:240,dir=lane>z?1:-1,start=z+dir*18;if(Math.abs(lane-start)>3)road(x,start,x,lane,4,7.1)});
+  /* Mərkəzi həyət: iri kərpic-daş döşəmə üzərində açıq və geniş keçidlər */
+  TR={x:150,y:7.05,z:150,s:1};
+  gB(-99,-99,-.65,198,198,.65,'#a99b83',3);
+  for(let q=-90;q<=90;q+=18){gB(q-.35,-99,.02,.7,198,.12,'#756b5b',0);gB(-99,q-.35,.02,198,.7,.12,'#756b5b',0)}
+  gB(-100,-100,.04,2,200,.7,'#766d60',0);gB(98,-100,.04,2,200,.7,'#766d60',0);
+  gB(-100,-100,.04,200,2,.7,'#766d60',0);gB(-100,98,.04,200,2,.7,'#766d60',0);
+  /* Darvazadan mərkəzi meydana dolanan geniş prospekt; çadır sahəsindən kənar keçir */
+  road(150,258,180,235,13,7.42);road(180,235,180,170,13,7.42);road(180,170,150,150,13,7.42);
+  /* Hərbi binalara ayrıca qısa keçidlər: girişlər bir-birini kəsmir */
+  road(85,105,112,125,6,7.42);road(215,105,188,125,6,7.42);
+  road(85,195,112,175,6,7.42);road(215,195,188,175,6,7.42);
   /* Möhkəm daxili qala divarları: dörd tərəf, müdafiə qüllələri və ön giriş */
   const wallLevel=Math.max(1,S.lv.wall||1),wallH=16+Math.min(wallLevel,30)*.55;
   const stone=wallLevel>=15?'#aaa99d':'#96968d',capStone=wallLevel>=20?'#d0c4a6':'#b9b5a8';
@@ -917,7 +909,7 @@ function dbuild(k){activeCityScale=k==='city'?1.38:1;VB=[];pk=[];pkr=[];lbl=[];
    if(id==='wall')return;
    const core=['barracks','range','stable','drill','hospital','tent'].includes(id);
    const s=(id==='castle'?1.08:(core?.82:1.02))*(1+Math.min(l,8)*.02);
-   const pw=id==='castle'?116:(core?56:(['farm','saw','quarry','mine','warehouse'].includes(id)?58:90)),pd=id==='castle'?108:(core?52:(['farm','saw','quarry','mine','warehouse'].includes(id)?50:78));
+   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(military?66:(core?68:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68))),pd=id==='castle'?78:(military?44:(core?58:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
    const y=addCityPad(x,z,s,pw,pd);TR={x,y,z,s};const a0=VB.length/12;
    if(l)GM[id](l);else GM.site();
    pkr.push({k:'b',id,a:a0,n:VB.length/12-a0});
