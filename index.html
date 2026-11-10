@@ -316,6 +316,16 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}#main{width:100%;max-width
 /* v166: show exact castle level prerequisite */
 .building-requirement-progress{display:block;margin-top:7px;padding-top:7px;border-top:1px solid #a987554d;color:#f0d49c;font-size:11px;font-weight:700}
 .building-lock-note b{display:block;line-height:1.45}
+
+/* v167: per-resource affordability in building upgrade panels */
+.building-resource-list{display:grid;gap:5px;margin:8px 0 6px}
+.building-resource-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 8px;padding:6px 8px;border:1px solid #9b78483d;border-radius:7px;background:#17140f55;font-size:11px}
+.building-resource-row>span{color:#f1dfbd}
+.building-resource-row>b{color:#fff0c5;font-variant-numeric:tabular-nums}
+.building-resource-row>small{grid-column:1/-1;font-size:10px}
+.building-resource-row .short,.building-resource-summary.short{color:#ff9b7e}
+.building-resource-row .enough,.building-resource-summary.enough{color:#b9d58d}
+.building-resource-summary{font-size:11px;font-weight:800;margin:5px 0 8px}
 </style>
 </head>
 <body>
@@ -472,8 +482,10 @@ function bCard(id){
  const info=id==="hospital"?`Yaralı tutumu: ${hospitalCapacity().toLocaleString("az-AZ")}`:id==="drill"?`Yürüş tutumu: ${armyCap().toLocaleString("az-AZ")}`:b.p?`+${(b.r*l*Math.max(1,Number(S.resourceCount?.[id])||1)).toFixed(1)} ${R[b.p][1]}/san`:b.mil?`${T[b.mil].n} gücü +${4*l}%`:id==="warehouse"?`Resurs limiti +${25*l}%`:id==="wall"?`Basqın itkisi −${2*l}%, müdafiə +${5*l}%`:id==="barracks"?"Piyada dərəcələri və təlim":"Binanın funksiyaları və səviyyə bonusları";
  const nextInfo=id==="hospital"?("Növbəti tutum: "+(HOSPITAL_CAPACITY[Math.min(30,l+1)]*Math.max(1,S.hospitalCount)).toLocaleString("az-AZ")):id==="drill"?("Növbəti yürüş tutumu: "+DRILL_MARCH_CAP[Math.min(30,l+1)].toLocaleString("az-AZ")):["barracks","range","stable"].includes(id)?("Növbəti əsgər dərəcəsi: "+(TROOP_TIER_UNLOCK.find(v=>v>l)||"son dərəcə")):b.p?("Növbəti istehsal: "+(b.r*(l+1)*Math.max(1,Number(S.resourceCount?.[id])||1)).toFixed(1)+" "+R[b.p][1]+"/san"):id==="warehouse"?"Anbar tutumu +25%":id==="wall"?"Müdafiə +5%":"Növbəti səviyyə bonusları";
  const dots=Array.from({length:30},(_,i)=>`<i class="${i<l?"on":""}"></i>`).join("");
+ const resourceStatus=Object.keys(c).map(k=>{const have=Math.max(0,Number(S.res[k])||0),need=Number(c[k])||0,missing=Math.max(0,need-have);return `<div class="building-resource-row"><span>${R[k][0]} ${R[k][1]}</span><b>${Math.floor(have).toLocaleString("az-AZ")} / ${need.toLocaleString("az-AZ")}</b><small class="${missing?"short":"enough"}">${missing?"Çatışmır: "+missing.toLocaleString("az-AZ"):"Kifayətdir"}</small></div>`}).join("");
+ const resourceSummary=afford(c)?'<div class="building-resource-summary enough">✓ Bütün resurslar kifayətdir</div>':'<div class="building-resource-summary short">! Tikintiyə başlamaq üçün resurs çatışmır</div>';
  const requiredCastle=id==="ironMine"&&l===0?10:l+1,lockText=id==="ironMine"&&l===0?`🔒 Dəmir mədənini açmaq üçün Qala ${requiredCastle}-cu səviyyədə olmalıdır.`:`🔒 Bu binanı ${l+1}-ci səviyyəyə yüksəltmək üçün Qala ən azı ${requiredCastle}-ci səviyyədə olmalıdır.`;
- const action=active?`<div class="building-active-inline">🔨 Bu bina hazırda yüksəldilir</div>`:cp?`<div class="building-lock-note"><b>${lockText}</b><small class="building-requirement-progress">Hazırkı Qala səviyyəsi: ${S.lv.castle}/30 · ${Math.max(0,requiredCastle-S.lv.castle)} səviyyə qalıb</small></div>`:`<div class="building-upgrade-cost"><span>🧱 Tələb olunan resurslar</span><b>${fmtC(c)}</b><small>⏱️ Tikinti vaxtı: ${fmtDuration(buildSec(id))}</small></div><button class="building-upgrade-btn" data-a="up" data-id="${id}" data-cap="0" data-c='${JSON.stringify(c)}'>${l?"⬆️ Yüksəlt":"🏗️ Tikintiyə başla"}</button>`;
+ const action=active?`<div class="building-active-inline">🔨 Bu bina hazırda yüksəldilir</div>`:cp?`<div class="building-lock-note"><b>${lockText}</b><small class="building-requirement-progress">Hazırkı Qala səviyyəsi: ${S.lv.castle}/30 · ${Math.max(0,requiredCastle-S.lv.castle)} səviyyə qalıb</small></div>`:`<div class="building-upgrade-cost"><span>🧱 Tələb olunan resurslar</span><b>${fmtC(c)}</b><div class="building-resource-list">${resourceStatus}</div>${resourceSummary}<small>⏱️ Tikinti vaxtı: ${fmtDuration(buildSec(id))}</small></div><button class="building-upgrade-btn" data-a="up" data-id="${id}" data-cap="0" data-c='${JSON.stringify(c)}'>${l?"⬆️ Yüksəlt":"🏗️ Tikintiyə başla"}</button>`;
  return `<section class="building-card-modern">
   <div class="building-level-line"><span>HAZIRKI SƏVİYYƏ</span><b>${l} <i>/ ${S.lv.castle}</i></b></div>
   <div class="building-level-track">${dots}</div>
