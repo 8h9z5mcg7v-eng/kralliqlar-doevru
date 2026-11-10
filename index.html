@@ -1026,7 +1026,8 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    ...[[107,290],[211,290],[230,150]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
   ];
   fieldSlots.forEach((p,i)=>{
-   const isTent=p.id==='tent',slotIndex=isTent?i:i-7,built=isTent?slotIndex<Math.max(0,S.tentCount-1):slotIndex<Math.max(0,S.hospitalCount-1);
+   const isTent=p.id==='tent',slotIndex=isTent?i:i-7,built=isTent?slotIndex<Math.max(0,S.tentCount-1):slotIndex<Math.max(0,S.hospitalCount-1),requiredCastle=isTent?1+slotIndex*3:6+slotIndex*5;
+   if(!built&&S.lv.castle<requiredCastle)return;
    const sc=isTent?.62:.72,pw=isTent?56:48,pd=isTent?44:40,instance=p.id+':field:'+slotIndex,y=addCityPad(p.x,p.z,sc,pw,pd,instance);
    TR={x:p.x,y,z:p.z,s:sc};
    const wood='#76502e',stone='#a99a7d';
@@ -1042,7 +1043,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
     gB(6,-7,1.9,1.5,13,1.2,'#b69b70',0);
    }
    pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+43*sc,p.z+pd/2+2]});
-   const requiredCastle=isTent?1+slotIndex*3:6+slotIndex*5,castleOpen=S.lv.castle>=requiredCastle,mainOpen=S.lv[p.id]>0,capacityOpen=slotIndex<(isTent?maxTentCount()-1:maxHospitalCount()-1),canBuildSite=castleOpen&&mainOpen&&capacityOpen;const siteText=built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:!castleOpen?`🔒 Qala ${requiredCastle}`:!mainOpen?'🔒 Əvvəlcə əsas bina':canBuildSite?'TİK':'🔒 Sahə açılmayıb';lab(siteText,[p.x,y+(built?31*sc:9),p.z],p.id,instance,!built,!built&&canBuildSite);
+   const mainOpen=S.lv[p.id]>0,capacityOpen=slotIndex<(isTent?maxTentCount()-1:maxHospitalCount()-1),canBuildSite=mainOpen&&capacityOpen;const siteText=built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:!mainOpen?'🔒 Əvvəlcə əsas bina':canBuildSite?'TİK':'🔒 Sahə artıq açılıb';lab(siteText,[p.x,y+(built?31*sc:9),p.z],p.id,instance,!built,!built&&canBuildSite);
   });
   /* Resurs binaları dörd səliqəli qrupda: ferma, taxta, dəmir və qızıl */
   const resourceSlots=[
@@ -1053,7 +1054,8 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    {id:'mine',x:292,z:250,slot:1,name:'Qızıl mədəni sırası'}
   ];
   resourceSlots.forEach(p=>{
-   const built=p.id==='ironMine'?(p.slot===0?S.lv.ironMine>0:(Number(S.resourceCount?.[p.id])||0)>=2):(Number(S.resourceCount?.[p.id])||0)>=2;
+   const built=p.id==='ironMine'?(p.slot===0?S.lv.ironMine>0:(Number(S.resourceCount?.[p.id])||0)>=2):(Number(S.resourceCount?.[p.id])||0)>=2,requiredCastle=p.id==='ironMine'&&p.slot===0?10:1;
+   if(!built&&S.lv.castle<requiredCastle)return;
    const sc=.68,pw=44,pd=36,instance=p.id+':resource:'+p.slot,y=addCityPad(p.x,p.z,sc,pw,pd,instance);
    TR={x:p.x,y,z:p.z,s:sc};const wood='#76502e',stone='#a99a7d';
    gB(-pw/2,-pd/2,.55,pw,2,1.3,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.3,wood,0);
@@ -1062,7 +1064,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    if(built){GM[p.id](S.lv[p.id]);pkr.push({k:'b',id:p.id,instance,a:a0,n:VB.length/12-a0})}
    else{gB(-7,-6,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,4,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,-6,1.7,1.4,12,1.2,'#b69b70',0);gB(5,-6,1.7,1.4,12,1.2,'#b69b70',0)}
    pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+30*sc,p.z+pd/2+2]});
-   const requiredCastle=p.id==='ironMine'&&p.slot===0?10:1,castleOpen=S.lv.castle>=requiredCastle,mainOpen=S.lv[p.id]>0,canBuildSite=p.slot===0?(castleOpen&&p.id!=='ironMine'||castleOpen&&p.id==='ironMine'):(castleOpen&&mainOpen&&(Number(S.resourceCount?.[p.id])||0)<2);const siteText=built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:!castleOpen?`🔒 Qala ${requiredCastle}`:!mainOpen&&p.slot===1?'🔒 Əvvəlcə əsas bina':canBuildSite?'TİK':'🔒 Sahə artıq açılıb';lab(siteText,[p.x,y+(built?29*sc:8),p.z],p.id,instance,!built,!built&&canBuildSite);
+   const mainOpen=S.lv[p.id]>0,canBuildSite=p.slot===0?true:(mainOpen&&(Number(S.resourceCount?.[p.id])||0)<2);const siteText=built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:!mainOpen&&p.slot===1?'🔒 Əvvəlcə əsas bina':canBuildSite?'TİK':'🔒 Sahə artıq açılıb';lab(siteText,[p.x,y+(built?29*sc:8),p.z],p.id,instance,!built,!built&&canBuildSite);
   });
   validateCityFootprints();
  }
