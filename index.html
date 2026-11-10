@@ -216,7 +216,7 @@ body.map-open{max-width:none;padding:0;overflow:hidden}body.map-open #top,body.m
 @media(min-width:600px){.sky.s3 .w3{transform:scale(1.35) rotateX(58deg) rotateZ(45deg)}}
 
 /* CoK-inspired building detail panel */
-.sheet.building-sheet{box-sizing:border-box;width:min(100%,560px);padding:7px 14px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#59432b 0%,#302317 100%);border:1px solid #b98b48;border-bottom:0;border-radius:19px 19px 0 0;box-shadow:0 -9px 28px #0009;max-height:min(72dvh,690px);display:flex;flex-direction:column;gap:9px}
+.sheet.building-sheet{box-sizing:border-box;width:min(100%,560px);padding:7px 14px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#59432b 0%,#302317 100%);border:1px solid #b98b48;border-bottom:0;border-radius:19px 19px 0 0;box-shadow:0 -9px 28px #0009;max-height:min(72dvh,690px);display:flex;flex-direction:column;gap:9px;overflow:hidden}
 .sheet-grab{width:38px;height:4px;border-radius:8px;background:#d9bd87;opacity:.75;margin:0 auto 2px;flex:none}
 .building-sheet-head{display:flex;align-items:center;gap:11px;padding:2px 2px 10px;border-bottom:1px solid #a77b453d;flex:none}
 .building-sheet-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,#7b6039,#44301d);border:1px solid #c69b58;box-shadow:inset 0 1px #ffffff22}
@@ -309,8 +309,9 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}#main{width:100%;max-width
 .building-level-track{display:grid;grid-template-columns:repeat(30,minmax(0,1fr));gap:2px;margin:7px 0 11px;height:8px;overflow:visible;background:transparent;letter-spacing:0;line-height:0;white-space:normal}
 .building-level-track i{display:block;min-width:0;height:8px;border-radius:2px;background:linear-gradient(180deg,#44372a,#292016);border:1px solid #80623c;box-sizing:border-box}
 .building-level-track i.on{background:linear-gradient(180deg,#f0ce7a,#a96d27);border-color:#f1ce83;box-shadow:0 0 4px #dba64c55}
-.building-sheet-content{padding-bottom:16px}
-.building-upgrade-btn{position:sticky;bottom:4px;z-index:4;box-shadow:0 -7px 12px #24180f55,inset 0 1px #ffffff40,0 3px 0 #3c2919}
+.building-sheet-content{padding-bottom:82px;flex:1 1 auto;min-height:0}
+.building-sheet .building-upgrade-btn{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(66px + env(safe-area-inset-bottom,0px) + 8px);width:min(calc(100% - 28px),532px);z-index:20;margin:0;box-shadow:0 -7px 12px #24180f55,inset 0 1px #ffffff40,0 3px 0 #3c2919}
+.building-sheet .building-upgrade-btn[aria-disabled="true"]{box-shadow:0 -7px 12px #24180f55}
 .building-upgrade-btn[aria-disabled="true"]{box-shadow:0 -7px 12px #24180f55}
 
 /* v166: show exact castle level prerequisite */
