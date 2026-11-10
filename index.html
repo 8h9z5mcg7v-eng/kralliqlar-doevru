@@ -446,6 +446,14 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}#main{width:100%;max-width
 .activity-chip-fill{display:block;height:100%;background:linear-gradient(90deg,#8eae59,#e7c16e)}
 .activity-chip:active{filter:brightness(1.18)}
 @media(max-width:390px){#activity-indicator{gap:2px}.activity-chip{padding:2px 3px 4px;min-height:21px}.activity-chip-title{font-size:6px}.activity-chip-time{font-size:7px}.activity-chip-icon{font-size:10px}}
+
+/* v184: quest reward readiness feedback */
+.city-icon-btn.quest.ready{border-color:#f3d078;background:linear-gradient(145deg,#79572bF5,#3b2815F5);box-shadow:0 0 0 1px #f3d07855,0 0 12px #f0b94b88,0 3px 9px #0009;animation:questReadyGlow 2.4s ease-in-out infinite}
+@keyframes questReadyGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.22)}}
+.feature-body .quest-card.ready{border-color:#d9ad54;box-shadow:inset 3px 0 #f0bd58,0 0 9px #d69a3b22}
+.feature-body .quest-card.ready button{background:linear-gradient(#f8d16c,#c98727);border-color:#ffe6a2;color:#2b1b0b}
+.feature-body .quest-card.claimed{opacity:.66}
+@media(prefers-reduced-motion:reduce){.city-icon-btn.quest.ready{animation:none}}
 </style>
 </head>
 <body>
@@ -695,10 +703,10 @@ const dayKey=()=>new Date().toDateString();
 const dailyRw=()=>{const c=S.lv.castle;return{food:100*c,wood:100*c,stone:50*c,gold:20*c}};
 function questReadyCount(){return (S.daily===dayKey()?0:1)+Q.reduce((n,q)=>n+(!S.claimed[q.id]&&q.ok()?1:0),0);}
 function questHtml(){
- const dn=S.daily===dayKey();
- let h=`<h2>Gündəlik mükafat</h2><div class="card"><div class="ic">🎁</div><div class="in"><b>Hər gün pulsuz</b><div class="mut">${fmtC(dailyRw())}</div></div><button data-a="dl" ${dn?"disabled":""}>${dn?"Alındı":"Götür"}</button></div><h2>Tapşırıqlar</h2>`;
- Q.slice().sort((a,b)=>(S.claimed[a.id]?1:0)-(S.claimed[b.id]?1:0)).forEach(q=>{const ok=q.ok(),cl=S.claimed[q.id];
-  h+=`<div class="card"><div class="ic">${cl?"✅":ok?"🎯":"📜"}</div><div class="in"><b>${q.n}</b><div class="mut">Mükafat: ${fmtC(q.rw)}</div></div><button data-a="cl" data-id="${q.id}" ${ok&&!cl?"":"disabled"}>${cl?"Alındı":ok?"Götür":"Davam"}</button></div>`});
+ const dn=S.daily===dayKey(),ready=Q.filter(q=>!S.claimed[q.id]&&q.ok()).length;
+ let h=`<h2>Gündəlik mükafat</h2><div class="card"><div class="ic">🎁</div><div class="in"><b>Hər gün pulsuz</b><div class="mut">${fmtC(dailyRw())}</div></div><button data-a="dl" ${dn?"disabled":""}>${dn?"Alındı":"Götür"}</button></div><h2>Tapşırıqlar <small style="font:700 10px system-ui;color:#e7c16e;margin-left:5px">${ready} hazır / ${Q.length}</small></h2>`;
+ Q.slice().sort((a,b)=>(!S.claimed[a.id]&&a.ok()?0:S.claimed[a.id]?2:1)-(!S.claimed[b.id]&&b.ok()?0:S.claimed[b.id]?2:1)).forEach(q=>{const ok=q.ok(),cl=S.claimed[q.id];
+  h+=`<div class="card quest-card ${cl?"claimed":ok?"ready":"locked"}"><div class="ic">${cl?"✅":ok?"🎯":"📜"}</div><div class="in"><b>${q.n}</b><div class="mut">${cl?"Mükafat götürülüb":ok?"🎁 Mükafat hazırdır":"Mükafat: "+fmtC(q.rw)}</div></div><button data-a="cl" data-id="${q.id}" ${ok&&!cl?"":"disabled"}>${cl?"Alındı":ok?"Götür":"Davam"}</button></div>`});
  return h;
 }
 function hint(){
@@ -1593,7 +1601,7 @@ function refresh(){
  document.getElementById("res").innerHTML=Object.keys(R).map(k=>`<div class="r" style="--c:${RC[k]}"><span class="res-icon">${R[k][0]}</span><span class="res-values"><b>${Math.floor(S.res[k])}</b><small>+${p[k].toFixed(1)}/s</small></span></div>`).join("");
  refreshMarchIndicator();
  refreshActivityIndicator();
- const questBadge=document.querySelector("[data-quest-badge]");if(questBadge){const ready=questReadyCount();questBadge.textContent=ready>99?"99+":String(ready);questBadge.style.display=ready?"flex":"none";}
+ const questBadge=document.querySelector("[data-quest-badge]");if(questBadge){const ready=questReadyCount();questBadge.textContent=ready>99?"99+":String(ready);questBadge.style.display=ready?"flex":"none";const questButton=questBadge.closest(".city-icon-btn");if(questButton){questButton.classList.toggle("ready",ready>0);questButton.setAttribute("aria-label",ready?"Tapşırıqlar · "+ready+" mükafat hazırdır":"Tapşırıqlar");questButton.title=ready?ready+" mükafat götürülməyə hazırdır":"Tapşırıqlar";}}
  const econ=document.querySelector(".city-economy");
  if(econ){
   const capNow=cap(),totalStored=Object.keys(R).reduce((n,k)=>n+Math.max(0,Number(S.res[k])||0),0),totalCap=capNow*Object.keys(R).length,reserveTotal=Object.values(S.resourceReserve||{}).reduce((n,v)=>n+Math.max(0,Number(v)||0),0);
