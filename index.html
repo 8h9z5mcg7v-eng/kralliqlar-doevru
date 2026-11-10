@@ -105,7 +105,7 @@ nav button.on{background:radial-gradient(#f0b948,#a5671a);color:#2a1a08}
 .b3.ghost{}
 .sky.gl{position:relative;display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;height:clamp(360px,calc(100dvh - 300px),600px);min-height:360px;perspective:none;background:linear-gradient(180deg,#9bc4d9 0%,#d2d8ad 46%,#75994f 100%);border:2px solid #b88b4a;box-shadow:inset 0 0 28px rgba(31,43,21,.38),0 5px 14px rgba(0,0,0,.35)}
 .glo{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.lab2{position:absolute;left:0;top:0;background:rgba(42,34,24,.82);border:1px solid rgba(218,190,133,.62);color:#f7e8c5;font:700 10px/1.15 system-ui,sans-serif;padding:2px 5px;border-radius:5px;white-space:nowrap;will-change:transform;letter-spacing:.1px}
+.lab2.site-action{background:linear-gradient(135deg,#f6d36b,#bd7924);border:1px solid #fff0a8;color:#2b1b0b;font-size:11px;font-weight:900;padding:3px 8px;border-radius:7px;box-shadow:0 2px 7px #0009;text-shadow:none;letter-spacing:.35px}.lab2.site-action:empty{display:none}.lab2{position:absolute;left:0;top:0;background:rgba(42,34,24,.82);border:1px solid rgba(218,190,133,.62);color:#f7e8c5;font:700 10px/1.15 system-ui,sans-serif;padding:2px 5px;border-radius:5px;white-space:nowrap;will-change:transform;letter-spacing:.1px}
 .b3.pulse{animation:pls3 1.2s}
 @keyframes pls3{30%{scale:1.3}}
 .hop{animation:hop3 .45s ease-in-out infinite alternate}
@@ -891,7 +891,7 @@ function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4
 function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
  const cityFootprints=[];
  const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>44&&x<256&&z>44&&z<256,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d});gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};
- const lab=(t,p,id,instance=id)=>{if(id&&sel!==id)return;if(id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2';el.textContent=t;lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
+ const lab=(t,p,id,instance=id,always=false)=>{if(!always&&id&&sel!==id)return;if(!always&&id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2'+(always?' site-action':'');el.textContent=t;lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
  const validateCityFootprints=()=>{const collisions=[];for(let i=0;i<cityFootprints.length;i++)for(let j=i+1;j<cityFootprints.length;j++){const a=cityFootprints[i],b=cityFootprints[j];if(Math.abs(a.x-b.x)<(a.w+b.w)/2&&Math.abs(a.z-b.z)<(a.d+b.d)/2)collisions.push(a.instance+' ↔ '+b.instance)}if(collisions.length)console.warn('Şəhər binalarında üst-üstə düşmə aşkarlandı:',collisions);else console.info('Şəhər yerləşim yoxlaması: '+cityFootprints.length+' sahə, kəsişmə yoxdur');return collisions};
  if(k==='city'){
   /* Səliqəli CoK tipli şəhər planı: kənar yollar və üç eninə küçə */
@@ -1019,7 +1019,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    if(l)GM[id](l);else GM.site();
    pkr.push({k:'b',id,instance:id+':main',a:a0,n:VB.length/12-a0});
    pk.push({k:'b',id,min:[x-32*s,y,z-32*s],max:[x+32*s,y+(id==='castle'?102:62)*s,z+32*s]});
-   lab(`${B[id]?.n||id} · Lv.${l||0}`,[x,y+(id==='castle'?108:65)*s,z],id,id+':main');}) 
+   const siteLocked=id==='ironMine'&&S.lv.castle<10&&!l&&!bu;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?'🔒 Qala 10':'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu);}) 
   /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
   const fieldSlots=[
    ...[[55,16],[114,16],[173,16],[232,16],[55,290],[159,290],[263,290]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
@@ -1042,7 +1042,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
     gB(6,-7,1.9,1.5,13,1.2,'#b69b70',0);
    }
    pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+43*sc,p.z+pd/2+2]});
-   lab(built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:p.name,[p.x,y+(built?31*sc:9),p.z],p.id,instance);
+   const canBuildSite=isTent?(S.lv.tent>0&&slotIndex<maxTentCount()-1):(S.lv.hospital>0&&slotIndex<maxHospitalCount()-1);const siteText=built?`${p.id==='tent'?'Hərbi çadır':'Xəstəxana'} · Lv.${S.lv[p.id]||1}`:canBuildSite?'TİK':'🔒 Qala səviyyəsi';lab(siteText,[p.x,y+(built?31*sc:9),p.z],p.id,instance,!built);
   });
   /* Resurs binaları dörd səliqəli qrupda: ferma, taxta, dəmir və qızıl */
   const resourceSlots=[
@@ -1062,7 +1062,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    if(built){GM[p.id](S.lv[p.id]);pkr.push({k:'b',id:p.id,instance,a:a0,n:VB.length/12-a0})}
    else{gB(-7,-6,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,4,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,-6,1.7,1.4,12,1.2,'#b69b70',0);gB(5,-6,1.7,1.4,12,1.2,'#b69b70',0)}
    pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+30*sc,p.z+pd/2+2]});
-   lab(built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:p.name,[p.x,y+(built?29*sc:8),p.z],p.id,instance);
+   const canBuildSite=p.slot===0?(p.id!=='ironMine'||S.lv.castle>=10):(S.lv[p.id]>0&&(Number(S.resourceCount?.[p.id])||0)<2);const siteText=built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:canBuildSite?'TİK':p.id==='ironMine'&&S.lv.castle<10?'🔒 Qala 10':'🔒 Əvvəlcə əsas bina';lab(siteText,[p.x,y+(built?29*sc:8),p.z],p.id,instance,!built);
   });
   validateCityFootprints();
  }
