@@ -454,7 +454,11 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}#main{width:100%;max-width
 .feature-body .quest-card.ready button{background:linear-gradient(#f8d16c,#c98727);border-color:#ffe6a2;color:#2b1b0b}
 .feature-body .quest-card.claimed{opacity:.66}
 @media(prefers-reduced-motion:reduce){.city-icon-btn.quest.ready{animation:none}}
-</style>
+/* v185 inbox and battle report styling */
+.mail-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}.mail-tabs button{padding:8px 5px;border:1px solid #8b6b3f;border-radius:8px;background:#302417;color:#e7d3ad;font-size:10px;font-weight:800}.mail-tabs button.active{background:linear-gradient(#e5bd69,#a36b2c);color:#24170b;border-color:#f4d28b}
+.mail-summary{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0 1px 7px;color:#d8c29b;font-size:10px}.mail-summary button{padding:5px 7px;border:1px solid #98713d;border-radius:7px;background:#46321d;color:#ffe2a6;font-size:9px;font-weight:800}.mail-summary button:disabled{opacity:.4}
+.mail-item{display:flex;width:100%;align-items:flex-start;gap:8px;padding:9px 7px;margin:5px 0;border:1px solid #8b6a3d;border-radius:9px;background:linear-gradient(110deg,#35291d,#211a14);color:#f3e2c1;text-align:left}.mail-item.unread{border-color:#d5a64f;background:linear-gradient(110deg,#49351e,#251b12);box-shadow:inset 3px 0 #edbd58}.mail-icon{font-size:20px;flex:0 0 auto}.mail-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}.mail-copy b{font-size:11px;color:#ffe3a6}.mail-copy small{font-size:10px;line-height:1.35;color:#d7c8ad}.mail-copy time{font-size:9px;color:#a99a7f}.mail-item>i{font-size:10px;color:#edc36d;font-style:normal}.mail-item.read{opacity:.72}
+.mail-empty{display:flex;flex-direction:column;align-items:center;gap:7px;padding:28px 12px;text-align:center;color:#e7d5b5}.mail-empty>span{font-size:34px}.mail-empty b{font-size:13px}.mail-empty small{max-width:260px;font-size:10px;line-height:1.45;color:#bcae95}.city-icon-btn.mail.unread{border-color:#e4c274;box-shadow:0 0 10px #e2ad4c66,0 2px 7px #0009}</style>
 </head>
 <body>
 <div id="top"><div id="hud"><div id="av"><svg class='bsv' viewBox='0 0 64 64' style='width:40px;height:40px'><use href='#b-hero' width='64' height='64'/></svg></div><div id="pw"></div></div><div id="res"></div><div id="march-indicator" aria-live="polite"></div><div id="activity-indicator" aria-live="polite"></div></div>
@@ -526,7 +530,7 @@ S.troops=S.troops||{};for(const k of ["inf","arc","cav"]){if(!Array.isArray(S.tr
 S.academyLevel=Math.max(0,Math.min(30,Number(S.academyLevel)||0));S.academyBuild=S.academyBuild||null;S.researchJob=S.researchJob||null;S.trainingJob=S.trainingJob||null;S.trainingQueue=Array.isArray(S.trainingQueue)?S.trainingQueue:[];
 S.hero=S.hero||{lv:1,xp:0};S.hero.sk=S.hero.sk||{atk:0,eco:0,loot:0};
 S.march=S.march||null;S.gather=S.gather||null;S.monsterMarch=S.monsterMarch||null;S.monstersDefeated=S.monstersDefeated||{};S.monsterLevelUnlocked=Math.max(1,Math.min(50,Number(S.monsterLevelUnlocked)||1));S.wounded=S.wounded||{inf:0,arc:0,cav:0};S.monsterLoot=Object.assign({relic:0,crystal:0,medal:0},S.monsterLoot||{});S.heroGear=Object.assign({weapon:0,armor:0,amulet:0},S.heroGear||{});S.heroGearFragments=Object.assign({weapon:0,armor:0,amulet:0},S.heroGearFragments||{});
-S.stats=S.stats||{wins:0,trained:0};S.claimed=S.claimed||{};S.camps=S.camps||[0,0,0,0,0,0];S.build=S.build||null;S.seen=S.seen||0;S.start=S.start||Date.now();S.kcd=S.kcd||{};if(S.ally===undefined)S.ally=null;S.lv.warehouse=S.lv.warehouse||0;S.lv.wall=S.lv.wall||0;S.lv.stable=S.lv.stable||0;S.lv.range=S.lv.range||0;S.lv.drill=S.lv.drill||0;S.stats.raids=S.stats.raids||0;if(!S.raidAt||S.raidAt<Date.now())S.raidAt=Date.now()+180000;S.daily=S.daily||"";
+S.stats=S.stats||{wins:0,trained:0};S.mailLog=Array.isArray(S.mailLog)?S.mailLog:[];S.mailLog=S.mailLog.filter(x=>x&&x.id&&x.title).slice(-40);S.claimed=S.claimed||{};S.camps=S.camps||[0,0,0,0,0,0];S.build=S.build||null;S.seen=S.seen||0;S.start=S.start||Date.now();S.kcd=S.kcd||{};if(S.ally===undefined)S.ally=null;S.lv.warehouse=S.lv.warehouse||0;S.lv.wall=S.lv.wall||0;S.lv.stable=S.lv.stable||0;S.lv.range=S.lv.range||0;S.lv.drill=S.lv.drill||0;S.stats.raids=S.stats.raids||0;if(!S.raidAt||S.raidAt<Date.now())S.raidAt=Date.now()+180000;S.daily=S.daily||"";
 const territoryCount=()=>Object.keys(S.territories||{}).filter(k=>!!S.territories[k]).length;
 const territoryBonus=()=>1+Math.min(territoryCount(),4)*.05;
 const relicBonus=()=>1+.02*(Number(S.monsterLoot.relic)||0);
@@ -864,6 +868,7 @@ function tickRaid(){
   const st={};for(const k of ["food","wood","stone","gold"]){const l=Math.floor(S.res[k]*Math.max(.03,.15-.02*S.lv.wall-.01*S.tech.wall));S.res[k]-=l;st[k]=l}
   lastMsg=`<span class="lose">Basqın!</span> Quldurlar (${T[rt].n}, güc ${rp}) şəhəri qarət etdi. İtki: ${fmtC(st)}. Ordunu gücləndir.`;sfx("lose");toast("🏴‍☠️ Quldurlar basqın etdi!");
  }
+ addMail("raid",lastMsg.indexOf("dəf edildi")>=0?"Basqın dəf edildi":"Quldur basqını","Quldur gücü "+rp+" · Nəticə: "+(lastMsg.indexOf("dəf edildi")>=0?"müdafiə uğurlu":"resurs itkisi")+".");
  notice=lastMsg;save();render();
 }
 let notice="";
@@ -899,10 +904,12 @@ function fx(win){
 let popId="",popN=0;
 const vis=id=>id!=="castle"?id:(S.lv.castle>=7?"castle3":S.lv.castle>=4?"castle2":"castle");
 const AL=[["Qızıl Şirlər","🦁","İstehsal +8%"],["Qara Qartallar","🦅","Ordu gücü +6%"],["Dəmir Qurdlar","🐺","Tikinti vaxtı −25%"]];
+function addMail(type,title,body){const item={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),type,title,body:String(body||"").replace(/<[^>]*>/g,""),time:Date.now(),read:0};S.mailLog=Array.isArray(S.mailLog)?S.mailLog:[];S.mailLog.unshift(item);if(S.mailLog.length>40)S.mailLog.length=40;}
+function mailHtml(){const all=S.mailLog||[],items=all.filter(x=>mailPage==="reports"?["battle","monster","raid"].includes(x.type):true),unread=all.filter(x=>!x.read).length;const tabs=[["inbox","📨 Gələnlər"],["reports","⚔️ Döyüş hesabatları"]];let h="<div class='mail-tabs'>"+tabs.map(t=>"<button type='button' data-a='mailTab' data-id='"+t[0]+"' class='"+(mailPage===t[0]?"active":"")+"'>"+t[1]+"</button>").join("")+"</div>";h+="<div class='mail-summary'><span>📬 "+all.length+" mesaj · "+unread+" oxunmayıb</span><button type='button' data-a='mailAll' "+(unread?"":"disabled")+">Hamısını oxunmuş et</button></div>";if(!items.length)return h+"<div class='mail-empty'><span>📭</span><b>"+(mailPage==="reports"?"Hələ döyüş hesabatı yoxdur":"Gələnlər qutusu boşdur")+"</b><small>Yürüş və döyüş nəticələri burada saxlanacaq.</small></div>";return h+items.map(x=>"<button type='button' class='mail-item "+(x.read?"read":"unread")+"' data-a='mailRead' data-id='"+escHtml(x.id)+"'><span class='mail-icon'>"+(x.type==="raid"?"🛡️":x.type==="monster"?"🐺":"⚔️")+"</span><span class='mail-copy'><b>"+escHtml(x.title)+"</b><small>"+escHtml(x.body)+"</small><time>"+new Date(x.time).toLocaleString("az-AZ",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})+"</time></span><i>"+(x.read?"✓":"●")+"</i></button>").join("");}
 function allyHtml(){
  return `<h2>🛡️ İttifaq</h2>`+AL.map((a,i)=>`<div class="card"><div class="ic">${a[1]}</div><div class="in"><b>${a[0]}</b><div class="mut">${a[2]}</div></div><button data-a="jn" data-id="${i}" ${S.ally===i?"disabled":""}>${S.ally===i?"Üzvsən":"Qoşul"}</button></div>`).join("");
 }
-let sel=null,panel=null,selC=null,selK=null,selInstance=null;
+let sel=null,panel=null,selC=null,selK=null,selInstance=null,mailPage="inbox";
 function kingSheet(){
  if(selK===null)return '';
  const k=board().find(r=>r[3]===selK),cd=(S.kcd[selK]||0)>Date.now();
@@ -910,7 +917,7 @@ function kingSheet(){
 }
 function campSheet(){if(selC===null)return '';return `<div class="bk"></div><div class="sheet"><div class="shh"><b>${E[selC][0]}</b><button data-a="x" class="x">✕</button></div>${eCard(selC)}</div>`}
 function actionsHtml(){return "";}
-const panelHtml=()=>{if(!panel)return "";const title=panel==="quests"?"🎯 Tapşırıqlar":panel==="alliance"?"🛡️ İttifaq":"⚙️ Ayarlar";const body=panel==="quests"?questHtml():panel==="settings"?resetHtml():panel==="alliance"?allyHtml():"";return `<div class="feature-backdrop" data-panel-close></div><section class="feature-panel"><div class="feature-head"><b>${title}</b><button type="button" class="x" data-a="x">✕</button></div><div class="feature-body">${body}</div></section>`};
+const panelHtml=()=>{if(!panel)return "";const title=panel==="quests"?"🎯 Tapşırıqlar":panel==="mail"?"✉️ Məktub və hesabatlar":panel==="alliance"?"🛡️ İttifaq":"⚙️ Ayarlar";const body=panel==="quests"?questHtml():panel==="mail"?mailHtml():panel==="settings"?resetHtml():panel==="alliance"?allyHtml():"";return `<div class="feature-backdrop" data-panel-close></div><section class="feature-panel"><div class="feature-head"><b>${title}</b><button type="button" class="x" data-a="x">✕</button></div><div class="feature-body">${body}</div></section>`};
 function sheetHtml(){
  if(!sel)return "";
  const b=B[sel],active=S.build?S.build:null,left=active?Math.max(0,active.end-Date.now()):0,progress=active?Math.max(0,Math.min(100,Math.round((1-left/(buildSec(active.id)*1000))*100))):0;
@@ -1479,6 +1486,7 @@ function tickMonster(){
  for(const k of ["inf","arc","cav"]){const rate=Math.max(.02,(win?.06+Math.random()*.10:.22+Math.random()*.20)-.04*S.tech.wall-.02*S.tech.scout),l=Math.min(m.troops[k],Math.round(m.troops[k]*rate));m.troops[k]-=l;let tierLeft=l;for(let ti=0;ti<10&&tierLeft>0;ti++){const take=Math.min(Number(m.tierTroops[k][ti])||0,tierLeft);m.tierTroops[k][ti]-=take;tierLeft-=take}lost+=l;lostBy[k]=l;const hurt=Math.floor(l*.6);hurtBy[k]=hurt;S.wounded[k]=(Number(S.wounded[k])||0)+hurt;}
  if(win){S.monstersDefeated[m.x+","+m.y]=Date.now();const ml=Math.max(1,Number(m.level)||monsterLevelAt(m.x,m.y));if(ml===S.monsterLevelUnlocked&&S.monsterLevelUnlocked<50)S.monsterLevelUnlocked++;const mult=ml;const loot={food:(50+Math.floor(Math.random()*51))*mult,wood:(40+Math.floor(Math.random()*41))*mult,stone:(35+Math.floor(Math.random()*36))*mult,gold:(10+Math.floor(Math.random()*16))*mult};for(const k in loot)addRes(k,Math.round(loot[k]*(1+.2*S.tech.loot+.08*S.tech.scout)));gainXp(12*ml);let rare="";if(Math.random()<.18){const item=["relic","crystal","medal"][Math.floor(Math.random()*3)];S.monsterLoot[item]=(Number(S.monsterLoot[item])||0)+1;rare=item==="relic"?"Qədim relikviya":item==="crystal"?"Sehrli kristal":"Cəsarət medalı";rare=" 🎁 Nadir qənimət: "+rare+"!"}let gearDrop="";if(Math.random()<.24){const slot=["weapon","armor","amulet"][Math.floor(Math.random()*3)],names={weapon:"Əjdaha qılıncı",armor:"Mühafizə zirehi",amulet:"Qədim amulet"},before=Number(S.heroGear[slot])||0;if(ml>before){S.heroGear[slot]=Math.min(5,Math.ceil(ml/10));gearDrop=" 🛡️ Yeni avadanlıq tapıldı: "+names[slot]+" · Səviyyə "+ml+" (təchiz edildi)!";}else{S.heroGearFragments[slot]=(Number(S.heroGearFragments[slot])||0)+1;gearDrop=" 🧩 "+names[slot]+" fraqmenti tapıldı! Fraqment: "+S.heroGearFragments[slot]+"/3."}}lastMsg="🏆 <span class='win'>Qələbə!</span> "+ml+"-ci səviyyə canavarı məğlub edildi. Ordu gücü: "+my+" · Düşmən gücü: "+m.enemy+". "+(tactic.bonus>1?"<b>Taktiki üstünlük:</b> "+tactic.label+" (+20%). ":"")+(S.monsterLevelUnlocked>ml?"🔓 "+S.monsterLevelUnlocked+"-ci səviyyə açıldı! ":"")+"Qənimət: "+fmtC(loot)+". İtki: "+lost+" əsgər ("+casualtyDetails(lostBy,hurtBy)+")."+rare+gearDrop}
  else{gainXp(4);lastMsg="⚔️ <span class='lose'>Məğlubiyyət.</span> Canavarlar ordunu geri oturtdu. Ordu gücü: "+my+" · Düşmən gücü: "+m.enemy+". "+(tactic.bonus>1?"Taktiki üstünlük tətbiq edildi: "+tactic.label+". ":"")+"İtki: "+lost+" əsgər."}
+ addMail("monster",(win?"Qələbə":"Məğlubiyyət")+" · "+monsterProfile(m.level).name,"Səviyyə "+m.level+" · Ordu gücü "+my+" · Düşmən gücü "+m.enemy+" · İtki "+lost+" əsgər."+(win?" Qənimət əldə edildi.":" Döyüş uduzuldu."));
  m.phase="back";m.end=Date.now()+m.sec*1000;save();if(tab==="map")render();
 }
 function tickMarch(){
@@ -1512,6 +1520,7 @@ function cityHomeHtml(){
  const quick=(a,label,ico,extra="")=>`<button class="city-icon-btn ${extra}" ${a} type="button"><b>${ico}</b><small>${label}</small></button>`;
  return `<div class="city-quick city-quick-left">
   ${quick('data-a="pn" data-id="quests"',"Tapşırıq","🎯","quest").replace("</button>","<span class='quest-count' data-quest-badge></span></button>")}
+  <button class="city-icon-btn mail" data-a="pn" data-id="mail" type="button"><b>✉️</b><small>Məktub</small><span class="quest-count" data-mail-badge></span></button>
   ${quick('data-a="pn" data-id="alliance"',"İttifaq","🛡️")}
   ${quick('data-a="pn" data-id="settings"',"Ayarlar","⚙️")}
  </div>
@@ -1601,7 +1610,7 @@ function refresh(){
  document.getElementById("res").innerHTML=Object.keys(R).map(k=>`<div class="r" style="--c:${RC[k]}"><span class="res-icon">${R[k][0]}</span><span class="res-values"><b>${Math.floor(S.res[k])}</b><small>+${p[k].toFixed(1)}/s</small></span></div>`).join("");
  refreshMarchIndicator();
  refreshActivityIndicator();
- const questBadge=document.querySelector("[data-quest-badge]");if(questBadge){const ready=questReadyCount();questBadge.textContent=ready>99?"99+":String(ready);questBadge.style.display=ready?"flex":"none";const questButton=questBadge.closest(".city-icon-btn");if(questButton){questButton.classList.toggle("ready",ready>0);questButton.setAttribute("aria-label",ready?"Tapşırıqlar · "+ready+" mükafat hazırdır":"Tapşırıqlar");questButton.title=ready?ready+" mükafat götürülməyə hazırdır":"Tapşırıqlar";}}
+ const questBadge=document.querySelector("[data-quest-badge]");if(questBadge){const ready=questReadyCount();questBadge.textContent=ready>99?"99+":String(ready);questBadge.style.display=ready?"flex":"none";const questButton=questBadge.closest(".city-icon-btn");if(questButton){questButton.classList.toggle("ready",ready>0);questButton.setAttribute("aria-label",ready?"Tapşırıqlar · "+ready+" mükafat hazırdır":"Tapşırıqlar");questButton.title=ready?ready+" mükafat götürülməyə hazırdır":"Tapşırıqlar";}}const mailBadge=document.querySelector("[data-mail-badge]");if(mailBadge){const unread=(S.mailLog||[]).filter(x=>!x.read).length;mailBadge.textContent=unread>99?"99+":String(unread);mailBadge.style.display=unread?"flex":"none";const mailButton=mailBadge.closest(".city-icon-btn");if(mailButton){mailButton.classList.toggle("unread",unread>0);mailButton.title=unread?unread+" oxunmamış mesaj":"Məktub";}}
  const econ=document.querySelector(".city-economy");
  if(econ){
   const capNow=cap(),totalStored=Object.keys(R).reduce((n,k)=>n+Math.max(0,Number(S.res[k])||0),0),totalCap=capNow*Object.keys(R).length,reserveTotal=Object.values(S.resourceReserve||{}).reduce((n,v)=>n+Math.max(0,Number(v)||0),0);
@@ -1637,6 +1646,7 @@ function attack(i){
  if(win&&ev<.2){const g=20*(i+1)+Math.round(Math.random()*30);S.res.gold+=g;lastMsg+=` 🎁 Düşərgədə sandıq tapdın: +🪙${g}!`}
  else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=loseTierTroops(k,r);r-=d;lostBy[k]+=d;hurtBy[k]+=Math.floor(d*.6);S.wounded[k]=(Number(S.wounded[k])||0)+Math.floor(d*.6)}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
 }
+ addMail("battle",lastMsg.indexOf("Qələbə")>=0?"Qələbə · "+E[i][0]:"Məğlubiyyət · "+E[i][0],"Ordu gücü "+my+" · Düşmən gücü "+ePow(i)+" · İtki "+lost+" əsgər.");
 document.addEventListener("click",e=>{const b=e.target.closest("[data-city-open]");if(!b)return;const next=b.dataset.cityOpen;if(!["army","tech","map"].includes(next))return;tab=next;techPage="";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("click",e=>{
  const buildSite=e.target.closest(".lab2.site-action[data-build-id]");if(buildSite){e.preventDefault();e.stopPropagation();const id=buildSite.dataset.buildId,instance=buildSite.dataset.buildInstance||id;let action="up";if(instance.includes(":field:"))action=id==="tent"?"tentAdd":"hospitalAdd";else if(instance.includes(":resource:")&&instance.endsWith(":1"))action="resourceAdd";sel=id;selInstance=instance;render();const btn=document.querySelector('#main button.building-upgrade-btn[data-a="'+action+'"]');if(btn){btn.click()}else{const sheet=document.querySelector("#main .building-card-modern");if(sheet)sheet.scrollIntoView({block:"nearest"})}return}
@@ -1667,7 +1677,10 @@ document.getElementById("main").addEventListener("click",e=>{
  if(a==="rs"){const pre=techPrerequisite(id),level=Number(S.tech[id])||0,requiredAcademy=academyRequirement(id,level+1);if(S.academyLevel<1){toast("Əvvəlcə Elmi Akademiyanı tik");return}if(S.researchJob){toast("Başqa tədqiqat artıq davam edir");return}if(S.academyLevel<requiredAcademy){toast("🏛️ Bu səviyyə üçün Elmi Akademiya "+requiredAcademy+"-ci səviyyə olmalıdır");return}if((pre&&(Number(S.tech[pre])||0)<1)||level>=maxTechLevel(id)){toast("🔒 Əvvəlki texnologiyanı ən azı 1-ci səviyyəyə çatdır");return}const c=tCost(id);if(!afford(c))return;for(const k in c)S.res[k]-=c[k];S.researchJob={id,started:Date.now(),end:Date.now()+researchSeconds(id)*1000};toast("🔬 Tədqiqat başladı: "+TECH[id].n)}
  if(a==="rst"){if(!rstArm){rstArm=true;render();return}nosave=true;try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}
  if(a==="sk"&&SK[id]&&skPts()>0)S.hero.sk[id]++;
- if(a==="pn"){panel=panel===id?null:id;render();return}
+ if(a==="pn"){panel=panel===id?null:id;if(id==="mail")mailPage="inbox";render();return}
+ if(a==="mailTab"){mailPage=id==="reports"?"reports":"inbox";render();return}
+ if(a==="mailRead"){const msg=(S.mailLog||[]).find(x=>x.id===id);if(msg)msg.read=1;save();render();return}
+ if(a==="mailAll"){(S.mailLog||[]).forEach(x=>x.read=1);save();render();return}
  if(a==="x"){sel=null;selC=null;selK=null;panel=null;render();return}
  if(a==="jn"){S.ally=+id;toast("🛡️ İttifaqa qoşuldun: "+AL[+id][0])}
  if(a==="wpage"){S.worldPage=Math.max(1,Math.min(10,+id||1));save();render();return}
