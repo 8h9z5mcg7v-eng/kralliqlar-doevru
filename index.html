@@ -1645,8 +1645,8 @@ function attack(i){
  const ev=Math.random();
  if(win&&ev<.2){const g=20*(i+1)+Math.round(Math.random()*30);S.res.gold+=g;lastMsg+=` 🎁 Düşərgədə sandıq tapdın: +🪙${g}!`}
  else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=loseTierTroops(k,r);r-=d;lostBy[k]+=d;hurtBy[k]+=Math.floor(d*.6);S.wounded[k]=(Number(S.wounded[k])||0)+Math.floor(d*.6)}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
-}
  addMail("battle",lastMsg.indexOf("Qələbə")>=0?"Qələbə · "+E[i][0]:"Məğlubiyyət · "+E[i][0],"Ordu gücü "+my+" · Düşmən gücü "+ePow(i)+" · İtki "+lost+" əsgər.");
+}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-city-open]");if(!b)return;const next=b.dataset.cityOpen;if(!["army","tech","map"].includes(next))return;tab=next;techPage="";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("click",e=>{
  const buildSite=e.target.closest(".lab2.site-action[data-build-id]");if(buildSite){e.preventDefault();e.stopPropagation();const id=buildSite.dataset.buildId,instance=buildSite.dataset.buildInstance||id;let action="up";if(instance.includes(":field:"))action=id==="tent"?"tentAdd":"hospitalAdd";else if(instance.includes(":resource:")&&instance.endsWith(":1"))action="resourceAdd";sel=id;selInstance=instance;render();const btn=document.querySelector('#main button.building-upgrade-btn[data-a="'+action+'"]');if(btn){btn.click()}else{const sheet=document.querySelector("#main .building-card-modern");if(sheet)sheet.scrollIntoView({block:"nearest"})}return}
