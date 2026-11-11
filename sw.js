@@ -1,5 +1,5 @@
-const CACHE_NAME = "kralliq-pwa-v197";
-const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./images/piyada_ordu.jpg", "./images/oxatan_ordu.jpg", "./images/suvari_ordu.jpg"];
+const CACHE_NAME = "kralliq-pwa-v198";
+const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./images/piyada.jpg", "./images/oxatan.jpg", "./images/suvari.jpg"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
