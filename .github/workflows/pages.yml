@@ -19,6 +19,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Extract troop portraits
+        run: |
+          mkdir -p images
+          unzip -o ordu_portretleri_paketi.zip -d images
+          test -f images/piyada_ordu.jpg
+          test -f images/oxatan_ordu.jpg
+          test -f images/suvari_ordu.jpg
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
