@@ -719,7 +719,7 @@ function troopTierCatalogHtml(){
  }).join("");
 }
 function troopPortrait(k){
- const files={inf:"piyada_ordu.jpg",arc:"oxatan_ordu.jpg",cav:"suvari_ordu.jpg"};
+ const files={inf:"piyada.jpg",arc:"oxatan.jpg",cav:"suvari.jpg"};
  const labels={inf:"Nizəli piyada əsgəri",arc:"Oxatan əsgəri",cav:"Atlı süvari əsgəri"};
  const file=files[k]||files.inf;
  return `<span class="army-unit-art army-unit-${k}"><img src="images/${file}" alt="${labels[k]||labels.inf}" loading="lazy" decoding="async"></span>`;
