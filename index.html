@@ -1757,7 +1757,7 @@ document.getElementById("main").addEventListener("click",e=>{
  const kb=e.target.closest(".b3[data-king]");if(kb){selK=+kb.dataset.king;render();return}
  const bd=e.target.closest(".bd[data-id],.b3[data-id]");if(bd){sel=bd.dataset.id;render();return}
  const bk=e.target.closest(".bk");if(bk){sel=null;selC=null;selK=null;render();return}
- const b=e.target.closest("button[data-a]");if(!b)return;
+ const b=e.target.closest("button[data-a],button[data-commander-select]");if(!b)return;
  const a=b.dataset.a,id=b.dataset.id;
  if(b.hasAttribute("data-commander-select")){const next=b.dataset.commanderSelect,valid=COMMANDERS.some(c=>c.id===next),until=(Number(S.commander.selectedAt)||0)+7*86400000;if(!valid)return;if(S.commander.id&&Date.now()<until){toast("Sərkərdə seçimi 7 gün tamamlanana qədər dəyişdirilə bilməz.");return}if(S.commander.id===next)return;S.commander.id=next;S.commander.selectedAt=Date.now();save();render();toast("👑 "+COMMANDERS.find(c=>c.id===next).name+" sərkərdə seçildi. 7 gün dəyişdirilə bilməz.");return}
  if(a==="resourceCollect"){if(!B[id]?.p||S.lv[id]<1)return;const key=B[id].p,stock=Math.floor(Number(S.resourceReserve?.[id])||0);if(stock<1){toast("Toplanacaq ehtiyat hələ yığılmayıb.");return}const before=Number(S.res[key])||0;addRes(key,stock);const gained=(Number(S.res[key])||0)-before;if(gained>0){S.resourceReserve[id]=Math.max(0,(Number(S.resourceReserve[id])||0)-gained);toast("📥 "+gained+" "+R[key][1]+" anbara əlavə edildi")}else toast("Anbar doludur. Əvvəlcə resurslardan istifadə et.");}
