@@ -1746,16 +1746,16 @@ function refresh(){
  });
 }
 function attack(i){
- const my=power();
- if(!my){lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";return}
- const ratio=effPower(ETYPE[i])/ePow(i)*(.85+Math.random()*.3),win=ratio>=1;
- const rate=win?.08+Math.random()*.12:.3+Math.random()*.2;
+ const rawPower=power(),heroSkill=heroBattleSkill(S.army);
+ if(!rawPower){lastMsg="Ordun yoxdur! Əvvəlcə əsgər hazırla.";return}
+ const my=Math.round(rawPower*heroSkill.effect.power),ratio=effPower(ETYPE[i])*heroSkill.effect.power/ePow(i)*(.85+Math.random()*.3),win=ratio>=1;
+ const rate=Math.max(.03,(win?.08+Math.random()*.12:.3+Math.random()*.2)-heroSkill.effect.loss);
  const up=gainXp(win?15*(i+1):5),upT=up?" 👑 Sərkərdə "+S.hero.lv+". səviyyəyə yüksəldi!":"";
  let lost=0;const lostBy={inf:0,arc:0,cav:0},hurtBy={inf:0,arc:0,cav:0};
  for(const k of ["inf","arc","cav"]){const l=loseTierTroops(k,Math.round(S.army[k]*rate));lost+=l;lostBy[k]=l;hurtBy[k]=Math.floor(l*.6);S.wounded[k]=(Number(S.wounded[k])||0)+hurtBy[k]}
- if(win){S.stats.wins++;eventState().wins++;const m=(i+1)*(1+.2*S.tech.loot+.05*S.hero.sk.loot);S.camps[i]++;const loot={food:Math.round(60*m),wood:Math.round(60*m),stone:Math.round(30*m),gold:Math.round(15*m)};for(const k in loot)S.res[k]+=loot[k];
-  lastMsg=`<span class="win">Qələbə!</span> ${E[i][0]} məğlub edildi. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər (${casualtyDetails(lostBy,hurtBy)}).${upT}`}
- else lastMsg=`<span class="lose">Məğlubiyyət.</span> ${E[i][0]} çox güclü idi. İtki: ${lost} əsgər (${Math.floor(lost*.6)} yaralı, ${lost-Math.floor(lost*.6)} həlak).${upT}`;
+ if(win){S.stats.wins++;eventState().wins++;const m=(i+1)*(1+.2*S.tech.loot+.05*S.hero.sk.loot)*(heroSkill.effect.loot||1);S.camps[i]++;const loot={food:Math.round(60*m),wood:Math.round(60*m),stone:Math.round(30*m),gold:Math.round(15*m)};for(const k in loot)S.res[k]+=loot[k];
+  lastMsg=`<span class="win">Qələbə!</span> ${E[i][0]} məğlub edildi. <b>Qəhrəman bacarığı:</b> ${heroSkill.label}. Qənimət: ${fmtC(loot)}. İtki: ${lost} əsgər (${casualtyDetails(lostBy,hurtBy)}).${upT}`}
+ else lastMsg=`<span class="lose">Məğlubiyyət.</span> ${E[i][0]} çox güclü idi. <b>Qəhrəman bacarığı:</b> ${heroSkill.label}. İtki: ${lost} əsgər (${Math.floor(lost*.6)} yaralı, ${lost-Math.floor(lost*.6)} həlak).${upT}`;
  const ev=Math.random();
  if(win&&ev<.2){const g=20*(i+1)+Math.round(Math.random()*30);S.res.gold+=g;lastMsg+=` 🎁 Düşərgədə sandıq tapdın: +🪙${g}!`}
  else if(ev>.9&&armyN()>0){const x=Math.max(1,Math.round(armyN()*.1));let r=x;for(const k of ["cav","arc","inf"]){const d=loseTierTroops(k,r);r-=d;lostBy[k]+=d;hurtBy[k]+=Math.floor(d*.6);S.wounded[k]=(Number(S.wounded[k])||0)+Math.floor(d*.6)}lastMsg+=` 🏹 Pusqu! Əlavə ${x-r} əsgər itirdin, ${Math.floor((x-r)*.6)}-i yaralandı.`}
