@@ -1349,6 +1349,32 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    }
    gK(side*17.7,7,15,1.05,.8,2.2,'#b08b4f',8,0);
   }
+  /* Körpünün iki tərəfində alçaq qoruyucu məhəccərlər */
+  for(let side of [-1,1]){
+   const railX=side*21.2;
+   gB(railX,8.5,5.2,1.25,25.5,1.1,'#553d29',0);
+   gB(railX,8.5,8.2,1.25,25.5,1.1,'#765536',0);
+   for(let post=0;post<7;post++){
+    const py=9+post*4;
+    gB(railX-.65,py,4.3,2.5,1.8,5.2,'#69492d',0);
+    gK(railX,py,9.5,.72,.52,.8,'#9b784b',6,0);
+    gK(railX,py,4.1,.7,.7,.45,'#b09a70',6,0);
+   }
+   /* Dəmir bərkidici lövhələr */
+   for(let brace=0;brace<4;brace++){
+    const py=11+brace*6;
+    gB(railX-side*.72,py,5.6,.35,1.2,2.5,'#454b4b',0);
+   }
+  }
+  /* Körpü başında iki daş keşikçi dirəyi və alov fənərləri */
+  for(let side of [-1,1]){
+   const postX=side*25.5,postY=34.5;
+   gB(postX-2,postY-2,0,4,4,5.5,'#89877d',0);
+   gB(postX-2.5,postY-2.5,5.5,5,5,1.2,'#b9b3a5',0);
+   gB(postX-.45,postY-.45,6.7,.9,.9,5.5,'#533d28',0);
+   gK(postX,postY,12.2,1.3,1.3,1.2,'#b08b4f',8,0);
+   gB(postX-.25,postY-.25,13.4,.5,.5,2.3,'#d18a32',0);
+  }
   /* Darvaza keçidinin yonulmuş daş çərçivəsi və tağ daşları */
   for(let side of [-1,1]){
    for(let course=0;course<5;course++){
