@@ -937,7 +937,7 @@ function skyCss(){
  let h=`<div class='sky s3'><div class='w3'><div class='tent-yard' style='left:132px;top:22px'><span>HƏRBİ DÜŞƏRGƏ</span></div><i class='sl' style='left:0;top:360px;width:360px;height:18px;transform-origin:0 0;transform:rotateX(-90deg)'></i><i class='sl' style='left:360px;top:0;width:360px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(-90deg);filter:brightness(.7)'></i>`;
  [[18,18],[342,18],[18,342],[342,342],[180,8],[8,180]].forEach(t=>{h+=`<div class='p3' style='left:${t[0]}px;top:${t[1]}px'>${bx(-2,-2,0,4,4,8,'#7a4a22')}${py(0,0,6,18,22,'#2f7d32')}</div>`});
  Object.keys(SLOT).forEach(id=>{
-  const bu=S.build&&S.build.id===id,l=S.lv[id],cx=SLOT[id][0]*360,cy=SLOT[id][1]*360,k=(id==='castle'?.85:1)*(1+Math.min(l,8)*.02);
+  const bu=S.build&&S.build.id===id,l=S.lv[id],cx=SLOT[id][0]*360,cy=SLOT[id][1]*360,k=(id==='castle'?.85:id==='barracks'?1.8:1)*(1+Math.min(l,8)*.02);
   h+=`<div class='b3${!l&&!bu?' ghost':''}' data-id='${id}' style='transform:translate3d(${cx}px,${cy}px,0) scale3d(${k},${k},${k})'>${l?M[id](l):M.site()}<div class='lab' style='transform:translate3d(0,0,${(H[id]||40)+6}px) rotateZ(-45deg) rotateX(-58deg)'><span>${bu?'🔨 ':''}${l>=5?'★':(l||(bu?'':'+'))}</span></div></div>`});
  return h+`</div></div>`;
 }
