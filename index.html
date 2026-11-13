@@ -731,6 +731,7 @@ function troopPortrait(k){
  return `<span class="army-unit-art army-unit-${k}"><img src="images/${file}" alt="${labels[k]||labels.inf}" loading="lazy" decoding="async"></span>`;
 }
 function tierPortrait(k,tier){
+ if(k==="inf" && tier===1) return '<span class="army-unit-art army-unit-inf"><img src="/kralliqlar-doevru/assets/infantry/87508b30-df26-11f1-86df-51db833c1655.jpeg" alt="Piyada T1" loading="lazy" decoding="async"></span>';
  const metal=["#77634c","#82705a","#8d795b","#9a8055","#a78a50","#b2944e","#bda253","#c5aa5b","#d7ba68","#f0d27b"];
  const trim=["#5b4938","#6d5139","#79513a","#87503a","#9a4b35","#a83f32","#b23d2e","#c18b39","#d4a33f","#ffe3a0"];
  const armor=metal[Math.max(0,Math.min(9,tier-1))],accent=trim[Math.max(0,Math.min(9,tier-1))];
