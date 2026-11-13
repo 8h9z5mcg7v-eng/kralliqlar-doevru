@@ -901,13 +901,13 @@ function attackKing(i){
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fbc02d"};
 const SLOT={
  castle:[150/300,150/300],
- /* Genişləndirilmiş plan: binalar dörd künc və yan zolaqlara ayrılıb */
- barracks:[75/300,75/300],range:[225/300,75/300],
- stable:[75/300,225/300],drill:[225/300,225/300],
- hospital:[75/300,150/300],tent:[225/300,150/300],
- farm:[0/300,75/300],saw:[0/300,225/300],
- quarry:[300/300,75/300],mine:[300/300,225/300],
- warehouse:[150/300,0/300],wall:[150/300,264/300]
+ /* Bütün binalar geniş dairəvi plana keçirilib: aralarında toqquşma üçün boşluq saxlanılıb */
+ barracks:[150/300,-15/300],range:[239/300,11/300],
+ stable:[300/300,81/300],drill:[313/300,173/300],
+ hospital:[275/300,258/300],tent:[196/300,308/300],
+ farm:[104/300,308/300],saw:[25/300,258/300],
+ quarry:[-13/300,173/300],mine:[0/300,81/300],
+ warehouse:[61/300,11/300],wall:[150/300,320/300]
 };
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
@@ -1528,7 +1528,7 @@ SB=mkBuf(VB)}
 function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4,'#2e86c1'],[6,-3,'#c0392b']].forEach(([x,y,c])=>{gK(x,y,0,2.2,2.2,9,c,8,3);gK(x,y,9,2,0,2,'#e8c9a0',8,3)});gB(10,0,0,1.2,1.2,22,'#6b4a2a');gB(11,0,14,9,.8,6,'#f1c40f');MB=mkBuf(VB);VB=sv}
 function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
  const cityFootprints=[];
- const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>44&&x<256&&z>44&&z<256,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d});gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};
+ const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>-30&&x<330&&z>-30&&z<330,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d});gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};
  const lab=(t,p,id,instance=id,always=false,actionable=always)=>{if(!always&&id&&sel!==id)return;if(!always&&id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2'+(actionable?' site-action':'');el.textContent=t;if(actionable){el.dataset.buildId=id||'';el.dataset.buildInstance=instance||'';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label',t+' — tikintiyə başla')}lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
  const validateCityFootprints=()=>{const collisions=[];for(let i=0;i<cityFootprints.length;i++)for(let j=i+1;j<cityFootprints.length;j++){const a=cityFootprints[i],b=cityFootprints[j];if(Math.abs(a.x-b.x)<(a.w+b.w)/2&&Math.abs(a.z-b.z)<(a.d+b.d)/2)collisions.push(a.instance+' ↔ '+b.instance)}if(collisions.length)console.warn('Şəhər binalarında üst-üstə düşmə aşkarlandı:',collisions);else console.info('Şəhər yerləşim yoxlaması: '+cityFootprints.length+' sahə, kəsişmə yoxdur');return collisions};
  if(k==='city'){
@@ -1676,12 +1676,12 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   });
   /* Mərkəzi həyət: iri kərpic-daş döşəmə üzərində açıq və geniş keçidlər */
   TR={x:150,y:7.05,z:150,s:1};
-  gB(-125,-125,-.65,250,250,.65,'#a99b83',3);
-  for(let q=-117;q<=117;q+=18){gB(q-.35,-125,.02,.7,250,.12,'#756b5b',0);gB(-125,q-.35,.02,250,.7,.12,'#756b5b',0)}
-  gB(-126,-126,.04,2,252,.7,'#766d60',0);gB(124,-126,.04,2,252,.7,'#766d60',0);
-  gB(-126,-126,.04,252,2,.7,'#766d60',0);gB(-126,124,.04,252,2,.7,'#766d60',0);
+  gB(-180,-180,-.65,360,360,.65,'#a99b83',3);
+  for(let q=-171;q<=171;q+=18){gB(q-.35,-180,.02,.7,360,.12,'#756b5b',0);gB(-180,q-.35,.02,360,.7,.12,'#756b5b',0)}
+  gB(-181,-181,.04,2,362,.7,'#766d60',0);gB(179,-181,.04,2,362,.7,'#766d60',0);
+  gB(-181,-181,.04,362,2,.7,'#766d60',0);gB(-181,179,.04,362,2,.7,'#766d60',0);
   /* Darvazadan mərkəzi meydana dolanan geniş prospekt; çadır sahəsindən kənar keçir */
-  road(150,285,180,250,16,7.42);road(180,235,180,170,13,7.42);road(180,170,150,150,13,7.42);
+  road(150,350,180,310,18,7.42);road(180,235,180,170,13,7.42);road(180,170,150,150,13,7.42);
   /* Hərbi binalara ayrıca qısa keçidlər: girişlər bir-birini kəsmir */
   road(75,75,115,115,6,7.42);road(225,75,185,115,6,7.42);
   road(75,225,115,185,6,7.42);road(225,225,185,185,6,7.42);
@@ -1710,7 +1710,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    /* Dişli müdafiə parapeti */
    for(let p=-len/2+4;p<len/2-2;p+=10)gB(alongX?p-2:-6,alongX?-6:p-2,wallH,4,4,5,capStone,0);
   };
-  fortWall(150,15,270,true);fortWall(15,150,270,false);fortWall(285,150,270,false);
+  fortWall(150,-20,340,true);fortWall(-20,150,340,false);fortWall(320,150,340,false);
   /* Divarların iç üzündə krallıq bayraqları və gerb lövhələri */
   const wallBanner=(x,z,face,color)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.35,z,s:1};
@@ -1728,11 +1728,11 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
     gK(side+(face==='west'?4:-5),0,wallH+12,0,1.8,2.8,'#e7c66d',8,0);
    }
   };
-  [[85,15,'north'],[215,15,'north'],[15,85,'west'],[15,215,'west'],[285,85,'east'],[285,215,'east'],[85,285,'south'],[215,285,'south']].forEach(([x,z,face],i)=>wallBanner(x,z,face,i%2?'#a93232':'#244f78'));
+  [[65,-20,'north'],[235,-20,'north'],[-20,65,'west'],[-20,235,'west'],[320,65,'east'],[320,235,'east'],[65,320,'south'],[235,320,'south']].forEach(([x,z,face],i)=>wallBanner(x,z,face,i%2?'#a93232':'#244f78'));
   /* Ön divar iki hissəyə ayrılır ki, əsas darvazanın keçidi açıq qalsın */
-  fortWall(82.5,285,135,true);fortWall(217.5,285,135,true);
+  fortWall(65,320,170,true);fortWall(235,320,170,true);
   /* Künc qüllələri və bayraqlar */
-  [[15,15],[285,15],[15,285],[285,285],[122,285],[178,285]].forEach(([x,z],i)=>{
+  [[-20,-20],[320,-20],[-20,320],[320,320],[122,320],[178,320]].forEach(([x,z],i)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.25,z,s:1};
    gK(0,0,0,10,10,wallH+10,'#85877f',14);gK(0,0,wallH+10,11,11,3,capStone,14);
    /* Qüllə gövdəsində çıxıntılı daş kəmərlər və dörd istiqamətli mazğallar */
@@ -1747,7 +1747,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    gB(.8,-.8,wallH+31,8,.8,5,i%2?'#c0392b':'#d6ad45',0);
   });
   /* Səviyyəsi divar binası ilə artan, qülləli və dəmir barmaqlıqlı əsas qala qapısı */
-  const gx=150,gz=285,gy=Math.max(hh(gx,gz),-.8)+.3;TR={x:gx,y:gy,z:gz,s:1};
+  const gx=150,gz=320,gy=Math.max(hh(gx,gz),-.8)+.3;TR={x:gx,y:gy,z:gz,s:1};
   const ga=VB.length/12,gateH=wallH+15;
   [[-24,-5],[24,-5]].forEach(([x,y])=>{
    gK(x,y,0,10,10,gateH,'#85877f',14);gK(x,y,gateH,11,11,3,capStone,14);
@@ -1798,20 +1798,20 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   }
   gB(0,portFront-1.05,gateH+5,24,3.4,4.5,'#57452f',0);
   /* Qala xəndəyi və taxta qaldırılan körpü */
-  gB(-34,13,-1.2,68,30,1.1,'#3e514c',0);
-  gB(-35,12,-.1,70,2.2,1.2,'#77796f',0);
-  gB(-35,43,-.1,70,2.2,1.2,'#77796f',0);
+  gB(-44,13,-1.2,88,42,1.1,'#3e514c',0);
+  gB(-45,12,-.1,90,2.2,1.2,'#77796f',0);
+  gB(-45,55,-.1,90,2.2,1.2,'#77796f',0);
   /* Körpünün daşıyıcı tirləri */
-  gB(-22,7,1.2,3,39,2.4,'#503b29',0);
-  gB(19,7,1.2,3,39,2.4,'#503b29',0);
+  gB(-27,7,1.2,3,51,2.4,'#503b29',0);
+  gB(24,7,1.2,3,51,2.4,'#503b29',0);
   /* Ayrı taxta lövhələr və dəmir mismar başları */
-  for(let plank=0;plank<19;plank++){
-   const px=-18+plank*2;
+  for(let plank=0;plank<23;plank++){
+   const px=-22+plank*2;
    gB(px,8,3.2,1.75,25,1.35,plank%3?'#8b633d':'#76502f',0);
    for(let end of [10,30])gK(px+.85,end,4.05,.22,.2,.2,'#4b4d4a',6,0);
   }
-  gB(0,7.2,4.15,39,2.1,1.1,'#65472e',0);
-  gB(0,42.8,4.15,39,2.1,1.1,'#65472e',0);
+  gB(0,7.2,4.15,47,2.1,1.1,'#65472e',0);
+  gB(0,54.8,4.15,47,2.1,1.1,'#65472e',0);
   /* Qaldırma körpüsünün yan zəncirləri və daş dayaqları */
   for(let side of [-1,1]){
    gB(side*19,5.5,3,2.2,2.2,12,'#77786f',0);
@@ -1840,7 +1840,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   }
   /* Körpü başında iki daş keşikçi dirəyi və alov fənərləri */
   for(let side of [-1,1]){
-   const postX=side*31.5,postY=44.5;
+   const postX=side*36.5,postY=56.5;
    gB(postX-2,postY-2,0,4,4,5.5,'#89877d',0);
    gB(postX-2.5,postY-2.5,5.5,5,5,1.2,'#b9b3a5',0);
    gB(postX-.45,postY-.45,6.7,.9,.9,5.5,'#533d28',0);
