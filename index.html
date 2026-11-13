@@ -1526,7 +1526,7 @@ function sbuild(){VB=[];terr();water();riverbank();riverstones();fordstones();fo
 });
 SB=mkBuf(VB)}
 function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4,'#2e86c1'],[6,-3,'#c0392b']].forEach(([x,y,c])=>{gK(x,y,0,2.2,2.2,9,c,8,3);gK(x,y,9,2,0,2,'#e8c9a0',8,3)});gB(10,0,0,1.2,1.2,22,'#6b4a2a');gB(11,0,14,9,.8,6,'#f1c40f');MB=mkBuf(VB);VB=sv}
-function dbuild(k){activeCityScale=k==='city'?1.55:1;VB=[];pk=[];pkr=[];lbl=[];
+function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
  const cityFootprints=[];
  const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>-30&&x<330&&z>-30&&z<330,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d});gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};
  const lab=(t,p,id,instance=id,always=false,actionable=always)=>{if(!always&&id&&sel!==id)return;if(!always&&id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2'+(actionable?' site-action':'');el.textContent=t;if(actionable){el.dataset.buildId=id||'';el.dataset.buildInstance=instance||'';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label',t+' — tikintiyə başla')}lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
@@ -1676,10 +1676,10 @@ function dbuild(k){activeCityScale=k==='city'?1.55:1;VB=[];pk=[];pkr=[];lbl=[];
   });
   /* Mərkəzi həyət: iri kərpic-daş döşəmə üzərində açıq və geniş keçidlər */
   TR={x:150,y:7.05,z:150,s:1};
-  gB(-210,-210,-.65,420,420,.65,'#a99b83',3);
-  for(let q=-201;q<=201;q+=18){gB(q-.35,-210,.02,.7,420,.12,'#756b5b',0);gB(-210,q-.35,.02,420,.7,.12,'#756b5b',0)}
-  gB(-211,-211,.04,2,422,.7,'#766d60',0);gB(209,-211,.04,2,422,.7,'#766d60',0);
-  gB(-211,-211,.04,422,2,.7,'#766d60',0);gB(-211,209,.04,422,2,.7,'#766d60',0);
+  gB(-250,-250,-.65,500,500,.65,'#a99b83',3);
+  for(let q=-241;q<=241;q+=18){gB(q-.35,-250,.02,.7,500,.12,'#756b5b',0);gB(-250,q-.35,.02,500,.7,.12,'#756b5b',0)}
+  gB(-251,-251,.04,2,502,.7,'#766d60',0);gB(249,-251,.04,2,502,.7,'#766d60',0);
+  gB(-251,-251,.04,502,2,.7,'#766d60',0);gB(-251,249,.04,502,2,.7,'#766d60',0);
   /* Darvazadan mərkəzi meydana dolanan geniş prospekt; çadır sahəsindən kənar keçir */
   road(150,350,180,310,18,7.42);road(180,235,180,170,13,7.42);road(180,170,150,150,13,7.42);
   /* Hərbi binalara ayrıca qısa keçidlər: girişlər bir-birini kəsmir */
@@ -1710,7 +1710,7 @@ function dbuild(k){activeCityScale=k==='city'?1.55:1;VB=[];pk=[];pkr=[];lbl=[];
    /* Dişli müdafiə parapeti */
    for(let p=-len/2+4;p<len/2-2;p+=10)gB(alongX?p-2:-6,alongX?-6:p-2,wallH,4,4,5,capStone,0);
   };
-  fortWall(150,-50,400,true);fortWall(-50,150,400,false);fortWall(350,150,400,false);
+  fortWall(150,-80,460,true);fortWall(-80,150,460,false);fortWall(380,150,460,false);
   /* Divarların iç üzündə krallıq bayraqları və gerb lövhələri */
   const wallBanner=(x,z,face,color)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.35,z,s:1};
@@ -1728,11 +1728,11 @@ function dbuild(k){activeCityScale=k==='city'?1.55:1;VB=[];pk=[];pkr=[];lbl=[];
     gK(side+(face==='west'?4:-5),0,wallH+12,0,1.8,2.8,'#e7c66d',8,0);
    }
   };
-  [[55,-50,'north'],[245,-50,'north'],[-50,55,'west'],[-50,245,'west'],[350,55,'east'],[350,245,'east'],[55,350,'south'],[245,350,'south']].forEach(([x,z,face],i)=>wallBanner(x,z,face,i%2?'#a93232':'#244f78'));
+  [[45,-80,'north'],[255,-80,'north'],[-80,45,'west'],[-80,255,'west'],[380,45,'east'],[380,255,'east'],[45,380,'south'],[255,380,'south']].forEach(([x,z,face],i)=>wallBanner(x,z,face,i%2?'#a93232':'#244f78'));
   /* Ön divar iki hissəyə ayrılır ki, əsas darvazanın keçidi açıq qalsın */
-  fortWall(50,350,200,true);fortWall(250,350,200,true);
+  fortWall(35,380,230,true);fortWall(265,380,230,true);
   /* Künc qüllələri və bayraqlar */
-  [[-50,-50],[350,-50],[-50,350],[350,350],[122,350],[178,350]].forEach(([x,z],i)=>{
+  [[-80,-80],[380,-80],[-80,380],[380,380],[122,380],[178,380]].forEach(([x,z],i)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.25,z,s:1};
    gK(0,0,0,10,10,wallH+10,'#85877f',14);gK(0,0,wallH+10,11,11,3,capStone,14);
    /* Qüllə gövdəsində çıxıntılı daş kəmərlər və dörd istiqamətli mazğallar */
@@ -1747,7 +1747,7 @@ function dbuild(k){activeCityScale=k==='city'?1.55:1;VB=[];pk=[];pkr=[];lbl=[];
    gB(.8,-.8,wallH+31,8,.8,5,i%2?'#c0392b':'#d6ad45',0);
   });
   /* Səviyyəsi divar binası ilə artan, qülləli və dəmir barmaqlıqlı əsas qala qapısı */
-  const gx=150,gz=350,gy=Math.max(hh(gx,gz),-.8)+.3;TR={x:gx,y:gy,z:gz,s:1};
+  const gx=150,gz=380,gy=Math.max(hh(gx,gz),-.8)+.3;TR={x:gx,y:gy,z:gz,s:1};
   const ga=VB.length/12,gateH=wallH+15;
   [[-24,-5],[24,-5]].forEach(([x,y])=>{
    gK(x,y,0,10,10,gateH,'#85877f',14);gK(x,y,gateH,11,11,3,capStone,14);
