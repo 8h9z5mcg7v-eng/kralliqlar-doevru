@@ -1898,7 +1898,7 @@ function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
    const baseY=addCityPad(x,z,s,pw,pd,id+':main');if(id==='castle'){TR={x,y:baseY,z,s:1.35};gK(0,0,0,74,74,27,'#827b6d',12,0);gK(0,0,27,66,66,5,'#b2a58e',12,0)}const y=baseY+(id==='castle'?32:0);TR={x,y,z,s};const a0=VB.length/12;
    /* Kazarma üçün vizual ehtiyat: səviyyə məlumatı gec yüklənsə belə bina şəhərdə görünsün. */
    const visualLevel=id==='barracks'?Math.max(1,Number(l)||0):Number(l)||0;
-   const hasBarracksGLB=id==='barracks'&&GLB_MODELS.some(m=>m.buildingId==='barracks');
+   const hasBarracksGLB=id==='barracks'&&(BARRACKS_GLB_PENDING||GLB_MODELS.some(m=>m.buildingId==='barracks'));
    if(!hasBarracksGLB){if(visualLevel)GM[id](visualLevel);else GM.site();}
    /* Baş qalanın ön qüllələrində kral bayraqları və metal ucluqlar */
    if(id==='castle'&&l){
@@ -2013,6 +2013,7 @@ function attachGL(){if(!GLOK)return;const ph=document.querySelector('.sky.gl');i
 
 /* GLB 2.0 reader: static meshes, node transforms, normals and material base colors */
 const GLB_MODELS=[],GLB_MODEL_URLS=new Set();
+let BARRACKS_GLB_PENDING=true;
 function glbMatMul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let v=0;for(let k=0;k<4;k++)v+=a[k*4+r]*b[c*4+k];o[c*4+r]=v}return o}
 function glbNodeMatrix(n){if(n.matrix)return new Float32Array(n.matrix);const t=n.translation||[0,0,0],q=n.rotation||[0,0,0,1],s=n.scale||[1,1,1],x=q[0],y=q[1],z=q[2],w=q[3],m=new Float32Array(16);m[0]=(1-2*y*y-2*z*z)*s[0];m[1]=(2*x*y+2*w*z)*s[0];m[2]=(2*x*z-2*w*y)*s[0];m[4]=(2*x*y-2*w*z)*s[1];m[5]=(1-2*x*x-2*z*z)*s[1];m[6]=(2*y*z+2*w*x)*s[1];m[8]=(2*x*z+2*w*y)*s[2];m[9]=(2*y*z-2*w*x)*s[2];m[10]=(1-2*x*x-2*y*y)*s[2];m[12]=t[0];m[13]=t[1];m[14]=t[2];m[15]=1;return m}
 function glbPoint(m,p){return[m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12],m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13],m[2]*p[0]+m[6]*p[1]+m[10]*p[2]+m[14]]}
@@ -2617,7 +2618,7 @@ setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(co
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 /* Yeni kazarma: GLB tam yüklənəndə dbuild yenidən qurulur və köhnə procedural bina silinərək GLB ilə əvəz olunur. */
-if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:3.4}).catch(e=>console.warn('Yeni kazarma yüklənmədi:',e));
+if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:5.8}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
 if(!S.seen)showWelcome();
 </script>
 </body>
