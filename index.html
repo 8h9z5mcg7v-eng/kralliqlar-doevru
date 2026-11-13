@@ -1167,6 +1167,35 @@ function sbuild(){VB=[];terr();water();riverbank();riverstones();fordstones();fo
   gB(px-.45,pz-.45,0,.9,.9,4.5+((stake%3)*.45),stake%2?timber:darkWood,0);
   gP(px,pz,4.6+((stake%3)*.45),1.2,1.1,timber,0);
  }
+ /* Düşərgə növbətçiləri: zirehli piyada, qalxan və nizə */
+ [[-11,7],[11,7]].forEach(([sx,sy],guardIndex)=>{
+  const tunic=campIndex%2?'#344b58':'#6d3930';
+  const steel='#777d80',leather='#76502f';
+  /* Çəkmələr və ayaqlar */
+  gB(sx-1.15,sy-.55,0,1.05,1.05,3.1,leather,0);
+  gB(sx+.1,sy-.55,0,1.05,1.05,3.1,leather,0);
+  gB(sx-1.2,sy-.6,2.8,1.1,1.1,2.1,'#4c5152',0);
+  gB(sx+.1,sy-.6,2.8,1.1,1.1,2.1,'#4c5152',0);
+  /* Bədən, çiyin zirehi və baş */
+  gB(sx-1.25,sy-.75,4.8,2.5,1.5,3.9,tunic,0);
+  gB(sx-1.45,sy-.82,7.8,2.9,1.65,1.2,steel,0);
+  gK(sx,sy-.05,9.1,.92,.92,1.8,'#c39a76',9,0);
+  gK(sx,sy-.05,10.65,1.12,.55,1.05,steel,9,0);
+  gB(sx-.95,sy-.08,10.5,1.9,.9,.5,'#b08b4f',0);
+  /* Qollar və bilək qoruyucuları */
+  gB(sx-2.2,sy-.55,5.5,.9,1,3,tunic,0);
+  gB(sx+1.3,sy-.55,5.5,.9,1,3,tunic,0);
+  gB(sx-2.18,sy-.62,4.9,.95,1.1,.75,steel,0);
+  gB(sx+1.28,sy-.62,4.9,.95,1.1,.75,steel,0);
+  /* Dəyirmi qalxan, metal göbək və kənar haşiyə */
+  gK(sx-2.55,sy+.9,5.4,1.55,1.55,.7,leather,10,0);
+  gK(sx-2.55,sy+.9,6.1,1.25,1.25,.22,steel,10,0);
+  gK(sx-2.55,sy+.9,6.34,.42,.42,.25,'#b08b4f',8,0);
+  /* Nizə və metal ucluq */
+  gB(sx+2.55,sy+.4,4.3,.28,.28,7.4,leather,0);
+  gP(sx+2.69,sy+.54,11.7,.95,1.8,steel,0);
+  gK(sx+2.69,sy+.54,4.1,.42,.42,.55,'#b08b4f',8,0);
+ });
  /* Təchizat çəlləkləri */
  for(let barrel=0;barrel<2;barrel++){
   gK(13+barrel*2,-3,0,.95,.95,2.4,'#76502f',8,0);
