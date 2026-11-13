@@ -1893,8 +1893,8 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300;
    if(id==='wall')return;
    const core=['barracks','range','stable','drill','hospital','tent'].includes(id);
-   const s=(id==='castle'?1.10:(core?.62:1.04))*(1+Math.min(l,8)*.02);
-   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?50:(military?44:(core?52:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68)))),pd=id==='castle'?78:(military?30:(core?40:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
+   const s=(id==='castle'?1.12:(core?.82:1.16))*(1+Math.min(l,8)*.025);
+   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?50:(military?48:(core?56:(['farm','saw','quarry','mine','warehouse'].includes(id)?68:72)))),pd=id==='castle'?78:(military?34:(core?44:(['farm','saw','quarry','mine','warehouse'].includes(id)?58:62)));
    const y=addCityPad(x,z,s,pw,pd,id+':main');TR={x,y,z,s};const a0=VB.length/12;
    /* Kazarma üçün vizual ehtiyat: səviyyə məlumatı gec yüklənsə belə bina şəhərdə görünsün. */
    const visualLevel=id==='barracks'?Math.max(1,Number(l)||0):Number(l)||0;
