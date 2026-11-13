@@ -1667,7 +1667,7 @@ function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
    tree(x,z,i%3===0?1.05:.82,i%2===0);
   });
 
-  [[34,60],[266,60],[34,160],[266,160],[34,240],[266,240]].forEach(([x,z])=>{
+  [[60,10],[260,10],[70,160],[365,200],[0,300],[365,290]].forEach(([x,z])=>{
    TR={x,y:hh(x,z),z,s:1};
    gK(0,0,0,3.2,2.4,2.2,'#82735e',8,0);
    gB(-.8,-.8,2,1.6,1.6,19,'#59452d',1);
@@ -1921,8 +1921,8 @@ function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
    const siteNeed=id==='ironMine'?10:1,siteLocked=!l&&!bu&&S.lv.castle<siteNeed;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?`🔒 Qala ${siteNeed}`:'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu,!l&&!bu&&!siteLocked);}) 
   /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
   const fieldSlots=[
-   ...[[0,320],[0,360],[39,360],[78,360],[117,360],[234,360],[273,360]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
-   ...[[312,360],[351,360],[351,320]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
+   ...[[0,320],[0,358],[39,358],[78,358],[117,358],[234,358],[273,358]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
+   ...[[312,358],[351,358],[351,320]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
   ];
   fieldSlots.forEach((p,i)=>{
    const isTent=p.id==='tent',slotIndex=isTent?i:i-7,built=isTent?slotIndex<Math.max(0,S.tentCount-1):slotIndex<Math.max(0,S.hospitalCount-1),requiredCastle=isTent?1+slotIndex*3:6+slotIndex*5;
@@ -1946,11 +1946,11 @@ function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
   });
   /* Resurs binaları dörd səliqəli qrupda: ferma, taxta, dəmir və qızıl */
   const resourceSlots=[
-   {id:'farm',x:-64,z:80,slot:1,name:'Ferma sırası'},
+   {id:'farm',x:-58,z:80,slot:1,name:'Ferma sırası'},
    {id:'saw',x:355,z:250,slot:1,name:'Mişar sırası'},
    {id:'ironMine',x:355,z:10,slot:0,name:'Dəmir mədəni sırası'},
    {id:'ironMine',x:355,z:130,slot:1,name:'Dəmir mədəni sırası'},
-   {id:'mine',x:-64,z:330,slot:1,name:'Qızıl mədəni sırası'}
+   {id:'mine',x:-58,z:330,slot:1,name:'Qızıl mədəni sırası'}
   ];
   resourceSlots.forEach(p=>{
    const built=p.id==='ironMine'?(p.slot===0?S.lv.ironMine>0:(Number(S.resourceCount?.[p.id])||0)>=2):(Number(S.resourceCount?.[p.id])||0)>=2,requiredCastle=p.id==='ironMine'&&p.slot===0?10:1;
