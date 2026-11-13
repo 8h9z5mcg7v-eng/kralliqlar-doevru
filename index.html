@@ -901,13 +901,13 @@ function attackKing(i){
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fbc02d"};
 const SLOT={
  castle:[150/300,150/300],
- /* Bütün binalar geniş dairəvi plana keçirilib: aralarında toqquşma üçün boşluq saxlanılıb */
- barracks:[150/300,-15/300],range:[239/300,11/300],
- stable:[300/300,81/300],drill:[313/300,173/300],
- hospital:[275/300,258/300],tent:[196/300,308/300],
- farm:[104/300,308/300],saw:[25/300,258/300],
- quarry:[-13/300,173/300],mine:[0/300,81/300],
- warehouse:[61/300,11/300],wall:[150/300,320/300]
+ /* 4x4 xarici halqa: bütün əsas binalar ayrı sahələrdə, qala həyətindən və divarlardan aralıdır */
+ barracks:[110/300,30/300],range:[190/300,30/300],
+ stable:[270/300,110/300],drill:[270/300,190/300],
+ hospital:[270/300,270/300],tent:[190/300,270/300],
+ farm:[110/300,270/300],saw:[30/300,270/300],
+ quarry:[30/300,190/300],mine:[30/300,110/300],
+ warehouse:[30/300,30/300],wall:[150/300,320/300]
 };
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
@@ -2615,7 +2615,7 @@ let last=Date.now(),acc=0;
 setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);tickResourceReserve(d);refresh();refreshMonsterRespawnTimer();tickMarch();tickGather();tickMonster();tickRival();tickTraining();tickBuild();tickResearch();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
-if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[75,7.4,75],scale:1.6}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
+if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[110,7.4,30],scale:1.6}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
 if(!S.seen)showWelcome();
 </script>
 </body>
