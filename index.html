@@ -2616,7 +2616,8 @@ let last=Date.now(),acc=0;
 setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);tickResourceReserve(d);refresh();refreshMonsterRespawnTimer();tickMarch();tickGather();tickMonster();tickRival();tickTraining();tickBuild();tickResearch();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
-/* Kazarma üçün ikinci GLB modelinin sonradan peyda olub ölçünü dəyişməməsi üçün yükləmə söndürüldü. Böyük procedural kazarma sabit saxlanılır. */
+/* Yeni kazarma: GLB tam yüklənəndə dbuild yenidən qurulur və köhnə procedural bina silinərək GLB ilə əvəz olunur. */
+if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:3.4}).catch(e=>console.warn('Yeni kazarma yüklənmədi:',e));
 if(!S.seen)showWelcome();
 </script>
 </body>
