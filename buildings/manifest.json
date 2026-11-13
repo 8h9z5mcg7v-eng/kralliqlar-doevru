@@ -3,18 +3,63 @@
   "buildings": {
     "barracks": {
       "file": "barracks/barracks.glb",
-      "status": "waiting_for_model",
-      "commercial_license_required": true
+      "status": "candidate_selected_waiting_for_upload",
+      "commercial_license_required": true,
+      "candidate": {
+        "name": "Wolfhold Barracks (Medieval Fantasy Buildings Sampler)",
+        "source": "https://literock-studios.itch.io/medieval-buildings-sampler",
+        "format": "GLB 2.0",
+        "license": "commercial_and_non_commercial_use_allowed_no_resale_or_redistribution",
+        "estimated_triangles": 10000,
+        "textures": "embedded_PBR_2K",
+        "lods": [
+          "LOD0",
+          "LOD1",
+          "LOD2"
+        ],
+        "integration": "requires_PBR_texture_and_LOD_compatibility_work",
+        "uploaded": false
+      }
     },
-    "castle": { "file": "castle/castle.glb", "status": "planned" },
-    "stable": { "file": "stable/stable.glb", "status": "planned" },
-    "archery_range": { "file": "archery_range/archery_range.glb", "status": "planned" },
-    "farm": { "file": "farm/farm.glb", "status": "planned" },
-    "gold_mine": { "file": "gold_mine/gold_mine.glb", "status": "planned" },
-    "iron_mine": { "file": "iron_mine/iron_mine.glb", "status": "planned" },
-    "sawmill": { "file": "sawmill/sawmill.glb", "status": "planned" },
-    "warehouse": { "file": "warehouse/warehouse.glb", "status": "planned" },
-    "hospital": { "file": "hospital/hospital.glb", "status": "planned" },
-    "walls": { "file": "walls/walls.glb", "status": "planned" }
+    "castle": {
+      "file": "castle/castle.glb",
+      "status": "planned"
+    },
+    "stable": {
+      "file": "stable/stable.glb",
+      "status": "planned"
+    },
+    "archery_range": {
+      "file": "archery_range/archery_range.glb",
+      "status": "planned"
+    },
+    "farm": {
+      "file": "farm/farm.glb",
+      "status": "planned"
+    },
+    "gold_mine": {
+      "file": "gold_mine/gold_mine.glb",
+      "status": "planned"
+    },
+    "iron_mine": {
+      "file": "iron_mine/iron_mine.glb",
+      "status": "planned"
+    },
+    "sawmill": {
+      "file": "sawmill/sawmill.glb",
+      "status": "planned"
+    },
+    "warehouse": {
+      "file": "warehouse/warehouse.glb",
+      "status": "planned"
+    },
+    "hospital": {
+      "file": "hospital/hospital.glb",
+      "status": "planned"
+    },
+    "walls": {
+      "file": "walls/walls.glb",
+      "status": "planned"
+    }
   }
 }
