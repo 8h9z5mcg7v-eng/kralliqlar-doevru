@@ -1346,6 +1346,22 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   /* Qapı tağının üstündə iri yonulmuş mərkəzi daş */
   gB(-5.5,-5.8,wallH+15,11,1.2,3.5,'#c0b8a7',0);
   gK(0,-6.1,wallH+18.5,2.8,1.1,2.5,'#d6ad45',8,0);
+  /* Darvaza üzərində çıxıntılı müdafiə qalereyası — maşikulya */
+  for(let corbel=-15;corbel<=15;corbel+=5){
+   gB(corbel,7.1,wallH+8.2,2.6,4.2,4.2,'#85867e',0);
+   gB(corbel,7.25,wallH+12.1,3.2,4.5,1.5,'#b9b3a5',0);
+  }
+  gB(0,8.1,wallH+13.1,35,5.2,2.1,'#a7a397',0);
+  gB(0,8.1,wallH+15.1,35,5.2,1.1,'#c0b9a9',0);
+  /* Qalereyanın altındakı müdafiə boşluqları */
+  for(let slot=-12;slot<=12;slot+=6){
+   gB(slot,7.95,wallH+10.8,2.2,1.25,.65,'#454943',0);
+  }
+  /* Üst parapetdə dişli daşlar və keşikçi meydançası */
+  gB(0,-5.1,wallH+16.1,35,12,1.8,'#b9b3a5',0);
+  for(let merlon=-16;merlon<=16;merlon+=4){
+   gB(merlon,-5.1,wallH+17.2,2.5,11,4.2,'#c0b9a9',0);
+  }
   /* Qapının üstündə daş gerb */
   gK(0,-5,wallH+17,4,1,5,'#d6ad45',8,0);
   gB(-1.2,-5,wallH+21,2.4,.8,8,'#c0392b',0);
