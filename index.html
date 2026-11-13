@@ -1325,6 +1325,30 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    gK(side*13.7,portFront-2.9,gateH+7,1.45,1.2,2.4,'#b08b4f',8,0);
   }
   gB(0,portFront-1.05,gateH+5,24,3.4,4.5,'#57452f',0);
+  /* Qala xəndəyi və taxta qaldırılan körpü */
+  gB(-24,13,-1.2,48,22,1.1,'#3e514c',0);
+  gB(-25,12,-.1,50,2.2,1.2,'#77796f',0);
+  gB(-25,33,-.1,50,2.2,1.2,'#77796f',0);
+  /* Körpünün daşıyıcı tirləri */
+  gB(-16,7,1.2,3,29,2.4,'#503b29',0);
+  gB(13,7,1.2,3,29,2.4,'#503b29',0);
+  /* Ayrı taxta lövhələr və dəmir mismar başları */
+  for(let plank=0;plank<15;plank++){
+   const px=-14+plank*2;
+   gB(px,8,3.2,1.75,25,1.35,plank%3?'#8b633d':'#76502f',0);
+   for(let end of [10,30])gK(px+.85,end,4.05,.22,.2,.2,'#4b4d4a',6,0);
+  }
+  gB(0,7.2,4.15,31,2.1,1.1,'#65472e',0);
+  gB(0,32.8,4.15,31,2.1,1.1,'#65472e',0);
+  /* Qaldırma körpüsünün yan zəncirləri və daş dayaqları */
+  for(let side of [-1,1]){
+   gB(side*19,5.5,3,2.2,2.2,12,'#77786f',0);
+   for(let link=0;link<9;link++){
+    const yy=8+link*2.4,zz=5+Math.sin(link/8*Math.PI)*5;
+    gB(side*17.7,yy,zz,.72,1.1,1.05,link%2?'#77786f':'#4b5150',0);
+   }
+   gK(side*17.7,7,15,1.05,.8,2.2,'#b08b4f',8,0);
+  }
   /* Darvaza keçidinin yonulmuş daş çərçivəsi və tağ daşları */
   for(let side of [-1,1]){
    for(let course=0;course<5;course++){
