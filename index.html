@@ -902,9 +902,9 @@ const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fb
 const SLOT={
  castle:[150/300,150/300],
  /* Binalar meydanın dörd zonasına daha geniş məsafə ilə paylanıb */
- barracks:[74/300,110/300],range:[226/300,110/300],
- stable:[74/300,225/300],drill:[226/300,225/300],
- hospital:[150/300,68/300],tent:[150/300,238/300],
+ barracks:[78/300,95/300],range:[222/300,95/300],
+ stable:[78/300,225/300],drill:[222/300,225/300],
+ hospital:[150/300,75/300],tent:[150/300,230/300],
  farm:[0/300,75/300],saw:[0/300,195/300],
  quarry:[292/300,15/300],mine:[292/300,195/300],
  warehouse:[150/300,0/300],wall:[150/300,264/300]
@@ -1874,8 +1874,8 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300;
    if(id==='wall')return;
    const core=['barracks','range','stable','drill','hospital','tent'].includes(id);
-   const s=(id==='castle'?1.10:(core?.78:1.04))*(1+Math.min(l,8)*.02);
-   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?64:(military?60:(core?64:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68)))),pd=id==='castle'?78:(military?42:(core?54:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
+   const s=(id==='castle'?1.10:(core?.72:1.04))*(1+Math.min(l,8)*.02);
+   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?58:(military?54:(core?60:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68)))),pd=id==='castle'?78:(military?38:(core?48:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
    const y=addCityPad(x,z,s,pw,pd,id+':main');TR={x,y,z,s};const a0=VB.length/12;
    if(l)GM[id](l);else GM.site();
    /* Baş qalanın ön qüllələrində kral bayraqları və metal ucluqlar */
