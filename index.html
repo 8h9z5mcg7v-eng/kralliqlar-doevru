@@ -1297,6 +1297,24 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    gB(leaf*6-1.1,2.55,3,2.2,.7,gateH-13,'#79502e',0);
    gB(leaf*12-1,2.55,3,2,.7,gateH-13,'#674329',0);
   }
+  /* Darvaza keçidinin yonulmuş daş çərçivəsi və tağ daşları */
+  for(let side of [-1,1]){
+   for(let course=0;course<5;course++){
+    gB(side*15.8,5.25,course*(gateH-8)/5,3.8,3.1,(gateH-8)/5-.35,course%2?'#aaa79b':'#b8b3a6',0);
+   }
+   gB(side*15.8,5.35,gateH-8,4.8,3.5,2.8,'#c0b9a9',0);
+  }
+  for(let seg=0;seg<9;seg++){
+   const x=-14+seg*3.5;
+   const rise=4.8*(1-(x/15.75)*(x/15.75));
+   const shade=seg%2?'#b7b1a3':'#c4bdad';
+   gB(x,5.35,gateH-6+rise,3.65,3.5,3.1,shade,0);
+  }
+  gB(-2.4,5.45,gateH-.2,4.8,3.8,3.8,'#d0c7b4',0);
+  /* Tağın kənarında ikinci, daha incə yonma xətti */
+  for(let side of [-1,1]){
+   gB(side*18.1,5.7,gateH*.48,1.15,2.2,gateH*.96,'#77786f',0);
+  }
   /* Qapı tağının üstündə iri yonulmuş mərkəzi daş */
   gB(-5.5,-5.8,wallH+15,11,1.2,3.5,'#c0b8a7',0);
   gK(0,-6.1,wallH+18.5,2.8,1.1,2.5,'#d6ad45',8,0);
