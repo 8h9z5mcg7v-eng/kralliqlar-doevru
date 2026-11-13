@@ -1918,7 +1918,7 @@ function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
     gB(15.6,21,0,2.4,27,8,'#8e8779',0);
    }
    pkr.push({k:'b',id,instance:id+':main',a:a0,n:VB.length/12-a0});
-   pk.push({k:'b',id,min:[x-32*s,y,z-32*s],max:[x+32*s,y+(id==='castle'?102:62)*s,z+32*s]});
+   pk.push(id==='barracks'?{k:'b',id,instance:id+':main',min:[cityCoord(x-72*s),y,cityCoord(z-72*s)],max:[cityCoord(x+72*s),y+220,cityCoord(z+72*s)]}:{k:'b',id,min:[x-32*s,y,z-32*s],max:[x+32*s,y+(id==='castle'?102:62)*s,z+32*s]});
    const siteNeed=id==='ironMine'?10:1,siteLocked=!l&&!bu&&S.lv.castle<siteNeed;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?`🔒 Qala ${siteNeed}`:'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu,!l&&!bu&&!siteLocked);}) 
   /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
   const fieldSlots=[
@@ -2006,7 +2006,7 @@ function pickAt(e){if(!lastVP||!DB)return null;const r=cv.getBoundingClientRect(
  const ul=n=>gl.getUniformLocation(PI,n);gl.uniformMatrix4fv(ul('uVP'),false,lastVP);gl.uniform3f(ul('uOff'),0,0,0);gl.uniform3f(ul('uCol'),0,0,0);drawB(SB);
  gl.bindBuffer(gl.ARRAY_BUFFER,DB.b);[[0,3,0],[1,3,12],[2,3,24],[3,2,36],[4,1,44]].forEach(([i,n,o])=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,n,gl.FLOAT,false,48,o)});
  pkr.forEach((o,i)=>{gl.uniform3f(ul('uCol'),(i+1)/255,0,0);gl.drawArrays(gl.TRIANGLES,o.a,o.n)});
- const q=new Uint8Array(4);gl.readPixels(px,py,1,1,gl.RGBA,gl.UNSIGNED_BYTE,q);gl.disable(gl.SCISSOR_TEST);if(!e.keep)draw();return pkr[q[0]-1]||null}
+ const q=new Uint8Array(4);gl.readPixels(px,py,1,1,gl.RGBA,gl.UNSIGNED_BYTE,q);gl.disable(gl.SCISSOR_TEST);if(!e.keep)draw();const hit=pkr[q[0]-1];if(hit)return hit;const nx=(e.clientX-r.left)/r.width*2-1,ny=1-(e.clientY-r.top)/r.height*2,c=cam(r.width/r.height),t=Math.tan(c.fov/2),dir=v3.nz([0,1,2].map(i=>c.f[i]+c.r[i]*nx*c.a*t+c.u[i]*ny*t)),b=pk.find(o=>o.k==='b'&&o.id==='barracks');if(b&&rayBox(c.e,dir,b.min,b.max)!==null)return b;return null}
 function onPick(e){const o=pickAt(e);if(!o)return;if(o.k==='b'){sel=o.id;selInstance=o.instance||o.id}else if(o.k==='c')selC=o.id;else selK=o.id;render()}
 function onPickOld(e){const r=cv.getBoundingClientRect(),nx=(e.clientX-r.left)/r.width*2-1,ny=1-(e.clientY-r.top)/r.height*2,c=cam(r.width/r.height),t=Math.tan(c.fov/2),dir=v3.nz([0,1,2].map(i=>c.f[i]+c.r[i]*nx*c.a*t+c.u[i]*ny*t));let best=null,bd=1e9;pk.forEach(o=>{const d=rayBox(c.e,dir,o.min,o.max);if(d!==null&&d<bd){bd=d;best=o}});if(!best)return;if(best.k==='b'){sel=best.id;selInstance=best.instance||best.id}else if(best.k==='c')selC=best.id;else selK=best.id;render()}
 function attachGL(){if(!GLOK)return;const ph=document.querySelector('.sky.gl');if(!ph)return;if(DB)gl.deleteBuffer(DB.b);dbuild(ph.dataset.k);DB=mkBuf(VB);if(!MB)mbuild();shadowPass();ph.appendChild(cv);const lo=document.createElement('div');lo.className='glo';lbl.forEach(l=>lo.appendChild(l.el));ph.appendChild(lo)}
