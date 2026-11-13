@@ -2037,7 +2037,7 @@ async function loadGLBBuilding(url,options={}){
     if(typeof createImageBitmap==='function'){try{source=await createImageBitmap(blob)}catch(bitmapError){console.warn('createImageBitmap uğursuz oldu, Image fallback işləyir:',bitmapError)}}
     if(!source&&typeof Image!=='undefined'){objectUrl=URL.createObjectURL(blob);source=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('GLB şəkli deşifrə edilmədi'));img.src=objectUrl})}
     if(source){
-     tex=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+     tex=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);const pot=(n)=>(n&(n-1))===0;const mip=pot(source.width)&&pot(source.height);if(mip)gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,mip?gl.LINEAR_MIPMAP_LINEAR:gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
     }
    }
   }catch(e){console.warn('GLB teksturası oxunmadı:',e)}
@@ -2060,7 +2060,7 @@ async function loadGLBBuilding(url,options={}){
  const model={url,parts,position:origin,buildingId:options.buildingId||null};GLB_MODELS.push(model);GLB_MODEL_URLS.add(url);if(DB){attachGL();}return model;
 }
 window.loadGLBBuilding=loadGLBBuilding;
-function GLinit(){try{cv=document.createElement('canvas');cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;display:block';cv.addEventListener('webglcontextlost',e=>{e.preventDefault();console.warn('WebGL konteksti itirildi:',e.statusMessage||'brauzer/GPU resurs məhdudiyyəti');GLOK=false;render()});gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power',depth:true,stencil:false,preserveDrawingBuffer:false});if(!gl)return;
+function GLinit(){try{cv=document.createElement('canvas');cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;display:block';cv.addEventListener('webglcontextlost',e=>{e.preventDefault();console.warn('WebGL konteksti itirildi:',e.statusMessage||'brauzer/GPU resurs məhdudiyyəti');GLOK=false;render()});gl=cv.getContext('webgl',{antialias:true,alpha:false,powerPreference:'high-performance',depth:true,stencil:false,preserveDrawingBuffer:false});if(!gl)return;
  const mkP=(v,f)=>{const p=gl.createProgram();gl.attachShader(p,glsh(gl.VERTEX_SHADER,v));gl.attachShader(p,glsh(gl.FRAGMENT_SHADER,f));['aP','aN','aC','aU','aT'].forEach((n,i)=>gl.bindAttribLocation(p,i,n));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw 'link';return p};
  PM=mkP(VS,FS);PS=mkP(SVS,SFS);PI=mkP('attribute vec3 aP;uniform mat4 uVP;uniform vec3 uOff;void main(){gl_Position=uVP*vec4(aP+uOff,1.);}','precision mediump float;uniform vec3 uCol;void main(){gl_FragColor=vec4(uCol,1.);}');
  const tp=(t,f)=>{gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,f);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,f);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE)};
@@ -2618,7 +2618,7 @@ setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(co
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 /* Yeni kazarma: GLB tam yüklənəndə dbuild yenidən qurulur və köhnə procedural bina silinərək GLB ilə əvəz olunur. */
-if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:5.8}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
+if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
 if(!S.seen)showWelcome();
 </script>
 </body>
