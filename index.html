@@ -2026,8 +2026,19 @@ async function loadGLBBuilding(url,options={}){
  if(!g||!bin)throw new Error('GLB JSON/BIN hissəsi natamamdır');
  const base=options.color||[1,1,1,1],scale=options.scale||1,origin=options.position||[150,7,150],parts=[],imageTextures=[];
  for(let i=0;i<(g.images||[]).length;i++){
-  const im=g.images[i];let tex=null;
-  try{if(im.bufferView!==undefined&&typeof createImageBitmap==='function'){const v=g.bufferViews[im.bufferView],bytes=bin.slice(v.byteOffset||0,(v.byteOffset||0)+v.byteLength),bitmap=await createImageBitmap(new Blob([bytes],{type:im.mimeType||'image/png'}));tex=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,bitmap);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);bitmap.close?.()}}catch(e){console.warn('GLB teksturası oxunmadı:',e)}imageTextures[i]=tex;
+  const im=g.images[i];let tex=null,source=null,objectUrl=null;
+  try{
+   if(im.bufferView!==undefined){
+    const v=g.bufferViews[im.bufferView],bytes=bin.slice(v.byteOffset||0,(v.byteOffset||0)+v.byteLength),blob=new Blob([bytes],{type:im.mimeType||'image/png'});
+    if(typeof createImageBitmap==='function'){try{source=await createImageBitmap(blob)}catch(bitmapError){console.warn('createImageBitmap uğursuz oldu, Image fallback işləyir:',bitmapError)}}
+    if(!source&&typeof Image!=='undefined'){objectUrl=URL.createObjectURL(blob);source=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('GLB şəkli deşifrə edilmədi'));img.src=objectUrl})}
+    if(source){
+     tex=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    }
+   }
+  }catch(e){console.warn('GLB teksturası oxunmadı:',e)}
+  finally{if(source&&typeof source.close==='function')source.close();if(objectUrl)URL.revokeObjectURL(objectUrl)}
+  imageTextures[i]=tex;
  }
  const emitPrimitive=(prim,world)=>{if(prim.mode!==undefined&&prim.mode!==4&&prim.mode!==5&&prim.mode!==6)return;
   const at=prim.attributes||{};if(at.POSITION===undefined)return;
