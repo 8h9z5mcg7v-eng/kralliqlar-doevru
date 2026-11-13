@@ -2,8 +2,8 @@
   "format": "GLB 2.0",
   "buildings": {
     "barracks": {
-      "file": "barracks/barracks.glb",
-      "status": "candidate_selected_waiting_for_upload",
+      "file": "barracks/Barracks.glb",
+      "status": "uploaded_waiting_for_binary_validation",
       "commercial_license_required": true,
       "candidate": {
         "name": "Wolfhold Barracks (Medieval Fantasy Buildings Sampler)",
@@ -18,7 +18,10 @@
           "LOD2"
         ],
         "integration": "requires_PBR_texture_and_LOD_compatibility_work",
-        "uploaded": false
+        "uploaded": true,
+        "uploaded_filename": "Barracks.glb",
+        "uploaded_size_bytes": 3107752,
+        "binary_validation": "pending"
       }
     },
     "castle": {
