@@ -901,14 +901,14 @@ function attackKing(i){
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fbc02d"};
 const SLOT={
  castle:[150/300,150/300],
- /* Binalar divarlardan aralı və bir-birinə mane olmayacaq geniş intervallarla */
- barracks:[82/300,115/300],range:[218/300,115/300],
- stable:[82/300,205/300],drill:[218/300,205/300],
- hospital:[150/300,78/300],tent:[150/300,220/300],
- /* Resurs zonları divar kənarında saxlanılır, əsas həyətə sıxışdırılmır */
+ /* Əsas binalar geniş həyətə yayılıb; aralarında və qala ilə məsafə saxlanılır */
+ barracks:[68/300,112/300],range:[232/300,112/300],
+ stable:[68/300,222/300],drill:[232/300,222/300],
+ hospital:[150/300,62/300],tent:[150/300,258/300],
+ /* Resurs zonları qala divarlarının xarici tərəfində saxlanılır */
  farm:[0/300,75/300],saw:[0/300,195/300],
  quarry:[292/300,15/300],mine:[292/300,195/300],
- warehouse:[100/300,155/300],wall:[150/300,264/300]
+ warehouse:[150/300,18/300],wall:[150/300,264/300]
 };
 
 const iso=(u,v)=>[50+(u-v)*46,12+(u+v)*40];
@@ -1665,8 +1665,8 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   /* Darvazadan mərkəzi meydana dolanan geniş prospekt; çadır sahəsindən kənar keçir */
   road(150,258,180,235,13,7.42);road(180,235,180,170,13,7.42);road(180,170,150,150,13,7.42);
   /* Hərbi binalara ayrıca qısa keçidlər: girişlər bir-birini kəsmir */
-  road(82,115,112,125,6,7.42);road(218,115,188,125,6,7.42);
-  road(82,205,112,175,6,7.42);road(218,205,188,175,6,7.42);
+  road(68,112,108,125,6,7.42);road(232,112,192,125,6,7.42);
+  road(68,222,108,180,6,7.42);road(232,222,192,180,6,7.42);
   /* Möhkəm daxili qala divarları: dörd tərəf, müdafiə qüllələri və ön giriş */
   const wallLevel=Math.max(1,S.lv.wall||1),wallH=16+Math.min(wallLevel,30)*.55;
   const stone=wallLevel>=15?'#aaa99d':'#96968d',capStone=wallLevel>=20?'#d0c4a6':'#b9b5a8';
