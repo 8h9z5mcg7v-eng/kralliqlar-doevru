@@ -1259,6 +1259,48 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   /* Divarların kənarında təbii yaşıllıq və kiçik dekorativ ağac qrupları */
   [[18,18],[282,18],[18,282],[282,282],[28,36],[272,36],[28,264],[272,264]].forEach(([x,z],i)=>tree(x,z,i%2?.68:.82,i%3===0));
   const cityProp=(x,z,fn)=>{TR={x,y:hh(x,z),z,s:1};fn()};
+  /* Şəhər meydanında bazar köşkləri və sakinlər */
+  const marketStall=(x,z,cloth,goods)=>{
+   cityProp(x,z,()=>{
+    const wood='#68482c',dark='#493522';
+    [[-5,-3],[5,-3],[-5,3],[5,3]].forEach(([a,b])=>gB(a-.45,b-.45,0,.9,.9,10,wood,0));
+    gB(-6,-4,8,12,8,1.1,dark,0);
+    for(let stripe=0;stripe<6;stripe++)gB(-5.8+stripe*2,-4,9.1,1.85,8.2,.45,stripe%2?cloth:'#d6c39a',0);
+    gB(-6,-4,7.5,12,.65,1.5,cloth,0);
+    gB(-7,1,3,14,3,2.2,'#9a7045',0);
+    gB(-7,1,5.2,14,3,.55,'#c39b64',0);
+    [[-4,1],[0,1],[4,1]].forEach(([a,b],i)=>{
+     gK(a,b,5.8,1.35,1.1,1.2,goods[i%goods.length],8,0);
+     gK(a+.5,b-.3,6.7,.8,.7,.7,goods[(i+1)%goods.length],7,0);
+    });
+    gB(-8,-1,0,2,2,3.2,dark,0);gB(6,-1,0,2,2,3.2,dark,0);
+    /* Satıcının sadə, statik fiquru */
+    gB(-.55,-6,2.2,1.1,1.1,4.2,'#76523a',0);
+    gK(0,-6,6.5,.9,.9,1.5,'#b9855e',8,0);
+    gB(-1.7,-6,3.8,.65,2.8,.7,'#b9855e',0);
+    gB(1.2,-6,3.8,.65,2.8,.7,'#b9855e',0);
+   });
+  };
+  marketStall(94,150,'#a33f32',['#b94c35','#d6a33e','#648b45']);
+  marketStall(206,150,'#315d7b',['#b94c35','#d6a33e','#648b45']);
+  marketStall(150,92,'#8b713f',['#78934b','#c58b35','#a94a35']);
+  /* Bazarın yanında ərzaq kisələri, çəlləklər və əl arabası */
+  cityProp(218,170,()=>{
+   for(let i=0;i<3;i++){
+    gK(-7+i*6,-3,0,1.8,1.8,3.2,'#76502f',9,0);
+    gB(-7+i*6,-3,1.2,.22,3.2,1.1,'#b08b4f',0);
+   }
+   gB(-5,5,1,10,1,1.2,'#68482c',0);
+   gB(-5,5,2.2,10,1,1.2,'#8c6038',0);
+   gK(-4,5,0,1.3,1.3,2.1,'#9b8a68',8,0);
+   gK(0,5,0,1.3,1.3,2.1,'#b49b70',8,0);
+  });
+  /* Kiçik şəhər skamyaları və su qabları */
+  [[88,166],[212,166],[150,75]].forEach(([x,z])=>cityProp(x,z,()=>{
+   gB(-5,-1,2,10,2,1,'#795331',0);
+   gB(-4,-1,0,1,2,2,'#59402a',0);gB(4,-1,0,1,2,2,'#59402a',0);
+   gK(7,1,0,1.1,1.1,2.2,'#8b887c',8,0);
+  }));
   /* Ferma yanında araba, kisələr və məhsul yeşikləri */
   cityProp(53,94,()=>{
    gK(-8,-5,0,3.2,3.2,3,'#3b3026',10,0);gK(8,-5,0,3.2,3.2,3,'#3b3026',10,0);
