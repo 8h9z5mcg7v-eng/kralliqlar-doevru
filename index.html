@@ -1243,6 +1243,16 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?76:(military?68:(core?70:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68)))),pd=id==='castle'?78:(military?46:(core?60:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
    const y=addCityPad(x,z,s,pw,pd,id+':main');TR={x,y,z,s};const a0=VB.length/12;
    if(l)GM[id](l);else GM.site();
+   /* Baş qalanın ön qüllələrində kral bayraqları və metal ucluqlar */
+   if(id==='castle'&&l){
+    [[-30,30,'#a93232'],[30,30,'#244f78']].forEach(([fx,fy,color])=>{
+     gB(fx-.9,fy-.9,69,1.8,1.8,23,'#49351f',1);
+     gB(fx+.9,fy-.8,84,12,1.2,9,color,0);
+     gB(fx+.9,fy-.8,92,12,1.2,1.2,'#d6ad45',0);
+     gB(fx+5.5,fy-.7,85,1.1,1.4,7,'#e4c36d',0);
+     gK(fx,fy,92,1.5,0,3,'#e0bd62',8,0);
+    });
+   }
    pkr.push({k:'b',id,instance:id+':main',a:a0,n:VB.length/12-a0});
    pk.push({k:'b',id,min:[x-32*s,y,z-32*s],max:[x+32*s,y+(id==='castle'?102:62)*s,z+32*s]});
    const siteNeed=id==='ironMine'?10:1,siteLocked=!l&&!bu&&S.lv.castle<siteNeed;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?`🔒 Qala ${siteNeed}`:'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu,!l&&!bu&&!siteLocked);}) 
