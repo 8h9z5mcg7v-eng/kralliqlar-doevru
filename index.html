@@ -1207,6 +1207,32 @@ function sbuild(){VB=[];terr();water();riverbank();riverstones();fordstones();fo
   gP(sx+2.69,sy+.54,11.7,.95,1.8,steel,0);
   gK(sx+2.69,sy+.54,4.1,.42,.42,.55,'#b08b4f',8,0);
  });
+ /* Yəhərlənmiş yük atı: bədən, boyun, baş və dörd ayaq */
+ const horseX=19,horseY=10,coat=campIndex%2?'#594333':'#765039',mane='#30251d',hoof='#302b27';
+ /* Bədən və qarın */
+ gB(horseX-4.8,horseY-1.45,4.3,8.7,2.9,3.8,coat,0);
+ gB(horseX-3.8,horseY-1.5,3.8,6.8,3,1.1,'#493528',0);
+ /* Boyun və baş */
+ gB(horseX+2.5,horseY-.9,6.2,2.2,1.9,4.2,coat,0);
+ gK(horseX+4.1,horseY-.55,8.5,1.05,.8,2.1,coat,9,0);
+ gB(horseX+4.35,horseY-.72,8.2,1.8,1.1,.75,mane,0);
+ /* Yel və quyruq */
+ gB(horseX+2.3,horseY-.25,9.5,.65,.55,2.1,mane,0);
+ gB(horseX-5.25,horseY-.15,5.2,.65,.65,3.6,mane,0);
+ gB(horseX-5.8,horseY-.15,2.5,.7,.7,3.1,mane,0);
+ /* Ayaqlar və dırnaqlar */
+ [[-3.7,-.9],[2.5,-.9],[-3.7,.85],[2.5,.85]].forEach(([lx,ly],legIndex)=>{
+  gB(horseX+lx,horseY+ly,0,.85,.8,4.5+(legIndex%2)*.25,coat,0);
+  gB(horseX+lx-.08,horseY+ly-.04,0,.98,.9,.85,hoof,0);
+ });
+ /* Yəhər, yəhəraltı örtük və cilov */
+ gB(horseX-1.8,horseY-1.72,7.45,3.6,3.45,.7,campIndex%2?'#8c754e':'#9a3430',0);
+ gB(horseX-1.25,horseY-1.88,8.05,2.5,3.7,.65,'#493528',0);
+ gB(horseX+3.85,horseY-1.05,8.3,.35,.3,2.2,'#b08b4f',0);
+ gB(horseX+2.9,horseY-1.12,7.8,1.8,.22,.22,'#b08b4f',0);
+ /* Yüyən və bağlama dirəyi */
+ gB(horseX+6.2,horseY-1.1,0,.45,.45,5.4,'#76502f',0);
+ gB(horseX+5.6,horseY-1.2,5.1,1.7,.5,.35,'#b08b4f',0);
  /* Təchizat çəlləkləri */
  for(let barrel=0;barrel<2;barrel++){
   gK(13+barrel*2,-3,0,.95,.95,2.4,'#76502f',8,0);
