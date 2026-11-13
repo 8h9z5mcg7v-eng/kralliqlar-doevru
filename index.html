@@ -1263,6 +1263,13 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   [[42,42],[258,42],[42,258],[258,258],[122,258],[178,258]].forEach(([x,z],i)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.25,z,s:1};
    gK(0,0,0,10,10,wallH+10,'#85877f',14);gK(0,0,wallH+10,11,11,3,capStone,14);
+   /* Qüllə gövdəsində çıxıntılı daş kəmərlər və dörd istiqamətli mazğallar */
+   gK(0,0,wallH*.34,10.35,10.35,1.15,'#b2ad9e',14,0);gK(0,0,wallH*.69,10.3,10.3,1,'#aaa596',14,0);
+   [[-1,-10.12],[10.12,-1],[-1,10.12],[-10.12,-1]].forEach(([sx,sy])=>{
+    gB(sx,sy,wallH*.48,2.1,.55,8,'#494a45',0);
+    gB(sx-.65,sy-.16,wallH*.48-1.1,3.4,.85,1,'#bdb6a5',0);
+    gB(sx-.65,sy-.16,wallH*.48+8,3.4,.85,1,'#bdb6a5',0);
+   });
    for(let a=0;a<4;a++)gB(-5+(a%2)*7,-5+Math.floor(a/2)*7,wallH+13,3,3,4,capStone,0);
    gB(-.8,-.8,wallH+17,1.6,1.6,19,'#59452d',1);
    gB(.8,-.8,wallH+31,8,.8,5,i%2?'#c0392b':'#d6ad45',0);
