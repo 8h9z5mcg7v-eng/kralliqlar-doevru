@@ -1896,7 +1896,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    const s=(id==='castle'?1.10:(core?.62:1.04))*(1+Math.min(l,8)*.02);
    const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?50:(military?44:(core?52:(['farm','saw','quarry','mine','warehouse'].includes(id)?60:68)))),pd=id==='castle'?78:(military?30:(core?40:(['farm','saw','quarry','mine','warehouse'].includes(id)?52:58)));
    const y=addCityPad(x,z,s,pw,pd,id+':main');TR={x,y,z,s};const a0=VB.length/12;
-   if(l&&id==='barracks'&&GLB_MODELS.some(m=>m.buildingId==='barracks')){}else if(l)GM[id](l);else GM.site();
+   if(l)GM[id](l);else GM.site();
    /* Baş qalanın ön qüllələrində kral bayraqları və metal ucluqlar */
    if(id==='castle'&&l){
     [[-30,30,'#a93232'],[30,30,'#244f78']].forEach(([fx,fy,color])=>{
