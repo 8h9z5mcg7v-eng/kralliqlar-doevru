@@ -18,7 +18,7 @@ while (offset + 8 <= b.length) {
   if (offset + len > b.length) { fail('Chunk fayl sərhədini aşır'); break; }
   chunks.push({ type: type.toString(16), length: len });
   if (type === 0x4e4f534a) {
-    try { json = JSON.parse(b.toString('utf8', offset, offset + len).replace(/[\\u0000\\s]+$/g, '')); }
+    try { json = JSON.parse(b.toString('utf8', offset, offset + len).replace(/\\0+$/g, '').trim()); }
     catch (e) { fail('JSON chunk oxunmur: ' + e.message); }
   }
   if (type === 0x004e4942) binLength = len;
