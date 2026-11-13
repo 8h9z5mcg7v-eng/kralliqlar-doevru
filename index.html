@@ -1893,8 +1893,8 @@ function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300;
    if(id==='wall')return;
    const core=['barracks','range','stable','drill','hospital','tent'].includes(id);
-   const s=(id==='castle'?1.18:(core?.95:1.25))*(1+Math.min(l,8)*.03);
-   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?82:(id==='tent'?56:(military?54:(core?62:(['farm','saw','quarry','mine','warehouse'].includes(id)?74:78)))),pd=id==='castle'?82:(military?40:(core?48:(['farm','saw','quarry','mine','warehouse'].includes(id)?64:68)));
+   const s=(id==='castle'?1.18:(id==='barracks'||id==='stable'?1.2:(core?.95:1.25)))*(1+Math.min(l,8)*.03);
+   const military=['barracks','range','stable','drill'].includes(id),largeMilitary=id==='barracks'||id==='stable',pw=id==='castle'?82:(id==='tent'?56:(largeMilitary?68:(military?54:(core?62:(['farm','saw','quarry','mine','warehouse'].includes(id)?74:78))))),pd=id==='castle'?82:(largeMilitary?54:(military?40:(core?48:(['farm','saw','quarry','mine','warehouse'].includes(id)?64:68))));
    const baseY=addCityPad(x,z,s,pw,pd,id+':main');if(id==='castle'){TR={x,y:baseY,z,s:1.35};gK(0,0,0,74,74,27,'#827b6d',12,0);gK(0,0,27,66,66,5,'#b2a58e',12,0)}const y=baseY+(id==='castle'?32:0);TR={x,y,z,s};const a0=VB.length/12;
    /* Kazarma üçün vizual ehtiyat: səviyyə məlumatı gec yüklənsə belə bina şəhərdə görünsün. */
    const visualLevel=id==='barracks'?Math.max(1,Number(l)||0):Number(l)||0;
@@ -2615,7 +2615,7 @@ let last=Date.now(),acc=0;
 setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);tickResourceReserve(d);refresh();refreshMonsterRespawnTimer();tickMarch();tickGather();tickMonster();tickRival();tickTraining();tickBuild();tickResearch();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
-if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,7.4,-102],scale:1.6}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
+if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,7.4,-102],scale:2.0}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
 if(!S.seen)showWelcome();
 </script>
 </body>
