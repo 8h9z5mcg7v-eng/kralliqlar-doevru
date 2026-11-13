@@ -901,12 +901,12 @@ function attackKing(i){
 const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fbc02d"};
 const SLOT={
  castle:[150/300,150/300],
- /* Binalar meydanın dörd zonasına daha geniş məsafə ilə paylanıb */
- barracks:[90/300,95/300],range:[210/300,95/300],
- stable:[90/300,205/300],drill:[210/300,205/300],
- hospital:[150/300,90/300],tent:[150/300,220/300],
- farm:[0/300,75/300],saw:[0/300,195/300],
- quarry:[292/300,15/300],mine:[292/300,195/300],
+ /* Genişləndirilmiş plan: binalar dörd künc və yan zolaqlara ayrılıb */
+ barracks:[75/300,75/300],range:[225/300,75/300],
+ stable:[75/300,225/300],drill:[225/300,225/300],
+ hospital:[75/300,150/300],tent:[225/300,150/300],
+ farm:[0/300,75/300],saw:[0/300,225/300],
+ quarry:[300/300,75/300],mine:[300/300,225/300],
  warehouse:[150/300,0/300],wall:[150/300,264/300]
 };
 
@@ -1559,9 +1559,9 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
     gB(1.2,-6,3.8,.65,2.8,.7,'#b9855e',0);
    });
   };
-  marketStall(94,150,'#a33f32',['#b94c35','#d6a33e','#648b45']);
-  marketStall(206,150,'#315d7b',['#b94c35','#d6a33e','#648b45']);
-  marketStall(150,92,'#8b713f',['#78934b','#c58b35','#a94a35']);
+  marketStall(115,115,'#a33f32',['#b94c35','#d6a33e','#648b45']);
+  marketStall(185,115,'#315d7b',['#b94c35','#d6a33e','#648b45']);
+  marketStall(150,205,'#8b713f',['#78934b','#c58b35','#a94a35']);
   /* Bazarın yanında ərzaq kisələri, çəlləklər və əl arabası */
   cityProp(218,170,()=>{
    for(let i=0;i<3;i++){
@@ -1683,8 +1683,8 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   /* Darvazadan mərkəzi meydana dolanan geniş prospekt; çadır sahəsindən kənar keçir */
   road(150,258,180,235,13,7.42);road(180,235,180,170,13,7.42);road(180,170,150,150,13,7.42);
   /* Hərbi binalara ayrıca qısa keçidlər: girişlər bir-birini kəsmir */
-  road(90,95,118,120,6,7.42);road(210,95,182,120,6,7.42);
-  road(90,205,118,180,6,7.42);road(210,205,182,180,6,7.42);
+  road(75,75,115,115,6,7.42);road(225,75,185,115,6,7.42);
+  road(75,225,115,185,6,7.42);road(225,225,185,185,6,7.42);
   /* Möhkəm daxili qala divarları: dörd tərəf, müdafiə qüllələri və ön giriş */
   const wallLevel=Math.max(1,S.lv.wall||1),wallH=16+Math.min(wallLevel,30)*.55;
   const stone=wallLevel>=15?'#aaa99d':'#96968d',capStone=wallLevel>=20?'#d0c4a6':'#b9b5a8';
@@ -1893,8 +1893,8 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   Object.keys(SLOT).forEach(id=>{const l=S.lv[id],bu=S.build&&S.build.id===id,x=SLOT[id][0]*300,z=SLOT[id][1]*300;
    if(id==='wall')return;
    const core=['barracks','range','stable','drill','hospital','tent'].includes(id);
-   const s=(id==='castle'?1.12:(core?.82:1.16))*(1+Math.min(l,8)*.025);
-   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?78:(id==='tent'?50:(military?48:(core?56:(['farm','saw','quarry','mine','warehouse'].includes(id)?68:72)))),pd=id==='castle'?78:(military?34:(core?44:(['farm','saw','quarry','mine','warehouse'].includes(id)?58:62)));
+   const s=(id==='castle'?1.18:(core?.95:1.25))*(1+Math.min(l,8)*.03);
+   const military=['barracks','range','stable','drill'].includes(id),pw=id==='castle'?82:(id==='tent'?56:(military?54:(core?62:(['farm','saw','quarry','mine','warehouse'].includes(id)?74:78)))),pd=id==='castle'?82:(military?40:(core?48:(['farm','saw','quarry','mine','warehouse'].includes(id)?64:68)));
    const y=addCityPad(x,z,s,pw,pd,id+':main');TR={x,y,z,s};const a0=VB.length/12;
    /* Kazarma üçün vizual ehtiyat: səviyyə məlumatı gec yüklənsə belə bina şəhərdə görünsün. */
    const visualLevel=id==='barracks'?Math.max(1,Number(l)||0):Number(l)||0;
@@ -2615,7 +2615,7 @@ let last=Date.now(),acc=0;
 setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);tickResourceReserve(d);refresh();refreshMonsterRespawnTimer();tickMarch();tickGather();tickMonster();tickRival();tickTraining();tickBuild();tickResearch();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
-if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[90,7.4,95],scale:1.5}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
+if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[75,7.4,75],scale:1.6}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
 if(!S.seen)showWelcome();
 </script>
 </body>
