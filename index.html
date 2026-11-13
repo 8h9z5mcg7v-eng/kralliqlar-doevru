@@ -1287,6 +1287,19 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   gB(-15,4,0,30,2,gateH-8,'#4a3321',1);
   for(let q=-12;q<=12;q+=6)gB(q-.8,3,0,1.6,1.2,gateH-8,'#b68a45',0);
   gB(-18,2,gateH-8,36,3,3,capStone,0);
+  /* Darvazanın taxta üzlüyündə dəmir sarğılar, pərçimlər və şaquli bərkidicilər */
+  for(let band=0;band<3;band++){
+   const zz=5+band*(gateH-18)/2;
+   gB(-14,2.65,zz,28,.65,1.5,'#4b4d4b',0);
+   for(let riv=-12;riv<=12;riv+=4)gK(riv,2.45,zz+.72,.38,.3,.38,'#b39a68',6,0);
+  }
+  for(let leaf of [-1,1]){
+   gB(leaf*6-1.1,2.55,3,2.2,.7,gateH-13,'#79502e',0);
+   gB(leaf*12-1,2.55,3,2,.7,gateH-13,'#674329',0);
+  }
+  /* Qapı tağının üstündə iri yonulmuş mərkəzi daş */
+  gB(-5.5,-5.8,wallH+15,11,1.2,3.5,'#c0b8a7',0);
+  gK(0,-6.1,wallH+18.5,2.8,1.1,2.5,'#d6ad45',8,0);
   /* Qapının üstündə daş gerb */
   gK(0,-5,wallH+17,4,1,5,'#d6ad45',8,0);
   gB(-1.2,-5,wallH+21,2.4,.8,8,'#c0392b',0);
