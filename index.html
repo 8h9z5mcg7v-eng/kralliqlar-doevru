@@ -902,7 +902,7 @@ const RC={food:"#7cb342",wood:"#8d6e63",stone:"#90a4ae",iron:"#b0bec5",gold:"#fb
 const SLOT={
  castle:[150/300,0/300],
  /* Əsas binalar üçün ölçüləri nəzərə alan, divarlardan aralı radial yerləşim */
- barracks:[208/300,42/300],range:[65/300,60/300],
+ barracks:[238/300,42/300],range:[65/300,60/300],
  stable:[320/300,70/300],drill:[300/300,190/300],
  hospital:[270/300,290/300],tent:[200/300,290/300],
  farm:[100/300,290/300],saw:[0/300,250/300],
@@ -2615,7 +2615,7 @@ let last=Date.now(),acc=0;
 setInterval(()=>{const n=Date.now(),d=(n-last)/1000;last=n;const p=prod();for(const k in p)addRes(k,p[k]*d);tickResourceReserve(d);refresh();refreshMonsterRespawnTimer();tickMarch();tickGather();tickMonster();tickRival();tickTraining();tickBuild();tickResearch();tickRaid();acc+=d;if(acc>=5){acc=0;save()}},250);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
-if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[254.4,7.4,-44.4],scale:1.6}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
+if(GLOK)loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[308.4,7.4,-44.4],scale:1.6}).catch(e=>console.warn('Kazarma modeli yüklənmədi:',e));
 if(!S.seen)showWelcome();
 </script>
 </body>
