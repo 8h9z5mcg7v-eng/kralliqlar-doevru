@@ -1252,6 +1252,13 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
      gB(fx+5.5,fy-.7,85,1.1,1.4,7,'#e4c36d',0);
      gK(fx,fy,92,1.5,0,3,'#e0bd62',8,0);
     });
+    /* Daş pillələr: əsas qalanın girişinə qalxan beşpilləli giriş */
+    for(let step=0;step<5;step++){
+     const yy=43-step*5,zz=step*1.5;
+     gB(-15,yy,zz,30,6,1.8,step%2?'#aaa18f':'#b8ae9b',0);
+    }
+    gB(-18,21,0,2.4,27,8,'#8e8779',0);
+    gB(15.6,21,0,2.4,27,8,'#8e8779',0);
    }
    pkr.push({k:'b',id,instance:id+':main',a:a0,n:VB.length/12-a0});
    pk.push({k:'b',id,min:[x-32*s,y,z-32*s],max:[x+32*s,y+(id==='castle'?102:62)*s,z+32*s]});
