@@ -1526,7 +1526,7 @@ function sbuild(){VB=[];terr();water();riverbank();riverstones();fordstones();fo
 });
 SB=mkBuf(VB)}
 function mbuild(){const sv=VB;VB=[];TR={x:0,y:0,z:0,s:1};[[-6,-3,'#c0392b'],[0,4,'#2e86c1'],[6,-3,'#c0392b']].forEach(([x,y,c])=>{gK(x,y,0,2.2,2.2,9,c,8,3);gK(x,y,9,2,0,2,'#e8c9a0',8,3)});gB(10,0,0,1.2,1.2,22,'#6b4a2a');gB(11,0,14,9,.8,6,'#f1c40f');MB=mkBuf(VB);VB=sv}
-function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
+function dbuild(k){activeCityScale=k==='city'?1.55:1;VB=[];pk=[];pkr=[];lbl=[];
  const cityFootprints=[];
  const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>-30&&x<330&&z>-30&&z<330,ground=inside?7.05:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d});gB(-w/2,-d/2,-1.2,w,d,1.2,inside?'#766d60':'#795638',inside?0:3);gB(-w/2+2,-d/2+2,0,w-4,d-4,inside?.35:.55,inside?'#b2a58e':'#66864b',3);return ground+(inside?.35:.55);};
  const lab=(t,p,id,instance=id,always=false,actionable=always)=>{if(!always&&id&&sel!==id)return;if(!always&&id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2'+(actionable?' site-action':'');el.textContent=t;if(actionable){el.dataset.buildId=id||'';el.dataset.buildInstance=instance||'';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label',t+' — tikintiyə başla')}lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
@@ -1676,10 +1676,10 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
   });
   /* Mərkəzi həyət: iri kərpic-daş döşəmə üzərində açıq və geniş keçidlər */
   TR={x:150,y:7.05,z:150,s:1};
-  gB(-180,-180,-.65,360,360,.65,'#a99b83',3);
-  for(let q=-171;q<=171;q+=18){gB(q-.35,-180,.02,.7,360,.12,'#756b5b',0);gB(-180,q-.35,.02,360,.7,.12,'#756b5b',0)}
-  gB(-181,-181,.04,2,362,.7,'#766d60',0);gB(179,-181,.04,2,362,.7,'#766d60',0);
-  gB(-181,-181,.04,362,2,.7,'#766d60',0);gB(-181,179,.04,362,2,.7,'#766d60',0);
+  gB(-210,-210,-.65,420,420,.65,'#a99b83',3);
+  for(let q=-201;q<=201;q+=18){gB(q-.35,-210,.02,.7,420,.12,'#756b5b',0);gB(-210,q-.35,.02,420,.7,.12,'#756b5b',0)}
+  gB(-211,-211,.04,2,422,.7,'#766d60',0);gB(209,-211,.04,2,422,.7,'#766d60',0);
+  gB(-211,-211,.04,422,2,.7,'#766d60',0);gB(-211,209,.04,422,2,.7,'#766d60',0);
   /* Darvazadan mərkəzi meydana dolanan geniş prospekt; çadır sahəsindən kənar keçir */
   road(150,350,180,310,18,7.42);road(180,235,180,170,13,7.42);road(180,170,150,150,13,7.42);
   /* Hərbi binalara ayrıca qısa keçidlər: girişlər bir-birini kəsmir */
@@ -1710,7 +1710,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    /* Dişli müdafiə parapeti */
    for(let p=-len/2+4;p<len/2-2;p+=10)gB(alongX?p-2:-6,alongX?-6:p-2,wallH,4,4,5,capStone,0);
   };
-  fortWall(150,-20,340,true);fortWall(-20,150,340,false);fortWall(320,150,340,false);
+  fortWall(150,-50,400,true);fortWall(-50,150,400,false);fortWall(350,150,400,false);
   /* Divarların iç üzündə krallıq bayraqları və gerb lövhələri */
   const wallBanner=(x,z,face,color)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.35,z,s:1};
@@ -1728,11 +1728,11 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
     gK(side+(face==='west'?4:-5),0,wallH+12,0,1.8,2.8,'#e7c66d',8,0);
    }
   };
-  [[65,-20,'north'],[235,-20,'north'],[-20,65,'west'],[-20,235,'west'],[320,65,'east'],[320,235,'east'],[65,320,'south'],[235,320,'south']].forEach(([x,z,face],i)=>wallBanner(x,z,face,i%2?'#a93232':'#244f78'));
+  [[55,-50,'north'],[245,-50,'north'],[-50,55,'west'],[-50,245,'west'],[350,55,'east'],[350,245,'east'],[55,350,'south'],[245,350,'south']].forEach(([x,z,face],i)=>wallBanner(x,z,face,i%2?'#a93232':'#244f78'));
   /* Ön divar iki hissəyə ayrılır ki, əsas darvazanın keçidi açıq qalsın */
-  fortWall(65,320,170,true);fortWall(235,320,170,true);
+  fortWall(50,350,200,true);fortWall(250,350,200,true);
   /* Künc qüllələri və bayraqlar */
-  [[-20,-20],[320,-20],[-20,320],[320,320],[122,320],[178,320]].forEach(([x,z],i)=>{
+  [[-50,-50],[350,-50],[-50,350],[350,350],[122,350],[178,350]].forEach(([x,z],i)=>{
    TR={x,y:Math.max(hh(x,z),-.8)+.25,z,s:1};
    gK(0,0,0,10,10,wallH+10,'#85877f',14);gK(0,0,wallH+10,11,11,3,capStone,14);
    /* Qüllə gövdəsində çıxıntılı daş kəmərlər və dörd istiqamətli mazğallar */
@@ -1747,7 +1747,7 @@ function dbuild(k){activeCityScale=k==='city'?1.4:1;VB=[];pk=[];pkr=[];lbl=[];
    gB(.8,-.8,wallH+31,8,.8,5,i%2?'#c0392b':'#d6ad45',0);
   });
   /* Səviyyəsi divar binası ilə artan, qülləli və dəmir barmaqlıqlı əsas qala qapısı */
-  const gx=150,gz=320,gy=Math.max(hh(gx,gz),-.8)+.3;TR={x:gx,y:gy,z:gz,s:1};
+  const gx=150,gz=350,gy=Math.max(hh(gx,gz),-.8)+.3;TR={x:gx,y:gy,z:gz,s:1};
   const ga=VB.length/12,gateH=wallH+15;
   [[-24,-5],[24,-5]].forEach(([x,y])=>{
    gK(x,y,0,10,10,gateH,'#85877f',14);gK(x,y,gateH,11,11,3,capStone,14);
@@ -1991,7 +1991,7 @@ const SVS=`attribute vec3 aP;uniform mat4 uLV;uniform vec3 uOff;void main(){gl_P
 const SFS=`precision highp float;vec4 pk(float d){vec4 e=fract(d*vec4(1.,255.,65025.,16581375.));e-=e.yzww*vec4(1./255.,1./255.,1./255.,0.);return e;}void main(){gl_FragColor=pk(gl_FragCoord.z);}`;
 function drawB(b){gl.bindBuffer(gl.ARRAY_BUFFER,b.b);[[0,3,0],[1,3,12],[2,3,24],[3,2,36],[4,1,44]].forEach(([i,n,o])=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,n,gl.FLOAT,false,48,o)});gl.drawArrays(gl.TRIANGLES,0,b.n)}
 function shadowPass(){LV=m4.mul(m4.ortho(310,50,1200),m4.look([150-SUN[0]*500,-SUN[1]*500,150-SUN[2]*500],[150,0,150]));gl.bindFramebuffer(gl.FRAMEBUFFER,smF);gl.viewport(0,0,1024,1024);gl.clearColor(1,1,1,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PS);gl.uniformMatrix4fv(gl.getUniformLocation(PS,'uLV'),false,LV);gl.uniform3f(gl.getUniformLocation(PS,'uOff'),0,0,0);[SB,DB].forEach(b=>b&&drawB(b));GLB_MODELS.forEach(m=>{if(m.buildingId&&!(Number(S.lv[m.buildingId])>0))return;gl.uniform3fv(gl.getUniformLocation(PS,'uOff'),m.position);m.parts.forEach(p=>drawB(p.buffer))});gl.bindFramebuffer(gl.FRAMEBUFFER,null)}
-function cam(a){const yaw=yawB+Math.sin(performance.now()/2800)*.1,tg=[150,12,150],fit=document.querySelector('.sky.gl[data-k="city"]')?Math.max(1,Math.min(2,1.12/Math.max(.56,a))):1,D=camDistance*fit,e=[tg[0]+D*Math.cos(pitch)*Math.sin(yaw),tg[1]+D*Math.sin(pitch),tg[2]+D*Math.cos(pitch)*Math.cos(yaw)],f=v3.nz(v3.sub(tg,e)),r=v3.nz(v3.cr(f,[0,1,0])),u=v3.cr(r,f);return{e,tg,f,r,u,a,fov:.7}}
+function cam(a){const yaw=yawB+Math.sin(performance.now()/2800)*.1,tg=[150,12,150],fit=document.querySelector('.sky.gl[data-k="city"]')?Math.max(1,Math.min(2,1.12/Math.max(.56,a)))*(activeCityScale/1.4):1,D=camDistance*fit,e=[tg[0]+D*Math.cos(pitch)*Math.sin(yaw),tg[1]+D*Math.sin(pitch),tg[2]+D*Math.cos(pitch)*Math.cos(yaw)],f=v3.nz(v3.sub(tg,e)),r=v3.nz(v3.cr(f,[0,1,0])),u=v3.cr(r,f);return{e,tg,f,r,u,a,fov:.7}}
 function draw(){const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.round(cv.clientWidth*dpr),h=Math.round(cv.clientHeight*dpr);if(!w||!h)return;if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}
  const c=cam(w/h),VP=m4.mul(m4.persp(c.fov,w/h,20,2600),m4.look(c.e,c.tg));lastVP=VP;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,w,h);gl.clearColor(.78,.87,.95,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PM);
  const U=n=>gl.getUniformLocation(PM,n);gl.uniformMatrix4fv(U('uVP'),false,VP);gl.uniformMatrix4fv(U('uLV'),false,LV);gl.uniform3fv(U('uSun'),SUN);gl.uniform3fv(U('uEye'),c.e);gl.uniform1f(U('uTime'),performance.now()/1000);gl.uniform1i(U('uTex'),0);gl.uniform1i(U('uSM'),1);
