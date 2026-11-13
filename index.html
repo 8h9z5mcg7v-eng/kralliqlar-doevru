@@ -2021,7 +2021,7 @@ async function loadGLBBuilding(url,options={}){
  if(GLB_MODEL_URLS.has(url))return GLB_MODELS.find(x=>x.url===url)||null;
  const res=await fetch(url);if(!res.ok)throw new Error('GLB faylı tapılmadı: '+res.status);
  const ab=await res.arrayBuffer(),dv=new DataView(ab);if(dv.getUint32(0,true)!==0x46546c67||dv.getUint32(4,true)!==2)throw new Error('Dəstəklənən GLB 2.0 faylı deyil');
- let off=12,g=null,bin=null;while(off+8<=ab.byteLength){const len=dv.getUint32(off,true),type=dv.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)g=JSON.parse(new TextDecoder().decode(new Uint8Array(ab,off,len)).replace(/\\s+$/,''));else if(type===0x004e4942)bin=ab.slice(off,off+len);off+=len}
+ let off=12,g=null,bin=null;while(off+8<=ab.byteLength){const len=dv.getUint32(off,true),type=dv.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)g=JSON.parse(new TextDecoder().decode(new Uint8Array(ab,off,len)).replace(/\s+$/,''));else if(type===0x004e4942)bin=ab.slice(off,off+len);off+=len}
  if(!g||!bin)throw new Error('GLB JSON/BIN hissəsi natamamdır');
  const verts=[],base=options.color||[1,1,1,1],scale=options.scale||1,origin=options.position||[150,7,150];
  const emitPrimitive=(prim,world)=>{if(prim.mode!==undefined&&prim.mode!==4&&prim.mode!==5&&prim.mode!==6)return;
