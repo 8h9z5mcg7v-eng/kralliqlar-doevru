@@ -7,6 +7,8 @@ on:
       - 'buildings/**/*.glb'
       - 'buildings/manifest.json'
       - 'scripts/validate-glb.mjs'
+      - 'scripts/validate-game-js.mjs'
+      - 'index.html'
       - '.github/workflows/validate-glb.yml'
 
 jobs:
@@ -15,5 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Validate game JavaScript syntax
+        run: node scripts/validate-game-js.mjs
       - name: Validate barracks GLB
         run: node scripts/validate-glb.mjs buildings/barracks/Barracks.glb
