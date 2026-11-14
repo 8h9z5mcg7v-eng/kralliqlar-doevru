@@ -147,6 +147,10 @@ jobs:
               ext=(bounds[1]-bounds[0]).tolist()
               rows.append((max(ext),node,geom_name,ext,[bounds[0].tolist(),bounds[1].tolist()]))
           for row in sorted(rows,reverse=True)[:20]: print('TRAINING_YARD_LARGEST_PART=',row)
+          for node in scene.graph.nodes_geometry:
+              transform,geom_name=scene.graph.get(node)
+              if 'gallery-wall' in node or 'gallery-wall' in geom_name:
+                  print('TRAINING_YARD_GALLERY_TRANSFORM=',node,geom_name,transform.tolist())
           PY
       - name: Inspect warehouse GLB complexity
         run: |
