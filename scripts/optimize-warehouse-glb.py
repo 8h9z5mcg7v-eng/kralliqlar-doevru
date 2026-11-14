@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Downscale embedded warehouse GLB textures for mobile and rebuild valid GLB."""
+"""Downscale embedded warehouse GLB textures and compact its binary buffer."""
 import io, json, struct
 from pathlib import Path
 from PIL import Image
@@ -10,7 +10,7 @@ if data[:4] != b"glTF" or struct.unpack_from("<I", data, 4)[0] != 2:
     raise SystemExit("Not a GLB 2.0 file")
 offset = 12
 doc = None
-binary = None
+original_binary = None
 while offset + 8 <= len(data):
     length, kind = struct.unpack_from("<II", data, offset)
     offset += 8
@@ -18,20 +18,19 @@ while offset + 8 <= len(data):
     if kind == 0x4E4F534A:
         doc = json.loads(chunk.decode("utf-8").rstrip(" \t\r\n\0"))
     elif kind == 0x004E4942:
-        binary = bytearray(chunk)
+        original_binary = bytes(chunk)
     offset += length
-if doc is None or binary is None:
+if doc is None or original_binary is None:
     raise SystemExit("Missing GLB JSON/BIN chunk")
 
-new_images = []
-total_before = total_after = 0
+image_views = {}
 for index, image in enumerate(doc.get("images", [])):
     if "bufferView" not in image:
         continue
-    view = doc["bufferViews"][image["bufferView"]]
+    view_index = image["bufferView"]
+    view = doc["bufferViews"][view_index]
     start = view.get("byteOffset", 0)
-    raw = bytes(binary[start:start + view["byteLength"]])
-    total_before += len(raw)
+    raw = original_binary[start:start + view["byteLength"]]
     with Image.open(io.BytesIO(raw)) as im:
         im.load()
         original = im.size
@@ -47,14 +46,23 @@ for index, image in enumerate(doc.get("images", [])):
             im.convert("RGB").save(out, format="JPEG", quality=88, optimize=True, progressive=False)
             mime = "image/jpeg"
         packed = out.getvalue()
+    image_views[view_index] = packed
+    image["mimeType"] = mime
+    print(f"image {index}: {original[0]}x{original[1]} -> {im.width}x{im.height}, {len(raw)} -> {len(packed)} bytes, {mime}")
+
+# Rebuild every bufferView into a compact BIN chunk, so old 4K/8K image bytes are discarded.
+binary = bytearray()
+for index, view in enumerate(doc.get("bufferViews", [])):
     while len(binary) % 4:
         binary.append(0)
+    old_start = view.get("byteOffset", 0)
+    if index in image_views:
+        chunk = image_views[index]
+    else:
+        chunk = original_binary[old_start:old_start + view["byteLength"]]
     view["byteOffset"] = len(binary)
-    view["byteLength"] = len(packed)
-    binary.extend(packed)
-    image["mimeType"] = mime
-    total_after += len(packed)
-    print(f"image {index}: {original[0]}x{original[1]} -> {im.width}x{im.height}, {len(raw)} -> {len(packed)} bytes, {mime}")
+    view["byteLength"] = len(chunk)
+    binary.extend(chunk)
 
 doc.setdefault("buffers", [{}])[0]["byteLength"] = len(binary)
 json_chunk = json.dumps(doc, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
@@ -69,4 +77,4 @@ out.extend(json_chunk)
 out.extend(struct.pack("<II", len(binary), 0x004E4942))
 out.extend(binary)
 path.write_bytes(out)
-print(f"Warehouse GLB optimized: {len(data)} -> {len(out)} bytes; embedded images {total_before} -> {total_after} bytes")
+print(f"Warehouse GLB compacted: {len(data)} -> {len(out)} bytes")
