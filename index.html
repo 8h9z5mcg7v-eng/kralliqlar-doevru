@@ -1777,7 +1777,7 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
    const siteNeed=id==='ironMine'?10:1,siteLocked=!l&&!bu&&S.lv.castle<siteNeed;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?`🔒 Qala ${siteNeed}`:'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu,!l&&!bu&&!siteLocked);}) 
   /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
   const fieldSlots=[
-   ...[[200,290],[140,350],[200,350],[320,350],[80,230],[80,350],[20,350]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
+   ...[[20,40],[110,40],[200,40],[20,130],[110,130],[200,130],[110,220]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
    ...[[270,290],[340,290],[270,350]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
   ];
   fieldSlots.forEach((p,i)=>{
@@ -2483,7 +2483,7 @@ if(GLOK){
  const stablePosition=[320,7.4,70];
  loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:7}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/warehouse/medieval_warehouse.glb',{buildingId:'warehouse',position:[150,7.4,190],fitSize:120}).then(()=>{WAREHOUSE_GLB_PENDING=false;}).catch(e=>{WAREHOUSE_GLB_PENDING=false;console.warn('Yeni anbar GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('buildings/tent/medieval-tent.glb',{buildingId:'tent',position:[70,7.4,290],fitSize:88}).then(model=>{TENT_GLB_PENDING=false;const baseIndex=GLB_MODELS.indexOf(model);if(baseIndex>=0)GLB_MODELS.splice(baseIndex,1);[[200,290],[140,350],[200,350],[320,350],[80,230],[80,350],[20,350]].forEach(([x,z],i)=>GLB_MODELS.push({...model,position:[x,7.4,z],fieldIndex:i+1}));if(DB)attachGL();}).catch(e=>{TENT_GLB_PENDING=false;console.warn('Yeni hərbi çadır GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/tent/medieval-tent.glb',{buildingId:'tent',position:[70,7.4,290],fitSize:88}).then(model=>{TENT_GLB_PENDING=false;const baseIndex=GLB_MODELS.indexOf(model);if(baseIndex>=0)GLB_MODELS.splice(baseIndex,1);[[20,40],[110,40],[200,40],[20,130],[110,130],[200,130],[110,220]].forEach(([x,z],i)=>GLB_MODELS.push({...model,position:[x,7.4,z],fieldIndex:i+1}));if(DB)attachGL();}).catch(e=>{TENT_GLB_PENDING=false;console.warn('Yeni hərbi çadır GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/hospital/field-hospital-tent.glb',{buildingId:'hospital',position:[270,7.4,290],fitSize:100}).then(model=>{HOSPITAL_GLB_PENDING=false;const baseIndex=GLB_MODELS.indexOf(model);if(baseIndex>=0)GLB_MODELS.splice(baseIndex,1);[[270,290],[340,290],[270,350]].forEach(([x,z],i)=>GLB_MODELS.push({...model,position:[x,7.4,z],fieldIndex:i+1}));if(DB)attachGL();}).catch(e=>{HOSPITAL_GLB_PENDING=false;console.warn('Yeni səhra xəstəxanası GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/drill/training-yard.glb',{buildingId:'drill',position:[300,7.4,190],fitSize:150}).then(()=>{DRILL_GLB_PENDING=false;}).catch(e=>{DRILL_GLB_PENDING=false;console.warn('Yeni hərbi məşq meydanı GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/drill/training-yard-details.glb',{buildingId:'drillDetails',position:[300,7.4,190],fitSize:100}).catch(e=>console.warn('Məşq meydanı detalları yüklənmədi:',e));
