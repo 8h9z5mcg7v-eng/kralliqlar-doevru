@@ -89,6 +89,47 @@ jobs:
           for i,n in enumerate(doc.get('nodes',[])): print('NODE',i,'name=',n.get('name'),'mesh=',n.get('mesh'))
           for i,m in enumerate(doc.get('meshes',[])): print('MESH',i,'name=',m.get('name'),'primitives=',len(m.get('primitives',[])))
           PY
+      - name: Download and prepare CC0 military training yard GLB
+        run: |
+          mkdir -p buildings/drill
+          curl -fL --retry 3 --retry-delay 2 "https://cdn.3dassets.dev/assets/39227/v1/model.glb" -o buildings/drill/training-yard.glb
+          python - <<'PY'
+          import json,struct,re
+          p='buildings/drill/training-yard.glb'; b=open(p,'rb').read()
+          if len(b)<100000 or struct.unpack_from('<I',b,0)[0]!=0x46546c67 or struct.unpack_from('<I',b,4)[0]!=2: raise SystemExit('Training yard GLB missing or invalid')
+          off=12; doc=None; chunks=[]
+          while off+8<=len(b):
+            n,t=struct.unpack_from('<II',b,off);off+=8; payload=b[off:off+n];off+=n
+            if t==0x4E4F534A: doc=json.loads(payload.decode('utf-8').rstrip(' \\t\\r\\n\\0'))
+            chunks.append((t,payload))
+          if not doc or not doc.get('meshes'): raise SystemExit('Training yard GLB has no meshes')
+          # Remove every human-character group (027–042); retain the yard, dummies, racks and banners.
+          pattern=re.compile(r'^(02[7-9]|03[0-9]|04[0-2])-')
+          removed=[]
+          def prune(parent):
+            kept=[]
+            for idx in parent.get('children',[]):
+              node=doc['nodes'][idx]; name=node.get('name','')
+              if pattern.match(name): removed.append(name); continue
+              prune(node); kept.append(idx)
+            parent['children']=kept
+          for root in doc.get('scenes',[{}])[doc.get('scene',0)].get('nodes',[]):
+            node=doc['nodes'][root]
+            if pattern.match(node.get('name','')): removed.append(node.get('name'))
+            else: prune(node)
+          # Rebuild the GLB JSON chunk; preserve the binary chunk and all material/texture data.
+          raw=json.dumps(doc,separators=(',',':')).encode('utf-8'); raw+=b' '*((4-len(raw)%4)%4)
+          out=bytearray(struct.pack('<III',0x46546c67,2,0))
+          for t,payload in chunks:
+            if t==0x4E4F534A: payload=raw
+            out+=struct.pack('<II',len(payload),t)+payload
+          struct.pack_into('<I',out,8,len(out))
+          open(p,'wb').write(out)
+          tris=sum((doc['accessors'][pr['indices']]['count']//3 if 'indices' in pr else doc['accessors'][pr['attributes']['POSITION']]['count']//3) for mesh in doc['meshes'] for pr in mesh.get('primitives',[]))
+          print('TRAINING_YARD_READY bytes=',len(out),'meshes=',len(doc['meshes']),'nodes_removed=',len(removed),'triangles_total=',tris,'removed_groups=',','.join(removed))
+          if not removed or len(removed)<8: raise SystemExit('Expected character groups were not removed')
+          PY
+          test -s buildings/drill/training-yard.glb
       - name: Inspect warehouse GLB complexity
         run: |
           python - <<'PY'
