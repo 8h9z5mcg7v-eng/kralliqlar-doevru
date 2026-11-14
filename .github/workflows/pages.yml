@@ -29,6 +29,27 @@ jobs:
           mkdir -p buildings/warehouse
           curl -fL --retry 3 --retry-delay 2 "https://github.com/8h9z5mcg7v-eng/kralliqlar-doevru/releases/download/v1.0.0/medieval_warehouse.glb" -o buildings/warehouse/medieval_warehouse.glb
           test "$(stat -c%s buildings/warehouse/medieval_warehouse.glb)" -gt 50000000
+      - name: Inspect warehouse GLB complexity
+        run: |
+          python - <<'PY'
+          import json,struct
+          p='buildings/warehouse/medieval_warehouse.glb'
+          b=open(p,'rb').read(); off=12; doc=None
+          while off+8<=len(b):
+            n,t=struct.unpack_from('<II',b,off); off+=8
+            if t==0x4E4F534A: doc=json.loads(b[off:off+n])
+            off+=n
+          if not doc: raise SystemExit('GLB JSON chunk missing')
+          tris=0
+          for m in doc.get('meshes',[]):
+            for pr in m.get('primitives',[]):
+              if 'indices' in pr: tris+=doc['accessors'][pr['indices']]['count']//3
+              elif 'POSITION' in pr: tris+=doc['accessors'][pr['attributes']['POSITION']]['count']//3
+          print('WAREHOUSE_GLB bytes=',len(b),'meshes=',len(doc.get('meshes',[])),'primitives=',sum(len(m.get('primitives',[])) for m in doc.get('meshes',[])),'triangles=',tris,'images=',len(doc.get('images',[])))
+          for i,im in enumerate(doc.get('images',[])):
+            if 'bufferView' in im:
+              v=doc['bufferViews'][im['bufferView']];print('IMAGE',i,'bytes=',v['byteLength'],'mime=',im.get('mimeType'))
+          PY
       - name: Extract troop portraits
         run: |
           mkdir -p images
