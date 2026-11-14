@@ -2669,7 +2669,7 @@ if(GLOK){
  loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
  const stablePosition=[456,7.4,6];
  loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:7}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('https://github.com/8h9z5mcg7v-eng/kralliqlar-doevru/releases/download/v1.0.0/medieval_warehouse.glb',{buildingId:'warehouse',position:[150,7.4,222],fitSize:108}).then(()=>{WAREHOUSE_GLB_PENDING=false;}).catch(e=>{WAREHOUSE_GLB_PENDING=false;console.warn('Yeni anbar GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/warehouse/medieval_warehouse.glb',{buildingId:'warehouse',position:[150,7.4,222],fitSize:108}).then(()=>{WAREHOUSE_GLB_PENDING=false;}).catch(e=>{WAREHOUSE_GLB_PENDING=false;console.warn('Yeni anbar GLB yüklənmədi:',e);if(DB)attachGL()});
 }
 if(!S.seen)showWelcome();
 </script>
