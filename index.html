@@ -2658,7 +2658,7 @@ GLinit();render();
 /* Yeni kazarma: GLB tam yüklənəndə dbuild yenidən qurulur və köhnə procedural bina silinərək GLB ilə əvəz olunur. */
 if(GLOK){
  loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
- const stablePosition=[576,7.4,126];
+ const stablePosition=[456,7.4,6];
  loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:7}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
 }
 if(!S.seen)showWelcome();
