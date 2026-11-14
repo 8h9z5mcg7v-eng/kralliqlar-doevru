@@ -34,8 +34,8 @@ for index, image in enumerate(doc.get("images", [])):
     with Image.open(io.BytesIO(raw)) as im:
         im.load()
         original = im.size
-        if max(im.size) > 2048:
-            ratio = 2048 / max(im.size)
+        if max(im.size) > 1024:
+            ratio = 1024 / max(im.size)
             im = im.resize((max(1, round(im.width * ratio)), max(1, round(im.height * ratio))), Image.Resampling.LANCZOS)
         has_alpha = "A" in im.getbands() or "transparency" in im.info
         out = io.BytesIO()
@@ -43,7 +43,7 @@ for index, image in enumerate(doc.get("images", [])):
             im.convert("RGBA").save(out, format="PNG", optimize=True)
             mime = "image/png"
         else:
-            im.convert("RGB").save(out, format="JPEG", quality=88, optimize=True, progressive=False)
+            im.convert("RGB").save(out, format="JPEG", quality=84, optimize=True, progressive=False)
             mime = "image/jpeg"
         packed = out.getvalue()
     image_views[view_index] = packed
