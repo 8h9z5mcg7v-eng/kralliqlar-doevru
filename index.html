@@ -1098,7 +1098,7 @@ function mkAtlas(){const c=document.createElement('canvas');c.width=c.height=256
  for(let r=0;r<8;r++){const y=128+r*16,off=r%2?8:0;for(let x=-off;x<128;x+=16){const v=190+grn()*60,x0=Math.max(0,x);R(x0,y,16,16,gr(v));R(x0,y+13,16,3,'rgba(0,0,0,.4)');R(x0,y,1,16,'rgba(0,0,0,.25)')}}
  R(128,128,128,128,'#dcdcdc');nzs(128,128,220,70);for(let i=0;i<500;i++)R(128+grn()*128,128+grn()*126,1,3+grn()*5,grn()<.5?'rgba(255,255,255,.3)':'rgba(0,0,0,.22)');
  return c}
-const cityCoord=v=>150+(v-150)*activeCityScale; const cityModelPosition=p=>{const f=activeCityScale>1?activeCityScale/1.8:1;return[150+(p[0]-150)*f,p[1],150+(p[2]-150)*f]}; const cityWorldBox=(min,max)=>({min:[cityCoord(min[0]),min[1],cityCoord(min[2])],max:[cityCoord(max[0]),max[1],cityCoord(max[2])]}); const gW=(x,y,z)=>[cityCoord(TR.x+x*TR.s),TR.y+z*TR.s,cityCoord(TR.z+y*TR.s)];
+const cityCoord=v=>150+(v-150)*activeCityScale; const cityModelPosition=p=>[cityCoord(p[0]),p[1],cityCoord(p[2])]; const cityWorldBox=(min,max)=>({min:[cityCoord(min[0]),min[1],cityCoord(min[2])],max:[cityCoord(max[0]),max[1],cityCoord(max[2])]}); const gW=(x,y,z)=>[cityCoord(TR.x+x*TR.s),TR.y+z*TR.s,cityCoord(TR.z+y*TR.s)];
 function gt(a,b,c,ca,cb,cc,ua,ub,uc,t,ct){let n=v3.nz(v3.cr(v3.sub(b,a),v3.sub(c,a)));const m=[(a[0]+b[0]+c[0])/3-ct[0],(a[1]+b[1]+c[1])/3-ct[1],(a[2]+b[2]+c[2])/3-ct[2]];if(v3.dt(n,m)<0)n=[-n[0],-n[1],-n[2]];[[a,ca,ua],[b,cb,ub],[c,cc,uc]].forEach(([p,k,u])=>VB.push(p[0],p[1],p[2],n[0],n[1],n[2],k[0],k[1],k[2],u[0],u[1],t))}
 function gq(p,cs,uw,uh,t,ct){const a=p.map(q=>gW(q[0],q[1],q[2])),C=gW(ct[0],ct[1],ct[2]);gt(a[0],a[1],a[2],cs[0],cs[1],cs[2],[0,0],[uw,0],[uw,uh],t,C);gt(a[0],a[2],a[3],cs[0],cs[2],cs[3],[0,0],[uw,uh],[0,uh],t,C)}
 const wd=c=>{const [r,g,b]=hx(c);return r>g&&g>b&&r-b>.18&&r<.75};
@@ -1571,7 +1571,7 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
  const cityFootprints=[];
  const addCityPad=(x,z,scale,w,d,instance)=>{const inside=x>-30&&x<330&&z>-30&&z<330,ground=inside?7.07:Math.max(hh(x,z),-.8)+.2;TR={x,y:ground,z,s:scale};if(instance)cityFootprints.push({instance,x,z,w,d,scale});return ground;};
  const lab=(t,p,id,instance=id,always=false,actionable=always)=>{if(!always&&id&&sel!==id)return;if(!always&&id&&selInstance&&instance!==selInstance)return;const el=document.createElement('div');el.className='lab2'+(actionable?' site-action':'');el.textContent=t;if(actionable){el.dataset.buildId=id||'';el.dataset.buildInstance=instance||'';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label',t+' — tikintiyə başla')}lbl.push({el,pos:[cityCoord(p[0]),p[1],cityCoord(p[2])]})};
- const validateCityFootprints=()=>{const collisions=[],wallHits=[];for(let i=0;i<cityFootprints.length;i++){const a=cityFootprints[i],aw=a.w*a.scale*1.05/2,ad=a.d*a.scale*1.05/2;if(a.x-aw<-75||a.x+aw>375||a.z-ad<-75||a.z+ad>375)wallHits.push(a.instance);for(let j=i+1;j<cityFootprints.length;j++){const b=cityFootprints[j],bw=b.w*b.scale*1.05/2,bd=b.d*b.scale*1.05/2;if(Math.abs(a.x-b.x)<aw+bw&&Math.abs(a.z-b.z)<ad+bd)collisions.push(a.instance+' ↔ '+b.instance)}}if(collisions.length)console.warn('Şəhər binalarında kəsişmə:',collisions);else console.info('Bina yoxlaması: '+cityFootprints.length+' sahə, 5% ehtiyatla kəsişmə yoxdur');if(wallHits.length)console.warn('Divara çox yaxın sahələr:',wallHits);return{collisions,wallHits}};
+ const validateCityFootprints=()=>{const collisions=[],wallHits=[];for(let i=0;i<cityFootprints.length;i++){const a=cityFootprints[i],aw=a.w*a.scale*1.05/2,ad=a.d*a.scale*1.05/2;if(!a.instance.includes(':field:')&&!a.instance.includes(':resource:')&&(a.x-aw<-75||a.x+aw>375||a.z-ad<-75||a.z+ad>375))wallHits.push(a.instance);for(let j=i+1;j<cityFootprints.length;j++){const b=cityFootprints[j],bw=b.w*b.scale*1.05/2,bd=b.d*b.scale*1.05/2;if(Math.abs(a.x-b.x)<aw+bw&&Math.abs(a.z-b.z)<ad+bd)collisions.push(a.instance+' ↔ '+b.instance)}}if(collisions.length)console.warn('Şəhər binalarında kəsişmə:',collisions);else console.info('Bina yoxlaması: '+cityFootprints.length+' sahə, 5% ehtiyatla kəsişmə yoxdur');if(wallHits.length)console.warn('Divara çox yaxın sahələr:',wallHits);return{collisions,wallHits}};
  if(k==='city'){
   /* Böyüdülmüş şəhərin altında fasiləsiz ot örtüklü zəmin: əvvəlki torpaq ölçüsü yeni divarları örtmürdü */
   TR={x:150,y:2.05,z:150,s:1};gB(-560,-560,-5,1120,1120,5,'#557d43',3);
@@ -1777,8 +1777,8 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
    const siteNeed=id==='ironMine'?10:1,siteLocked=!l&&!bu&&S.lv.castle<siteNeed;const siteText=l?`${B[id]?.n||id} · Lv.${l}`:bu?'🔨 TİKİLİR':siteLocked?`🔒 Qala ${siteNeed}`:'TİK';lab(siteText,[x,y+(id==='castle'?108:65)*s,z],id,id+':main',!l&&!bu,!l&&!bu&&!siteLocked);}) 
   /* Qalanın xaricində ayrıca tikinti sahələri: CoK tipli çöl zonası */
   const fieldSlots=[
-   ...[[122.22,344.44],[183.33,344.44],[244.44,344.44],[305.56,344.44],[122.22,283.33],[183.33,283.33],[244.44,283.33]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
-   ...[[366,344],[427,344],[488,344]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
+   ...[[122,470],[183,470],[244,470],[305,470],[122,530],[183,530],[244,530]].map(([x,z])=>({x,z,id:'tent',name:'Hərbi çadır sahəsi'})),
+   ...[[366,470],[427,470],[488,470]].map(([x,z])=>({x,z,id:'hospital',name:'Xəstəxana sahəsi'}))
   ];
   fieldSlots.forEach((p,i)=>{
    const isTent=p.id==='tent',slotIndex=isTent?i:i-7,built=isTent?slotIndex<Math.max(0,S.tentCount-1):slotIndex<Math.max(0,S.hospitalCount-1),requiredCastle=isTent?1+slotIndex*3:6+slotIndex*5;
@@ -1801,7 +1801,7 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
   const resourceSlots=[
    {id:'farm',x:100,z:410,slot:1,name:'Ferma sırası'},
    {id:'saw',x:0,z:370,slot:1,name:'Mişar sırası'},
-   {id:'ironMine',x:355,z:10,slot:0,name:'Dəmir mədəni sırası'},
+   {id:'ironMine',x:200,z:100,slot:0,name:'Dəmir mədəni sırası'},
    {id:'ironMine',x:355,z:130,slot:1,name:'Dəmir mədəni sırası'},
    {id:'mine',x:0,z:-135,slot:1,name:'Qızıl mədəni sırası'}
   ];
@@ -2479,14 +2479,14 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 /* Yeni kazarma: GLB tam yüklənəndə dbuild yenidən qurulur və köhnə procedural bina silinərək GLB ilə əvəz olunur. */
 if(GLOK){
- loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
- const stablePosition=[456,7.4,6];
+ loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[320,9,-15],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
+ const stablePosition=[320,7.4,70];
  loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:7}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('buildings/warehouse/medieval_warehouse.glb',{buildingId:'warehouse',position:[150,7.4,222],fitSize:120}).then(()=>{WAREHOUSE_GLB_PENDING=false;}).catch(e=>{WAREHOUSE_GLB_PENDING=false;console.warn('Yeni anbar GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('buildings/tent/medieval-tent.glb',{buildingId:'tent',position:[200,7.4,290],fitSize:88}).then(model=>{TENT_GLB_PENDING=false;const baseIndex=GLB_MODELS.indexOf(model);if(baseIndex>=0)GLB_MODELS.splice(baseIndex,1);[[100,500],[210,500],[320,500],[430,500],[100,390],[210,390],[320,390]].forEach(([x,z],i)=>GLB_MODELS.push({...model,position:[x,7.4,z],fieldIndex:i+1}));if(DB)attachGL();}).catch(e=>{TENT_GLB_PENDING=false;console.warn('Yeni hərbi çadır GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('buildings/hospital/field-hospital-tent.glb',{buildingId:'hospital',position:[539,7.4,499],fitSize:100}).then(model=>{HOSPITAL_GLB_PENDING=false;const baseIndex=GLB_MODELS.indexOf(model);if(baseIndex>=0)GLB_MODELS.splice(baseIndex,1);[[539,499],[649,499],[758,499]].forEach(([x,z],i)=>GLB_MODELS.push({...model,position:[x,7.4,z],fieldIndex:i+1}));if(DB)attachGL();}).catch(e=>{HOSPITAL_GLB_PENDING=false;console.warn('Yeni səhra xəstəxanası GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('buildings/drill/training-yard.glb',{buildingId:'drill',position:[420,7.4,222],fitSize:150}).then(()=>{DRILL_GLB_PENDING=false;}).catch(e=>{DRILL_GLB_PENDING=false;console.warn('Yeni hərbi məşq meydanı GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('buildings/drill/training-yard-details.glb',{buildingId:'drillDetails',position:[420,7.4,222],fitSize:100}).catch(e=>console.warn('Məşq meydanı detalları yüklənmədi:',e));
+ loadGLBBuilding('buildings/warehouse/medieval_warehouse.glb',{buildingId:'warehouse',position:[150,7.4,190],fitSize:120}).then(()=>{WAREHOUSE_GLB_PENDING=false;}).catch(e=>{WAREHOUSE_GLB_PENDING=false;console.warn('Yeni anbar GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/tent/medieval-tent.glb',{buildingId:'tent',position:[122,7.4,470],fitSize:88}).then(model=>{TENT_GLB_PENDING=false;const baseIndex=GLB_MODELS.indexOf(model);if(baseIndex>=0)GLB_MODELS.splice(baseIndex,1);[[122,470],[183,470],[244,470],[305,470],[122,530],[183,530],[244,530]].forEach(([x,z],i)=>GLB_MODELS.push({...model,position:[x,7.4,z],fieldIndex:i+1}));if(DB)attachGL();}).catch(e=>{TENT_GLB_PENDING=false;console.warn('Yeni hərbi çadır GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/hospital/field-hospital-tent.glb',{buildingId:'hospital',position:[366,7.4,470],fitSize:100}).then(model=>{HOSPITAL_GLB_PENDING=false;const baseIndex=GLB_MODELS.indexOf(model);if(baseIndex>=0)GLB_MODELS.splice(baseIndex,1);[[366,470],[427,470],[488,470]].forEach(([x,z],i)=>GLB_MODELS.push({...model,position:[x,7.4,z],fieldIndex:i+1}));if(DB)attachGL();}).catch(e=>{HOSPITAL_GLB_PENDING=false;console.warn('Yeni səhra xəstəxanası GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/drill/training-yard.glb',{buildingId:'drill',position:[300,7.4,190],fitSize:150}).then(()=>{DRILL_GLB_PENDING=false;}).catch(e=>{DRILL_GLB_PENDING=false;console.warn('Yeni hərbi məşq meydanı GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/drill/training-yard-details.glb',{buildingId:'drillDetails',position:[300,7.4,190],fitSize:100}).catch(e=>console.warn('Məşq meydanı detalları yüklənmədi:',e));
 }
 if(!S.seen)showWelcome();
 </script>
