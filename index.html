@@ -1972,9 +1972,6 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
    const sc=isTent?1.25:.72,pw=isTent?46:48,pd=isTent?40:40,instance=p.id+':field:'+slotIndex,y=addCityPad(p.x,p.z,sc,pw,pd,instance);
    TR={x:p.x,y,z:p.z,s:sc};
    const wood='#76502e',stone='#a99a7d';
-   gB(-pw/2,-pd/2,.55,pw,2,1.5,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.5,wood,0);
-   gB(-pw/2,-pd/2,.55,2,pd,1.5,wood,0);gB(pw/2-2,-pd/2,.55,2,pd,1.5,wood,0);
-   [[-pw/2+4,-pd/2+4],[pw/2-4,-pd/2+4],[-pw/2+4,pd/2-4],[pw/2-4,pd/2-4]].forEach(([a,b])=>gK(a,b,1.8,1.3,1.3,4,stone,6,0));
    const a0=VB.length/12;
    if(built){if(!isTent)GM.hospital();pkr.push({k:'b',id:p.id,instance,a:a0,n:VB.length/12-a0})}
    else{
@@ -2000,8 +1997,6 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
    if(!built&&p.slot===1&&S.lv[p.id]<=0)return;
    const sc=.68,pw=44,pd=36,instance=p.id+':resource:'+p.slot,y=addCityPad(p.x,p.z,sc,pw,pd,instance);
    TR={x:p.x,y,z:p.z,s:sc};const wood='#76502e',stone='#a99a7d';
-   gB(-pw/2,-pd/2,.55,pw,2,1.3,wood,0);gB(-pw/2,pd/2-2,.55,pw,2,1.3,wood,0);
-   gB(-pw/2,-pd/2,.55,2,pd,1.3,wood,0);gB(pw/2-2,-pd/2,.55,2,pd,1.3,wood,0);
    const a0=VB.length/12;
    if(built){GM[p.id](S.lv[p.id]);pkr.push({k:'b',id:p.id,instance,a:a0,n:VB.length/12-a0})}
    else{gB(-7,-6,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,4,1.7,14,1.4,1.2,'#b69b70',0);gB(-7,-6,1.7,1.4,12,1.2,'#b69b70',0);gB(5,-6,1.7,1.4,12,1.2,'#b69b70',0)}
