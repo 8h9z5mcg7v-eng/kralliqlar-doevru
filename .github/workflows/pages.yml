@@ -71,173 +71,32 @@ jobs:
           if tris<1000: raise SystemExit('Unexpectedly empty field hospital model')
           print('FIELD_HOSPITAL_GLB bytes=',len(b),'meshes=',len(doc['meshes']),'parts=',parts,'triangles=',tris,'images=',len(doc.get('images',[])))
           PY
-      - name: Download and inspect CC0 training yard model
+      - name: Download new CC0 medieval tournament and training ground
         run: |
           mkdir -p buildings/drill
-          curl -fL --retry 3 --retry-delay 2 "https://cdn.3dassets.dev/assets/39227/v1/model.glb" -o /tmp/training-yard-source.glb
+          curl -fL --retry 3 --retry-delay 2 "https://cdn.3dassets.dev/assets/37252/v1/model.glb" -o buildings/drill/training-yard.glb
           python - <<'PY'
           import json,struct,os
-          p='/tmp/training-yard-source.glb'; b=open(p,'rb').read()
-          if len(b)<100000 or struct.unpack_from('<I',b,0)[0]!=0x46546c67 or struct.unpack_from('<I',b,4)[0]!=2: raise SystemExit('Training yard GLB missing or invalid')
+          p='buildings/drill/training-yard.glb'; b=open(p,'rb').read()
+          if len(b)<100000 or len(b)>25000000 or struct.unpack_from('<I',b,0)[0]!=0x46546c67 or struct.unpack_from('<I',b,4)[0]!=2: raise SystemExit('New tournament ground GLB missing, invalid, or too large')
           off=12; doc=None
           while off+8<=len(b):
-            n,t=struct.unpack_from('<II',b,off);off+=8
-            if t==0x4E4F534A: doc=json.loads(b[off:off+n])
-            off+=n
-          if not doc or not doc.get('meshes'): raise SystemExit('Training yard GLB has no meshes')
-          print('TRAINING_YARD bytes=',len(b),'meshes=',len(doc.get('meshes',[])),'nodes=',len(doc.get('nodes',[])))
-          for i,n in enumerate(doc.get('nodes',[])): print('NODE',i,'name=',n.get('name'),'mesh=',n.get('mesh'))
-          for i,m in enumerate(doc.get('meshes',[])): print('MESH',i,'name=',m.get('name'),'primitives=',len(m.get('primitives',[])))
-          PY
-      - name: Download and prepare CC0 military training yard GLB
-        run: |
-          mkdir -p buildings/drill
-          curl -fL --retry 3 --retry-delay 2 "https://cdn.3dassets.dev/assets/39227/v1/model.glb" -o buildings/drill/training-yard.glb
-          python - <<'PY'
-          import json,struct,re
-          p='buildings/drill/training-yard.glb'; b=open(p,'rb').read()
-          if len(b)<100000 or struct.unpack_from('<I',b,0)[0]!=0x46546c67 or struct.unpack_from('<I',b,4)[0]!=2: raise SystemExit('Training yard GLB missing or invalid')
-          off=12; doc=None; chunks=[]
-          while off+8<=len(b):
-            n,t=struct.unpack_from('<II',b,off);off+=8; payload=b[off:off+n];off+=n
-            if t==0x4E4F534A: doc=json.loads(payload.decode('utf-8').rstrip(' \\t\\r\\n\\0'))
-            chunks.append((t,payload))
-          if not doc or not doc.get('meshes'): raise SystemExit('Training yard GLB has no meshes')
-          # Remove every human-character group (027–042); retain the yard, dummies, racks and banners.
-          pattern=re.compile(r'^(02[7-9]|03[0-9]|04[0-2])-')
-          removed=[]
-          def prune(parent):
-            kept=[]
-            for idx in parent.get('children',[]):
-              node=doc['nodes'][idx]; name=node.get('name','')
-              if pattern.match(name): removed.append(name); continue
-              prune(node); kept.append(idx)
-            parent['children']=kept
-          for root in doc.get('scenes',[{}])[doc.get('scene',0)].get('nodes',[]):
-            node=doc['nodes'][root]
-            if pattern.match(node.get('name','')): removed.append(node.get('name'))
-            else: prune(node)
-          # Rebuild the GLB JSON chunk; preserve the binary chunk and all material/texture data.
-          raw=json.dumps(doc,separators=(',',':')).encode('utf-8'); raw+=b' '*((4-len(raw)%4)%4)
-          out=bytearray(struct.pack('<III',0x46546c67,2,0))
-          for t,payload in chunks:
-            if t==0x4E4F534A: payload=raw
-            out+=struct.pack('<II',len(payload),t)+payload
-          struct.pack_into('<I',out,8,len(out))
-          open(p,'wb').write(out)
+              n,t=struct.unpack_from('<II',b,off);off+=8
+              if t==0x4E4F534A: doc=json.loads(b[off:off+n])
+              off+=n
+          if not doc or not doc.get('meshes'): raise SystemExit('New tournament ground GLB has no meshes')
           tris=sum((doc['accessors'][pr['indices']]['count']//3 if 'indices' in pr else doc['accessors'][pr['attributes']['POSITION']]['count']//3) for mesh in doc['meshes'] for pr in mesh.get('primitives',[]))
-          print('TRAINING_YARD_READY bytes=',len(out),'meshes=',len(doc['meshes']),'nodes_removed=',len(removed),'triangles_total=',tris,'removed_groups=',','.join(removed))
-          if not removed or len(removed)<8: raise SystemExit('Expected character groups were not removed')
+          print('NEW_TOURNAMENT_GROUND_READY bytes=',len(b),'meshes=',len(doc['meshes']),'nodes=',len(doc.get('nodes',[])),'triangles=',tris,'images=',len(doc.get('images',[])))
+          if tris<5000: raise SystemExit('Tournament ground model unexpectedly simple')
           PY
-          test -s buildings/drill/training-yard.glb
           python - <<'PY'
           import trimesh
           scene=trimesh.load('buildings/drill/training-yard.glb',force='scene')
-          print('TRAINING_YARD_SCENE_BOUNDS=',scene.bounds.tolist())
-          print('TRAINING_YARD_SCENE_EXTENTS=',scene.extents.tolist())
-          print('TRAINING_YARD_GEOMETRIES=',len(scene.geometry))
-          print('TRAINING_YARD_SCENE_NODES=',len(scene.graph.nodes_geometry))
-          rows=[]
-          for node in scene.graph.nodes_geometry:
-              transform,geom_name=scene.graph.get(node)
-              mesh=scene.geometry[geom_name]
-              corners=trimesh.bounds.corners(mesh.bounds)
-              transformed=trimesh.transform_points(corners,transform)
-              bounds=[transformed.min(axis=0),transformed.max(axis=0)]
-              ext=(bounds[1]-bounds[0]).tolist()
-              rows.append((max(ext),node,geom_name,ext,[bounds[0].tolist(),bounds[1].tolist()]))
-          for row in sorted(rows,reverse=True)[:20]: print('TRAINING_YARD_LARGEST_PART=',row)
-          for node in scene.graph.nodes_geometry:
-              transform,geom_name=scene.graph.get(node)
-              if 'gallery-wall' in node or 'gallery-wall' in geom_name:
-                  print('TRAINING_YARD_GALLERY_TRANSFORM=',node,geom_name,transform.tolist())
+          print('TOURNAMENT_GROUND_BOUNDS=',scene.bounds.tolist())
+          print('TOURNAMENT_GROUND_EXTENTS=',scene.extents.tolist())
+          print('TOURNAMENT_GROUND_GEOMETRIES=',len(scene.geometry))
           PY
-      - name: Add detailed medieval training-yard equipment
-        run: |
-          python - <<'PY'
-          import trimesh, numpy as np
-          from pathlib import Path
-          scene=trimesh.Scene()
-          mats={
-            'stone':[111,103,88,255],'sand':[177,145,99,255],'wood':[83,49,29,255],
-            'wood2':[119,77,43,255],'iron':[65,68,70,255],'gold':[185,143,59,255],
-            'red':[132,39,34,255],'blue':[42,67,91,255],'canvas':[179,157,119,255],
-            'straw':[171,139,73,255],'leather':[92,52,35,255]
-          }
-          def add(mesh,mat,name):
-              mesh.visual=trimesh.visual.ColorVisuals(mesh,face_colors=np.tile(mats[mat],(len(mesh.faces),1)))
-              scene.add_geometry(mesh,node_name=name,geom_name=name)
-          def box(name,xyz,size,mat):
-              m=trimesh.creation.box(extents=size);m.apply_translation(xyz);add(m,mat,name)
-          def cyl(name,xyz,r,h,mat,axis='z'):
-              m=trimesh.creation.cylinder(radius=r,height=h,sections=12)
-              if axis=='x':m.apply_transform(trimesh.transformations.rotation_matrix(np.pi/2,[0,1,0]))
-              if axis=='y':m.apply_transform(trimesh.transformations.rotation_matrix(np.pi/2,[1,0,0]))
-              m.apply_translation(xyz);add(m,mat,name)
-          def pole(x,y,z,h,mat='wood',r=.65):
-              cyl('pole',(x,y,z+h/2),r,h,mat)
-          # Broad packed-earth training ground and stone perimeter
-          box('packed-earth-yard',(0,0,-1.2),(100,78,2.4),'sand')
-          for x in [-49,49]:
-              for y in np.arange(-36,37,6): box('perimeter-stone',(x,y,0),(2,5.5,2),'stone')
-          for y in [-38,38]:
-              for x in np.arange(-45,46,6): box('perimeter-stone',(x,y,0),(5.5,2,2),'stone')
-          # Three archery lanes with timber target frames and layered target faces
-          for i,x in enumerate([-30,0,30]):
-              box('target-foot',(x,25,1.5),(12,3,3),'wood')
-              for dx in [-4.5,4.5]:
-                  pole(x+dx,25,3,15,'wood',.65)
-              box('target-crossbar',(x,25,17),(10,1.2,1.2),'wood2')
-              cyl('target-board',(x,23.9,11),4.4,.8,'straw','y')
-              cyl('target-red-ring',(x,23.35,11),3.0,.35,'red','y')
-              cyl('target-inner',(x,23.1,11),1.5,.25,'canvas','y')
-              cyl('target-bullseye',(x,22.9,11),.55,.18,'red','y')
-              for dx in [-5,5]:box('lane-marker',(x+dx,3,0.4),(.45,38,.8),'stone')
-          # Two full-size wooden training dummies, no human figures
-          for x in [-17,17]:
-              pole(x,-7,1,15,'wood',1.15)
-              box('dummy-crossbar',(x,-7,10),(12,1.5,1.5),'wood2')
-              box('dummy-shield',(x,-7,5),(5,2,5),'leather')
-              cyl('dummy-head',(x,-7,14),1.8,2,'straw')
-          # Weapon racks with spears, shields and practice swords
-          for x in [-42,42]:
-              box('rack-base',(x,-8,1.5),(12,3,3),'wood')
-              for dx in [-5,5]:pole(x+dx,-8,3,12,'wood2',.65)
-              box('rack-top',(x,-8,14),(12,2,2),'wood')
-              for j in range(5):
-                  xx=x-4+j*2
-                  pole(xx,-8,5,17,'wood',.28)
-                  box('spear-head',(xx,-8,22),(.8,.8,2.5),'iron')
-              for j in range(3):
-                  cyl('round-shield',(x-3+j*3,-11,5),1.7,.6,['red','blue','canvas'][j],'y')
-          # Low obstacle course, hurdles and timber barricades
-          for y in [-22,-12]:
-              for x in [-28,-14,0,14,28]:
-                  box('training-hurdle',(x,y,2.5),(8,1.2,5),'wood2')
-                  for dx in [-3.5,3.5]:box('hurdle-leg',(x+dx,y,1.4),(1.1,2,2.8),'wood')
-          for x in [-39,39]:
-              for y in [-25,-18,-11]:
-                  box('barricade',(x,y,3),(9,2,6),'wood')
-          # Supply corner: crates, barrels, stacked shields
-          for x,y in [(-42,-31),(-34,-31),(34,-31),(42,-31)]:
-              box('supply-crate',(x,y,2.2),(5,5,4.4),'wood2')
-              box('crate-lid',(x,y,4.6),(5.3,5.3,.6),'wood')
-          for x in [-24,24]:
-              cyl('supply-barrel',(x,-31,3),2.1,6,'wood2')
-              for z in [1,5]:cyl('barrel-hoop',(x,-31,z),2.2,.35,'iron')
-          # Tall pennants at the entrance and lane corners
-          for x,y,mat in [(-45,-36,'red'),(45,-36,'blue'),(-45,30,'blue'),(45,30,'red')]:
-              pole(x,y,1,23,'wood',.55)
-              box('pennant',(x,y,19),(5,.55,6),mat)
-              box('pennant-gold-trim',(x,y-.35,16.2),(5,.2,.5),'gold')
-          # Entrance stone approach
-          for i in range(6):
-              box('entrance-paving',(0,-34+i*2.3,.15),(18,2,.3),'stone')
-          out=scene.export(file_type='glb')
-          Path('buildings/drill/training-yard-details.glb').write_bytes(out)
-          print('TRAINING_YARD_DETAILS_READY bytes=',len(out),'parts=',len(scene.geometry))
-          PY
-          test -s buildings/drill/training-yard-details.glb
+          test -s buildings/drill/training-yard.glb
       - name: Inspect warehouse GLB complexity
         run: |
           python - <<'PY'
