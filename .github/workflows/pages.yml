@@ -145,7 +145,7 @@ jobs:
               transformed=trimesh.transform_points(corners,transform)
               bounds=[transformed.min(axis=0),transformed.max(axis=0)]
               ext=(bounds[1]-bounds[0]).tolist()
-              rows.append((max(ext),node,geom_name,ext,bounds.tolist()))
+              rows.append((max(ext),node,geom_name,ext,[bounds[0].tolist(),bounds[1].tolist()]))
           for row in sorted(rows,reverse=True)[:20]: print('TRAINING_YARD_LARGEST_PART=',row)
           PY
       - name: Inspect warehouse GLB complexity
