@@ -1935,7 +1935,7 @@ function dbuild(k){activeCityScale=k==='city'?1.8:1;VB=[];pk=[];pkr=[];lbl=[];
    const military=['barracks','range','stable','drill'].includes(id),largeMilitary=id==='barracks'||id==='stable',pw=id==='castle'?82:(id==='tent'?56:(largeMilitary?68:(military?54:(core?62:(['farm','saw','quarry','mine','warehouse'].includes(id)?74:78))))),pd=id==='castle'?82:(largeMilitary?54:(military?40:(core?48:(['farm','saw','quarry','mine','warehouse'].includes(id)?64:68))));
    const baseY=addCityPad(x,z,s,pw,pd,id+':main');if(id==='castle'){TR={x,y:baseY,z,s:1.35};gK(0,0,0,74,74,27,'#827b6d',12,0);gK(0,0,27,66,66,5,'#b2a58e',12,0)}const y=baseY+(id==='castle'?32:0);TR={x,y,z,s};const a0=VB.length/12;
    /* Kazarma üçün vizual ehtiyat: səviyyə məlumatı gec yüklənsə belə bina şəhərdə görünsün. */
-   const visualLevel=id==='barracks'?Math.max(1,Number(l)||0):Number(l)||0;
+   const visualLevel=(id==='barracks'||id==='stable')?Math.max(1,Number(l)||0):Number(l)||0;
    const hasExternalGLB=(id==='barracks'&&(BARRACKS_GLB_PENDING||GLB_MODELS.some(m=>m.buildingId==='barracks')))||(id==='stable'&&(STABLE_GLB_PENDING||GLB_MODELS.some(m=>m.buildingId==='stable')));
    if(!hasExternalGLB){if(visualLevel)GM[id](visualLevel);else GM.site();}
    /* Baş qalanın ön qüllələrində kral bayraqları və metal ucluqlar */
@@ -2029,7 +2029,7 @@ else{float t=floor(vT+.5);vec2 off=vec2(mod(t,2.),floor(t/2.))*.5;vec3 tx=textur
 const SVS=`attribute vec3 aP;uniform mat4 uLV;uniform vec3 uOff;void main(){gl_Position=uLV*vec4(aP+uOff,1.);}`;
 const SFS=`precision highp float;vec4 pk(float d){vec4 e=fract(d*vec4(1.,255.,65025.,16581375.));e-=e.yzww*vec4(1./255.,1./255.,1./255.,0.);return e;}void main(){gl_FragColor=pk(gl_FragCoord.z);}`;
 function drawB(b){gl.bindBuffer(gl.ARRAY_BUFFER,b.b);[[0,3,0],[1,3,12],[2,3,24],[3,2,36],[4,1,44]].forEach(([i,n,o])=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,n,gl.FLOAT,false,48,o)});gl.drawArrays(gl.TRIANGLES,0,b.n)}
-function shadowPass(){LV=m4.mul(m4.ortho(310,50,1200),m4.look([150-SUN[0]*500,-SUN[1]*500,150-SUN[2]*500],[150,0,150]));gl.bindFramebuffer(gl.FRAMEBUFFER,smF);gl.viewport(0,0,512,512);gl.clearColor(1,1,1,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PS);gl.uniformMatrix4fv(gl.getUniformLocation(PS,'uLV'),false,LV);gl.uniform3f(gl.getUniformLocation(PS,'uOff'),0,0,0);[SB,DB].forEach(b=>b&&drawB(b));GLB_MODELS.forEach(m=>{if(m.buildingId&&!(Number(S.lv[m.buildingId])>0))return;gl.uniform3fv(gl.getUniformLocation(PS,'uOff'),m.position);m.parts.forEach(p=>drawB(p.buffer))});gl.bindFramebuffer(gl.FRAMEBUFFER,null)}
+function shadowPass(){LV=m4.mul(m4.ortho(310,50,1200),m4.look([150-SUN[0]*500,-SUN[1]*500,150-SUN[2]*500],[150,0,150]));gl.bindFramebuffer(gl.FRAMEBUFFER,smF);gl.viewport(0,0,512,512);gl.clearColor(1,1,1,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PS);gl.uniformMatrix4fv(gl.getUniformLocation(PS,'uLV'),false,LV);gl.uniform3f(gl.getUniformLocation(PS,'uOff'),0,0,0);[SB,DB].forEach(b=>b&&drawB(b));GLB_MODELS.forEach(m=>{if(m.buildingId&&m.buildingId!=='stable'&&!(Number(S.lv[m.buildingId])>0))return;gl.uniform3fv(gl.getUniformLocation(PS,'uOff'),m.position);m.parts.forEach(p=>drawB(p.buffer))});gl.bindFramebuffer(gl.FRAMEBUFFER,null)}
 function cam(a){const yaw=yawB+Math.sin(performance.now()/2800)*.1,tg=[150,12,150],fit=document.querySelector('.sky.gl[data-k="city"]')?Math.max(1,Math.min(2,1.12/Math.max(.56,a)))*(activeCityScale/1.4):1,D=camDistance*fit,e=[tg[0]+D*Math.cos(pitch)*Math.sin(yaw),tg[1]+D*Math.sin(pitch),tg[2]+D*Math.cos(pitch)*Math.cos(yaw)],f=v3.nz(v3.sub(tg,e)),r=v3.nz(v3.cr(f,[0,1,0])),u=v3.cr(r,f);return{e,tg,f,r,u,a,fov:.7}}
 function draw(){const dpr=Math.min(2,Math.max(1,window.devicePixelRatio||1)),w=Math.round(cv.clientWidth*dpr),h=Math.round(cv.clientHeight*dpr);if(!w||!h)return;if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}
  const c=cam(w/h),VP=m4.mul(m4.persp(c.fov,w/h,20,2600),m4.look(c.e,c.tg));lastVP=VP;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,w,h);gl.clearColor(.78,.87,.95,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.useProgram(PM);
@@ -2658,9 +2658,8 @@ GLinit();render();
 /* Yeni kazarma: GLB tam yüklənəndə dbuild yenidən qurulur və köhnə procedural bina silinərək GLB ilə əvəz olunur. */
 if(GLOK){
  loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
- const stableHit=pk.find(o=>o.k==='b'&&o.id==='stable');
- const stablePosition=stableHit?[(stableHit.min[0]+stableHit.max[0])/2,stableHit.min[1],(stableHit.min[2]+stableHit.max[2])/2]: [456,9,6];
- loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:2.5}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
+ const stablePosition=[576,7.4,126];
+ loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:7}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
 }
 if(!S.seen)showWelcome();
 </script>
