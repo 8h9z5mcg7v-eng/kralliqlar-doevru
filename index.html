@@ -1719,10 +1719,8 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
   });
   /* Mərkəzi həyət: iri kərpic-daş döşəmə üzərində açıq və geniş keçidlər */
   TR={x:150,y:7.05,z:150,s:1};
-  gB(-250,-250,-.65,500,500,.65,'#a99b83',3);
-  for(let q=-241;q<=241;q+=18){gB(q-.35,-250,.02,.7,500,.12,'#756b5b',0);gB(-250,q-.35,.02,500,.7,.12,'#756b5b',0)}
-  gB(-251,-251,.04,2,502,.7,'#766d60',0);gB(249,-251,.04,2,502,.7,'#766d60',0);
-  gB(-251,-251,.04,502,2,.7,'#766d60',0);gB(-251,249,.04,502,2,.7,'#766d60',0);
+  /* Vahid daş döşəmə: üst-üstə düşən iri kvadrat tor xətləri çıxarıldı */
+  gB(-250,-250,-.65,500,500,.65,'#a99b83',0);
   /* Darvazadan mərkəzi meydana dolanan geniş prospekt; çadır sahəsindən kənar keçir */
   road(150,350,220,310,18,7.42);road(220,310,220,245,13,7.42);road(220,245,220,160,13,7.42);road(220,160,220,90,13,7.42);road(220,90,150,90,13,7.42);
   /* Hərbi binalara ayrıca qısa keçidlər: genişlənmiş binaların girişlərinə yönəlir */
