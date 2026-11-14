@@ -137,6 +137,14 @@ jobs:
           print('TRAINING_YARD_SCENE_EXTENTS=',scene.extents.tolist())
           print('TRAINING_YARD_GEOMETRIES=',len(scene.geometry))
           print('TRAINING_YARD_SCENE_NODES=',len(scene.graph.nodes_geometry))
+          rows=[]
+          for node in scene.graph.nodes_geometry:
+              transform,geom_name=scene.graph.get(node)
+              mesh=scene.geometry[geom_name]
+              bounds=trimesh.bounds.transform_bounds(mesh.bounds,transform)
+              ext=(bounds[1]-bounds[0]).tolist()
+              rows.append((max(ext),node,geom_name,ext,bounds.tolist()))
+          for row in sorted(rows,reverse=True)[:20]: print('TRAINING_YARD_LARGEST_PART=',row)
           PY
       - name: Inspect warehouse GLB complexity
         run: |
