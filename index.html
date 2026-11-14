@@ -7,6 +7,7 @@
 <link rel="preload" href="buildings/tent/medieval-tent.glb" as="fetch" crossorigin="anonymous" fetchpriority="high">
 <link rel="preload" href="buildings/hospital/field-hospital-tent.glb" as="fetch" crossorigin="anonymous" fetchpriority="high">
 <link rel="preload" href="buildings/drill/training-yard.glb" as="fetch" crossorigin="anonymous" fetchpriority="high">
+<link rel="preload" href="buildings/drill/training-yard-details.glb" as="fetch" crossorigin="anonymous" fetchpriority="high">
 <meta charset="utf-8">
 <title>Krallıq</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -2678,6 +2679,7 @@ if(GLOK){
  loadGLBBuilding('buildings/tent/medieval-tent.glb',{buildingId:'tent',position:[240,7.4,402],fitSize:100}).then(()=>{TENT_GLB_PENDING=false;}).catch(e=>{TENT_GLB_PENDING=false;console.warn('Yeni hərbi çadır GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/hospital/field-hospital-tent.glb',{buildingId:'hospital',position:[270,7.4,290],fitSize:100}).then(()=>{HOSPITAL_GLB_PENDING=false;}).catch(e=>{HOSPITAL_GLB_PENDING=false;console.warn('Yeni səhra xəstəxanası GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/drill/training-yard.glb',{buildingId:'drill',position:[420,7.4,222],fitSize:100}).then(()=>{DRILL_GLB_PENDING=false;}).catch(e=>{DRILL_GLB_PENDING=false;console.warn('Yeni hərbi məşq meydanı GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/drill/training-yard-details.glb',{buildingId:'drillDetails',position:[420,7.4,222],fitSize:100}).catch(e=>console.warn('Məşq meydanı detalları yüklənmədi:',e));
 }
 if(!S.seen)showWelcome();
 </script>
