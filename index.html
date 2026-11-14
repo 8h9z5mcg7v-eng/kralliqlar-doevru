@@ -2659,7 +2659,7 @@ GLinit();render();
 if(GLOK){
  loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[456,9,-147],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
  const stableHit=pk.find(o=>o.k==='b'&&o.id==='stable');
- const stablePosition=stableHit?[(stableHit.min[0]+stableHit.max[0])/2,stableHit.min[1],(stableHit.min[2]+stableHit.max[2])/2]:[456,9,90];
+ const stablePosition=stableHit?[(stableHit.min[0]+stableHit.max[0])/2,stableHit.min[1],(stableHit.min[2]+stableHit.max[2])/2]: [456,9,6];
  loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:2.5}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
 }
 if(!S.seen)showWelcome();
