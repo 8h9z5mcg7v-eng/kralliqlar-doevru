@@ -2676,7 +2676,7 @@ if(GLOK){
  loadGLBBuilding('buildings/warehouse/medieval_warehouse.glb',{buildingId:'warehouse',position:[150,7.4,190],fitSize:120}).then(()=>{WAREHOUSE_GLB_PENDING=false;}).catch(e=>{WAREHOUSE_GLB_PENDING=false;console.warn('Yeni anbar GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/tent/medieval-tent.glb',{buildingId:'tent',position:[240,7.4,402],fitSize:100}).then(()=>{TENT_GLB_PENDING=false;}).catch(e=>{TENT_GLB_PENDING=false;console.warn('Yeni hərbi çadır GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/hospital/field-hospital-tent.glb',{buildingId:'hospital',position:[270,7.4,290],fitSize:100}).then(()=>{HOSPITAL_GLB_PENDING=false;}).catch(e=>{HOSPITAL_GLB_PENDING=false;console.warn('Yeni səhra xəstəxanası GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('buildings/drill/training-yard.glb',{buildingId:'drill',position:[420,7.4,222],fitSize:100}).then(()=>{DRILL_GLB_PENDING=false;}).catch(e=>{DRILL_GLB_PENDING=false;console.warn('Yeni hərbi məşq meydanı GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('buildings/drill/training-yard.glb',{buildingId:'drill',position:[420,7.4,222],fitSize:150}).then(()=>{DRILL_GLB_PENDING=false;}).catch(e=>{DRILL_GLB_PENDING=false;console.warn('Yeni hərbi məşq meydanı GLB yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/drill/training-yard-details.glb',{buildingId:'drillDetails',position:[420,7.4,222],fitSize:100}).catch(e=>console.warn('Məşq meydanı detalları yüklənmədi:',e));
 }
 if(!S.seen)showWelcome();
