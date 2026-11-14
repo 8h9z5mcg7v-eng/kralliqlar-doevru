@@ -130,6 +130,14 @@ jobs:
           if not removed or len(removed)<8: raise SystemExit('Expected character groups were not removed')
           PY
           test -s buildings/drill/training-yard.glb
+          python - <<'PY'
+          import trimesh
+          scene=trimesh.load('buildings/drill/training-yard.glb',force='scene')
+          print('TRAINING_YARD_SCENE_BOUNDS=',scene.bounds.tolist())
+          print('TRAINING_YARD_SCENE_EXTENTS=',scene.extents.tolist())
+          print('TRAINING_YARD_GEOMETRIES=',len(scene.geometry))
+          print('TRAINING_YARD_SCENE_NODES=',len(scene.graph.nodes_geometry))
+          PY
       - name: Inspect warehouse GLB complexity
         run: |
           python - <<'PY'
