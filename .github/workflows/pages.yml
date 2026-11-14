@@ -152,6 +152,92 @@ jobs:
               if 'gallery-wall' in node or 'gallery-wall' in geom_name:
                   print('TRAINING_YARD_GALLERY_TRANSFORM=',node,geom_name,transform.tolist())
           PY
+      - name: Add detailed medieval training-yard equipment
+        run: |
+          python - <<'PY'
+          import trimesh, numpy as np
+          from pathlib import Path
+          scene=trimesh.Scene()
+          mats={
+            'stone':[111,103,88,255],'sand':[177,145,99,255],'wood':[83,49,29,255],
+            'wood2':[119,77,43,255],'iron':[65,68,70,255],'gold':[185,143,59,255],
+            'red':[132,39,34,255],'blue':[42,67,91,255],'canvas':[179,157,119,255],
+            'straw':[171,139,73,255],'leather':[92,52,35,255]
+          }
+          def add(mesh,mat,name):
+              mesh.visual=trimesh.visual.ColorVisuals(mesh,face_colors=np.tile(mats[mat],(len(mesh.faces),1)))
+              scene.add_geometry(mesh,node_name=name,geom_name=name)
+          def box(name,xyz,size,mat):
+              m=trimesh.creation.box(extents=size);m.apply_translation(xyz);add(m,mat,name)
+          def cyl(name,xyz,r,h,mat,axis='z'):
+              m=trimesh.creation.cylinder(radius=r,height=h,sections=12)
+              if axis=='x':m.apply_transform(trimesh.transformations.rotation_matrix(np.pi/2,[0,1,0]))
+              if axis=='y':m.apply_transform(trimesh.transformations.rotation_matrix(np.pi/2,[1,0,0]))
+              m.apply_translation(xyz);add(m,mat,name)
+          def pole(x,y,z,h,mat='wood',r=.65):
+              cyl('pole',(x,y,z+h/2),r,h,mat)
+          # Broad packed-earth training ground and stone perimeter
+          box('packed-earth-yard',(0,0,-1.2),(100,78,2.4),'sand')
+          for x in [-49,49]:
+              for y in np.arange(-36,37,6): box('perimeter-stone',(x,y,0),(2,5.5,2),'stone')
+          for y in [-38,38]:
+              for x in np.arange(-45,46,6): box('perimeter-stone',(x,y,0),(5.5,2,2),'stone')
+          # Three archery lanes with timber target frames and layered target faces
+          for i,x in enumerate([-30,0,30]):
+              box('target-foot',(x,25,1.5),(12,3,3),'wood')
+              for dx in [-4.5,4.5]:
+                  pole(x+dx,25,3,15,'wood',.65)
+              box('target-crossbar',(x,25,17),(10,1.2,1.2),'wood2')
+              cyl('target-board',(x,23.9,11),4.4,.8,'straw','y')
+              cyl('target-red-ring',(x,23.35,11),3.0,.35,'red','y')
+              cyl('target-inner',(x,23.1,11),1.5,.25,'canvas','y')
+              cyl('target-bullseye',(x,22.9,11),.55,.18,'red','y')
+              for dx in [-5,5]:box('lane-marker',(x+dx,3,0.4),(.45,38,.8),'stone')
+          # Two full-size wooden training dummies, no human figures
+          for x in [-17,17]:
+              pole(x,-7,1,15,'wood',1.15)
+              box('dummy-crossbar',(x,-7,10),(12,1.5,1.5),'wood2')
+              box('dummy-shield',(x,-7,5),(5,2,5),'leather')
+              cyl('dummy-head',(x,-7,14),1.8,2,'straw')
+          # Weapon racks with spears, shields and practice swords
+          for x in [-42,42]:
+              box('rack-base',(x,-8,1.5),(12,3,3),'wood')
+              for dx in [-5,5]:pole(x+dx,-8,3,12,'wood2',.65)
+              box('rack-top',(x,-8,14),(12,2,2),'wood')
+              for j in range(5):
+                  xx=x-4+j*2
+                  pole(xx,-8,5,17,'wood',.28)
+                  box('spear-head',(xx,-8,22),(.8,.8,2.5),'iron')
+              for j in range(3):
+                  cyl('round-shield',(x-3+j*3,-11,5),1.7,.6,['red','blue','canvas'][j],'y')
+          # Low obstacle course, hurdles and timber barricades
+          for y in [-22,-12]:
+              for x in [-28,-14,0,14,28]:
+                  box('training-hurdle',(x,y,2.5),(8,1.2,5),'wood2')
+                  for dx in [-3.5,3.5]:box('hurdle-leg',(x+dx,y,1.4),(1.1,2,2.8),'wood')
+          for x in [-39,39]:
+              for y in [-25,-18,-11]:
+                  box('barricade',(x,y,3),(9,2,6),'wood')
+          # Supply corner: crates, barrels, stacked shields
+          for x,y in [(-42,-31),(-34,-31),(34,-31),(42,-31)]:
+              box('supply-crate',(x,y,2.2),(5,5,4.4),'wood2')
+              box('crate-lid',(x,y,4.6),(5.3,5.3,.6),'wood')
+          for x in [-24,24]:
+              cyl('supply-barrel',(x,-31,3),2.1,6,'wood2')
+              for z in [1,5]:cyl('barrel-hoop',(x,-31,z),2.2,.35,'iron')
+          # Tall pennants at the entrance and lane corners
+          for x,y,mat in [(-45,-36,'red'),(45,-36,'blue'),(-45,30,'blue'),(45,30,'red')]:
+              pole(x,y,1,23,'wood',.55)
+              box('pennant',(x,y,19),(5,.55,6),mat)
+              box('pennant-gold-trim',(x,y-.35,16.2),(5,.2,.5),'gold')
+          # Entrance stone approach
+          for i in range(6):
+              box('entrance-paving',(0,-34+i*2.3,.15),(18,2,.3),'stone')
+          out=scene.export(file_type='glb')
+          Path('buildings/drill/training-yard-details.glb').write_bytes(out)
+          print('TRAINING_YARD_DETAILS_READY bytes=',len(out),'parts=',len(scene.geometry))
+          PY
+          test -s buildings/drill/training-yard-details.glb
       - name: Inspect warehouse GLB complexity
         run: |
           python - <<'PY'
