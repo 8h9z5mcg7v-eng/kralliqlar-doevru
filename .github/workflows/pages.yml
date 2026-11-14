@@ -141,7 +141,9 @@ jobs:
           for node in scene.graph.nodes_geometry:
               transform,geom_name=scene.graph.get(node)
               mesh=scene.geometry[geom_name]
-              bounds=trimesh.bounds.transform_bounds(mesh.bounds,transform)
+              corners=trimesh.bounds.corners(mesh.bounds)
+              transformed=trimesh.transform_points(corners,transform)
+              bounds=[transformed.min(axis=0),transformed.max(axis=0)]
               ext=(bounds[1]-bounds[0]).tolist()
               rows.append((max(ext),node,geom_name,ext,bounds.tolist()))
           for row in sorted(rows,reverse=True)[:20]: print('TRAINING_YARD_LARGEST_PART=',row)
