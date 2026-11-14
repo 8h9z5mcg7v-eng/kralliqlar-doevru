@@ -71,6 +71,24 @@ jobs:
           if tris<1000: raise SystemExit('Unexpectedly empty field hospital model')
           print('FIELD_HOSPITAL_GLB bytes=',len(b),'meshes=',len(doc['meshes']),'parts=',parts,'triangles=',tris,'images=',len(doc.get('images',[])))
           PY
+      - name: Download and inspect CC0 training yard model
+        run: |
+          mkdir -p buildings/drill
+          curl -fL --retry 3 --retry-delay 2 "https://cdn.3dassets.dev/assets/39227/v1/model.glb" -o /tmp/training-yard-source.glb
+          python - <<'PY'
+          import json,struct,os
+          p='/tmp/training-yard-source.glb'; b=open(p,'rb').read()
+          if len(b)<100000 or struct.unpack_from('<I',b,0)[0]!=0x46546c67 or struct.unpack_from('<I',b,4)[0]!=2: raise SystemExit('Training yard GLB missing or invalid')
+          off=12; doc=None
+          while off+8<=len(b):
+            n,t=struct.unpack_from('<II',b,off);off+=8
+            if t==0x4E4F534A: doc=json.loads(b[off:off+n])
+            off+=n
+          if not doc or not doc.get('meshes'): raise SystemExit('Training yard GLB has no meshes')
+          print('TRAINING_YARD bytes=',len(b),'meshes=',len(doc.get('meshes',[])),'nodes=',len(doc.get('nodes',[])))
+          for i,n in enumerate(doc.get('nodes',[])): print('NODE',i,'name=',n.get('name'),'mesh=',n.get('mesh'))
+          for i,m in enumerate(doc.get('meshes',[])): print('MESH',i,'name=',m.get('name'),'primitives=',len(m.get('primitives',[])))
+          PY
       - name: Inspect warehouse GLB complexity
         run: |
           python - <<'PY'
