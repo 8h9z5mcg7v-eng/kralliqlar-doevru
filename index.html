@@ -1811,11 +1811,21 @@ async function loadGLBBuilding(url,options={}){
 let CASTLE_LV11_LOADING=false,CASTLE_LV11_LOADED=false;
 async function ensureCastleLv11Model(){
  if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED||Number(S.lv.castle||1)<11)return;
- CASTLE_LV11_LOADING=true;
+ CASTLE_LV11_LOADING=true;toast('🏰 Yeni qala modeli yüklənir...');
  try{
   const model=await loadGLBBuilding('https://github.com/8h9z5mcg7v-eng/kralliqlar-doevru/releases/download/castle-lv11-20/castle_sides.glb',{buildingId:'castle',position:[150,7.4,70],fitSize:500});
-  if(model){model.minLevel=11;const old=GLB_MODELS.find(m=>m!==model&&m.buildingId==='castle');if(old)old.maxLevel=10;CASTLE_LV11_LOADED=true;if(DB)attachGL();console.info('LV 11–20 qala modeli aktivdir');}
- }catch(e){console.warn('LV 11–20 qala modeli yüklənmədi:',e);}
+  if(!model)throw new Error('Model boş qayıtdı');
+  model.minLevel=11;
+  const old=GLB_MODELS.find(m=>m!==model&&m.buildingId==='castle');
+  if(old)old.maxLevel=10;
+  CASTLE_LV11_LOADED=true;
+  if(DB)attachGL();
+  toast('✅ LV 11–20 qala modeli yükləndi');
+  console.info('LV 11–20 qala modeli aktivdir; hissə sayı:',model.parts.length);
+ }catch(e){
+  console.warn('LV 11–20 qala modeli yüklənmədi:',e);
+  toast('⚠️ Yeni qala yüklənmədi: '+(e&&e.message?e.message:'şəbəkə xətası'));
+ }
  finally{CASTLE_LV11_LOADING=false;}
 }
 window.loadGLBBuilding=loadGLBBuilding;
