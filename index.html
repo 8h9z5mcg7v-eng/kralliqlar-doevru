@@ -1763,7 +1763,7 @@ function glbReadAccessor(g,bin,index){const a=g.accessors[index],v=g.bufferViews
 async function loadGLBBuilding(url,options={}){
  if(!GLOK)throw new Error('WebGL mühərriki hazır deyil');
  if(GLB_MODEL_URLS.has(url))return GLB_MODELS.find(x=>x.url===url)||null;
- const res=await fetch(url);if(!res.ok)throw new Error('GLB faylı tapılmadı: '+res.status);
+ const res=await fetch(url,{headers:{Accept:'application/octet-stream'}});if(!res.ok)throw new Error('GLB faylı tapılmadı: HTTP '+res.status);
  const ab=await res.arrayBuffer(),dv=new DataView(ab);if(dv.getUint32(0,true)!==0x46546c67||dv.getUint32(4,true)!==2)throw new Error('Dəstəklənən GLB 2.0 faylı deyil');
  let off=12,g=null,bin=null;while(off+8<=ab.byteLength){const len=dv.getUint32(off,true),type=dv.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)g=JSON.parse(new TextDecoder().decode(new Uint8Array(ab,off,len)).replace(/\\s+$/,''));else if(type===0x004e4942)bin=ab.slice(off,off+len);off+=len}
  if(!g||!bin)throw new Error('GLB JSON/BIN hissəsi natamamdır');
@@ -1813,7 +1813,7 @@ async function ensureCastleLv11Model(){
  if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED||Number(S.lv.castle||1)<11)return;
  CASTLE_LV11_LOADING=true;toast('🏰 Yeni qala modeli yüklənir...');
  try{
-  const model=await loadGLBBuilding('https://github.com/8h9z5mcg7v-eng/kralliqlar-doevru/releases/download/castle-lv11-20/castle_sides.glb',{buildingId:'castle',position:[150,7.4,70],fitSize:500});
+  const model=await loadGLBBuilding('https://api.github.com/repos/8h9z5mcg7v-eng/kralliqlar-doevru/releases/assets/750888039',{buildingId:'castle',position:[150,7.4,70],fitSize:500});
   if(!model)throw new Error('Model boş qayıtdı');
   model.minLevel=11;
   const old=GLB_MODELS.find(m=>m!==model&&m.buildingId==='castle');
