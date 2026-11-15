@@ -1815,7 +1815,7 @@ async function loadGLBBuildingBuffer(ab,url,options={}){
 let CASTLE_LV11_LOADING=false,CASTLE_LV11_LOADED=false;
 async function loadCastleLv11Parts(){
  const base='https://raw.githubusercontent.com/8h9z5mcg7v-eng/kralliqlar-doevru/main/assets/castle/';
- const names=['castle_part1.bin','castle_part2.bin','castle_part3.bin'];
+ const names=['castle_original_part1.bin','castle_original_part2.bin','castle_original_part3.bin','castle_original_part4.bin'];
  const chunks=await Promise.all(names.map(async name=>{
   const res=await fetch(base+name,{cache:'no-store'});
   if(!res.ok)throw new Error(name+' yüklənmədi: HTTP '+res.status);
@@ -1824,8 +1824,8 @@ async function loadCastleLv11Parts(){
  const total=chunks.reduce((n,x)=>n+x.byteLength,0);
  const joined=new Uint8Array(total);let offset=0;
  for(const chunk of chunks){joined.set(new Uint8Array(chunk),offset);offset+=chunk.byteLength;}
- console.info('Qala GLB hissələri birləşdirildi:',(total/1048576).toFixed(2),'MB');
- return loadGLBBuildingBuffer(joined.buffer,'castle-lv11-20-parts',{buildingId:'castle',fullCastle:true,position:[150,7.4,70],fitSize:500});
+ console.info('Orijinal qala GLB hissələri birləşdirildi:',(total/1048576).toFixed(2),'MB');
+ return loadGLBBuildingBuffer(joined.buffer,'castle-original-lv11-20-parts',{buildingId:'castle',fullCastle:true,position:[150,7.4,70],fitSize:500});
 }
 async function ensureCastleLv11Model(){
  if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED||Number(S.lv.castle||1)<11)return;
