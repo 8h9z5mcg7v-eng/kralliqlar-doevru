@@ -2417,7 +2417,7 @@ if(GLOK){
  loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[150,7.4,58],fitSize:500}).then(()=>{if(DB)attachGL();console.info('Wolfhold barracks GLB yükləndi')}).catch(e=>{console.warn('GLB kazarma yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('assets/stable/barn.glb',{buildingId:'stable',position:[150,7.4,58],fitSize:500}).then(()=>{if(DB)attachGL();console.info('Ahır GLB yükləndi')}).catch(e=>{console.warn('GLB ahır yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('assets/academy/university-building.glb',{buildingId:'academy',position:[150,7.4,300],fitSize:360}).then(()=>{if(DB)attachGL();console.info('Elmi Akademiya GLB qaladan aralı, ön sırada yerləşdirildi')}).catch(e=>{console.warn('Akademiya GLB yüklənmədi:',e);if(DB)attachGL()});
- loadGLBBuilding('assets/farm/windmill.glb',{buildingId:'farm',position:[-250,7.4,500],fitSize:340}).then(model=>{if(!model)return;model.fieldIndex=1;const second={...model,position:[250,7.4,500],fieldIndex:2};GLB_MODELS.push(second);if(DB)attachGL();console.info('Ferma modelləri bir sırada yerləşdirildi')}).catch(e=>{console.warn('Ferma GLB yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('assets/farm/windmill.glb',{buildingId:'farm',position:[-250,7.4,500],fitSize:340}).then(model=>{if(!model)return;model.fieldIndex=1;const second={...model,position:[-250,7.4,300],fieldIndex:2};GLB_MODELS.push(second);if(DB)attachGL();console.info('Ferma modelləri bir sırada yerləşdirildi')}).catch(e=>{console.warn('Ferma GLB yüklənmədi:',e);if(DB)attachGL()});
 
 }
 if(!S.seen)showWelcome();
