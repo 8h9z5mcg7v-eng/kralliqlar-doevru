@@ -1761,10 +1761,14 @@ function glbReadAccessor(g,bin,index){const a=g.accessors[index],v=g.bufferViews
  const read=(p)=>{switch(a.componentType){case 5120:return dv.getInt8(p);case 5121:return dv.getUint8(p);case 5122:return dv.getInt16(p,true);case 5123:return dv.getUint16(p,true);case 5125:return dv.getUint32(p,true);default:return dv.getFloat32(p,true)}};
  for(let i=0;i<a.count;i++){const row=[];for(let j=0;j<n;j++){let x=read(off+i*stride+j*b);if(a.normalized&&a.componentType!==5126){if(a.componentType===5120)x=Math.max(-1,x/127);else if(a.componentType===5121)x/=255;else if(a.componentType===5122)x=Math.max(-1,x/32767);else if(a.componentType===5123)x/=65535}row.push(x)}out.push(row)}return out}
 async function loadGLBBuilding(url,options={}){
- if(!GLOK)throw new Error('WebGL mühərriki hazır deyil');
  if(GLB_MODEL_URLS.has(url))return GLB_MODELS.find(x=>x.url===url)||null;
  const res=await fetch(url,{headers:{Accept:'application/octet-stream'}});if(!res.ok)throw new Error('GLB faylı tapılmadı: HTTP '+res.status);
- const ab=await res.arrayBuffer(),dv=new DataView(ab);if(dv.getUint32(0,true)!==0x46546c67||dv.getUint32(4,true)!==2)throw new Error('Dəstəklənən GLB 2.0 faylı deyil');
+ return loadGLBBuildingBuffer(await res.arrayBuffer(),url,options);
+}
+async function loadGLBBuildingBuffer(ab,url,options={}){
+ if(!GLOK)throw new Error('WebGL mühərriki hazır deyil');
+ if(GLB_MODEL_URLS.has(url))return GLB_MODELS.find(x=>x.url===url)||null;
+ const dv=new DataView(ab);if(dv.getUint32(0,true)!==0x46546c67||dv.getUint32(4,true)!==2)throw new Error('Dəstəklənən GLB 2.0 faylı deyil');
  let off=12,g=null,bin=null;while(off+8<=ab.byteLength){const len=dv.getUint32(off,true),type=dv.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)g=JSON.parse(new TextDecoder().decode(new Uint8Array(ab,off,len)).replace(/\\s+$/,''));else if(type===0x004e4942)bin=ab.slice(off,off+len);off+=len}
  if(!g||!bin)throw new Error('GLB JSON/BIN hissəsi natamamdır');
  const base=options.color||[1,1,1,1],scale=options.scale||1,origin=options.position||[150,7,150],parts=[],imageTextures=[],fitSize=Number(options.fitSize)||0;
@@ -1809,11 +1813,25 @@ async function loadGLBBuilding(url,options={}){
  const model={url,parts,position:origin,buildingId:options.buildingId||null};GLB_MODELS.push(model);GLB_MODEL_URLS.add(url);if(DB){attachGL();}return model;
 }
 let CASTLE_LV11_LOADING=false,CASTLE_LV11_LOADED=false;
+async function loadCastleLv11Parts(){
+ const base='https://raw.githubusercontent.com/8h9z5mcg7v-eng/kralliqlar-doevru/main/assets/castle/';
+ const names=['castle_part1.bin','castle_part2.bin','castle_part3.bin'];
+ const chunks=await Promise.all(names.map(async name=>{
+  const res=await fetch(base+name,{cache:'no-store'});
+  if(!res.ok)throw new Error(name+' yüklənmədi: HTTP '+res.status);
+  return await res.arrayBuffer();
+ }));
+ const total=chunks.reduce((n,x)=>n+x.byteLength,0);
+ const joined=new Uint8Array(total);let offset=0;
+ for(const chunk of chunks){joined.set(new Uint8Array(chunk),offset);offset+=chunk.byteLength;}
+ console.info('Qala GLB hissələri birləşdirildi:',(total/1048576).toFixed(2),'MB');
+ return loadGLBBuildingBuffer(joined.buffer,'castle-lv11-20-parts',{buildingId:'castle',fullCastle:true,position:[150,7.4,70],fitSize:500});
+}
 async function ensureCastleLv11Model(){
  if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED||Number(S.lv.castle||1)<11)return;
  CASTLE_LV11_LOADING=true;toast('🏰 Yeni qala modeli yüklənir...');
  try{
-  const model=await loadGLBBuilding('https://github.com/8h9z5mcg7v-eng/kralliqlar-doevru/releases/download/castle-lv11-20/castle_lv11_20_v5.glb',{buildingId:'castle',fullCastle:true,position:[150,7.4,70],fitSize:500});
+  const model=await loadCastleLv11Parts();
   if(!model)throw new Error('Model boş qayıtdı');
   model.minLevel=11;model.maxLevel=20;
   const old=GLB_MODELS.find(m=>m!==model&&m.buildingId==='castle');
