@@ -1817,7 +1817,7 @@ async function loadCastleLv11Parts(){
  const base='https://raw.githubusercontent.com/8h9z5mcg7v-eng/kralliqlar-doevru/main/assets/castle/';
  const names=['castle_original_part1.bin','castle_original_part2.bin','castle_original_part3.bin','castle_original_part4.bin'];
  const chunks=await Promise.all(names.map(async name=>{
-  const res=await fetch(base+name,{cache:'no-store'});
+  const res=await fetch(base+name,{cache:'force-cache'});
   if(!res.ok)throw new Error(name+' yüklənmədi: HTTP '+res.status);
   return await res.arrayBuffer();
  }));
