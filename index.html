@@ -1772,8 +1772,10 @@ async function loadGLBBuildingBuffer(ab,url,options={}){
  let off=12,g=null,bin=null;while(off+8<=ab.byteLength){const len=dv.getUint32(off,true),type=dv.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)g=JSON.parse(new TextDecoder().decode(new Uint8Array(ab,off,len)).replace(/\\s+$/,''));else if(type===0x004e4942)bin=ab.slice(off,off+len);off+=len}
  if(!g||!bin)throw new Error('GLB JSON/BIN hissəsi natamamdır');
  const base=options.color||[1,1,1,1],scale=options.scale||1,origin=options.position||[150,7,150],parts=[],imageTextures=[],fitSize=Number(options.fitSize)||0;
- for(let i=0;i<(g.images||[]).length;i++){
-  const im=g.images[i];let tex=null,source=null,objectUrl=null;
+ const imgs=g.images||[];
+ for(let batch=0;batch<imgs.length;batch+=4){
+  await Promise.all(imgs.slice(batch,batch+4).map(async (im,j)=>{
+  const i=batch+j;let tex=null,source=null,objectUrl=null;
   try{
    if(im.bufferView!==undefined){
     const v=g.bufferViews[im.bufferView],bytes=bin.slice(v.byteOffset||0,(v.byteOffset||0)+v.byteLength),blob=new Blob([bytes],{type:im.mimeType||'image/png'});
@@ -1787,6 +1789,7 @@ async function loadGLBBuildingBuffer(ab,url,options={}){
   }catch(e){console.warn('GLB teksturası oxunmadı:',e)}
   finally{if(source&&typeof source.close==='function')source.close();if(objectUrl)URL.revokeObjectURL(objectUrl)}
   imageTextures[i]=tex;
+  }));
  }
  let fitTransform=null;
  const emitPrimitive=(prim,world)=>{if(prim.mode!==undefined&&prim.mode!==4&&prim.mode!==5&&prim.mode!==6)return;
