@@ -1462,20 +1462,6 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
   TR={x:150,y:2.05,z:150,s:1};
   /* Uzaqlaşdırılmış kamerada ağ boşluq görünməsin: geniş meşə-yaşıl zəmin */
   gB(-1500,-1500,-12,3000,3000,12,'#557d43',3);
-  /* Şəhəri əhatə edən qeyri-bərabər, təbii dağ silueti */
-  const ridgeColors=['#686b60','#77786d','#5e665c','#827b6d','#62695f'];
-  for(let i=0;i<28;i++){
-   const ang=i/28*Math.PI*2,rad=720+Math.sin(i*2.37)*58+Math.cos(i*1.13)*35;
-   const x=Math.cos(ang)*rad,z=Math.sin(ang)*rad;
-   const h=105+((i*37)%93),base=92+((i*19)%58),top=5+((i*11)%24);
-   gK(x,z,0,base,top,h,ridgeColors[i%ridgeColors.length],7+(i%3)*2,3);
-   if(i%2===0)gK(x+Math.cos(ang)*58,z+Math.sin(ang)*58,0,base*.55,2,h*.62,'#77796d',7,3);
-  }
-  /* Dağ ətəyində meşə zolağı */
-  for(let i=0;i<64;i++){
-   const ang=i/64*Math.PI*2,rad=575+((i*29)%95),x=Math.cos(ang)*rad,z=Math.sin(ang)*rad;
-   TR={x:150,y:2.05,z:150,s:1};tree(x,z,.72+(i%4)*.12,i%3===0);
-  }
   TR={x:150,y:2.05,z:150,s:1};
   return; // Şəhər binaları GLB modelləri ilə ayrıca çəkilir
   if(false){
