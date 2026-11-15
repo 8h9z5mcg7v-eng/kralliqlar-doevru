@@ -1817,7 +1817,7 @@ async function ensureCastleLv11Model(){
   if(!model)throw new Error('Model boş qayıtdı');
   model.minLevel=11;
   const old=GLB_MODELS.find(m=>m!==model&&m.buildingId==='castle');
-  if(old)old.maxLevel=10;
+  if(old)old.maxLevel=20;
   CASTLE_LV11_LOADED=true;
   if(DB)attachGL();
   toast('✅ LV 11–20 qala modeli yükləndi');
