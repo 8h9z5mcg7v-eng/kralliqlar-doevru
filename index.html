@@ -1791,11 +1791,11 @@ async function loadGLBBuilding(url,options={}){
   let ids=prim.indices===undefined?pos.map((_,i)=>i):glbReadAccessor(g,bin,prim.indices).map(x=>x[0]);if(prim.mode===5){const q=[];for(let i=2;i<ids.length;i++)q.push(...(i%2?[ids[i-1],ids[i-2],ids[i]]:[ids[i-2],ids[i-1],ids[i]]));ids=q}else if(prim.mode===6){const q=[];for(let i=2;i<ids.length;i++)q.push(ids[0],ids[i-1],ids[i]);ids=q}
   const mat=g.materials&&g.materials[prim.material||0],pbr=mat&&mat.pbrMetallicRoughness,fac=pbr&&pbr.baseColorFactor||[1,1,1,1],texInfo=pbr&&pbr.baseColorTexture,texDef=texInfo&&g.textures&&g.textures[texInfo.index],texture=texDef&&imageTextures[texDef.source]||glbWhiteTexture;
   for(let i=0;i+2<ids.length;i+=3){const tri=[ids[i],ids[i+1],ids[i+2]],p=tri.map(j=>{const q=glbPoint(world,pos[j].slice(0,3));return fitTransform?[(q[0]-fitTransform.cx)*fitTransform.scale*scale,(q[1]-fitTransform.minY)*fitTransform.scale*scale,(q[2]-fitTransform.cz)*fitTransform.scale*scale]:q.map(v=>v*scale)}),face=v3.nz(v3.cr(v3.sub(p[1],p[0]),v3.sub(p[2],p[0])));
-   if(options.buildingId==='castle'){const cx=(p[0][0]+p[1][0]+p[2][0])/3,cy=(p[0][1]+p[1][1]+p[2][1])/3,cz=(p[0][2]+p[1][2]+p[2][2])/3;if(cy<3.2&&(Math.abs(cx)>78||Math.abs(cz)>78))continue;}tri.forEach((j,k)=>{const n=norm?v3.nz(glbVector(world,norm[j].slice(0,3))):face,c=col?col[j]:[1,1,1,1],u=uv?uv[j]:[0,0],rgb=[0,1,2].map(z=>Math.max(0,Math.min(1,(c[z]||0)*fac[z]*base[z])));verts.push(p[k][0],p[k][1],p[k][2],n[0],n[1],n[2],rgb[0],rgb[1],rgb[2],u[0],u[1],6)});
+   if(options.buildingId==='castle'&&!options.fullCastle){const cx=(p[0][0]+p[1][0]+p[2][0])/3,cy=(p[0][1]+p[1][1]+p[2][1])/3,cz=(p[0][2]+p[1][2]+p[2][2])/3;if(cy<3.2&&(Math.abs(cx)>78||Math.abs(cz)>78))continue;}tri.forEach((j,k)=>{const n=norm?v3.nz(glbVector(world,norm[j].slice(0,3))):face,c=col?col[j]:[1,1,1,1],u=uv?uv[j]:[0,0],rgb=[0,1,2].map(z=>Math.max(0,Math.min(1,(c[z]||0)*fac[z]*base[z])));verts.push(p[k][0],p[k][1],p[k][2],n[0],n[1],n[2],rgb[0],rgb[1],rgb[2],u[0],u[1],6)});
   }
   if(verts.length)parts.push({buffer:mkBuf(verts),texture});
  };
- const nodes=g.nodes||[],isExcludedNode=n=>(options.buildingId==='warehouse'||options.buildingId==='castle')&&/(tree|pine|oak|bush|shrub|plant|foliage|vegetation|grass|rock|stone|fern|flower|leaf|stump|terrain|ground|base)/i.test((n.name||'')+' '+(n.mesh!==undefined?(g.meshes[n.mesh]?.name||''):'')),walk=(ni,parent,seen)=>{if(seen.has(ni))return;seen.add(ni);const n=nodes[ni];if(isExcludedNode(n)){seen.delete(ni);return}const w=glbMatMul(parent,glbNodeMatrix(n));if(n.mesh!==undefined){const mesh=g.meshes[n.mesh];(mesh.primitives||[]).forEach(p=>emitPrimitive(p,w))}(n.children||[]).forEach(ci=>walk(ci,w,seen));seen.delete(ni)};
+ const nodes=g.nodes||[],isExcludedNode=n=>(options.buildingId==='warehouse'||(options.buildingId==='castle'&&!options.fullCastle))&&/(tree|pine|oak|bush|shrub|plant|foliage|vegetation|grass|rock|stone|fern|flower|leaf|stump|terrain|ground|base)/i.test((n.name||'')+' '+(n.mesh!==undefined?(g.meshes[n.mesh]?.name||''):'')),walk=(ni,parent,seen)=>{if(seen.has(ni))return;seen.add(ni);const n=nodes[ni];if(isExcludedNode(n)){seen.delete(ni);return}const w=glbMatMul(parent,glbNodeMatrix(n));if(n.mesh!==undefined){const mesh=g.meshes[n.mesh];(mesh.primitives||[]).forEach(p=>emitPrimitive(p,w))}(n.children||[]).forEach(ci=>walk(ci,w,seen));seen.delete(ni)};
  const identity=new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]),scene=g.scenes&&g.scenes[g.scene||0];
  if(fitSize>0){
   const bounds={min:[Infinity,Infinity,Infinity],max:[-Infinity,-Infinity,-Infinity]};
@@ -1813,7 +1813,7 @@ async function ensureCastleLv11Model(){
  if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED||Number(S.lv.castle||1)<11)return;
  CASTLE_LV11_LOADING=true;toast('🏰 Yeni qala modeli yüklənir...');
  try{
-  const model=await loadGLBBuilding('assets/castle/castle_lv11_20_realistic.glb',{buildingId:'castle',position:[150,7.4,70],fitSize:500});
+  const model=await loadGLBBuilding('assets/castle/castle_lv11_20_realistic.glb',{buildingId:'castle',fullCastle:true,position:[150,7.4,70],fitSize:500});
   if(!model)throw new Error('Model boş qayıtdı');
   model.minLevel=11;model.maxLevel=20;
   const old=GLB_MODELS.find(m=>m!==model&&m.buildingId==='castle');
