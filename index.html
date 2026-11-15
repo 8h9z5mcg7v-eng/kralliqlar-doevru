@@ -1813,7 +1813,7 @@ async function loadGLBBuildingBuffer(ab,url,options={}){
  }
  if(scene&&scene.nodes)scene.nodes.forEach(i=>walk(i,identity,new Set()));else nodes.forEach((n,i)=>{if(n.mesh!==undefined)walk(i,identity,new Set())});
  if(!parts.length)throw new Error('GLB daxilində göstərilə bilən mesh tapılmadı');
- const model={url,parts,position:origin,buildingId:options.buildingId||null};GLB_MODELS.push(model);GLB_MODEL_URLS.add(url);if(DB){attachGL();}return model;
+ const model={url,parts,position:origin,buildingId:options.buildingId||null};if(model.buildingId==='castle'&&Number(S.lv.castle||1)>=11)model.maxLevel=10;GLB_MODELS.push(model);GLB_MODEL_URLS.add(url);if(DB){attachGL();}return model;
 }
 let CASTLE_LV11_LOADING=false,CASTLE_LV11_LOADED=false;
 async function loadCastleLv11Parts(){
@@ -1831,7 +1831,10 @@ async function loadCastleLv11Parts(){
  return loadGLBBuildingBuffer(joined.buffer,'castle-original-lv11-20-parts',{buildingId:'castle',fullCastle:true,position:[150,7.4,70],fitSize:500});
 }
 async function ensureCastleLv11Model(){
- if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED||Number(S.lv.castle||1)<11)return;
+ if(Number(S.lv.castle||1)<11)return;
+ const old=GLB_MODELS.find(m=>m.buildingId==='castle'&&m.minLevel!==11);
+ if(old)old.maxLevel=10;
+ if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED)return;
  CASTLE_LV11_LOADING=true;toast('🏰 Yeni qala modeli yüklənir...');
  try{
   const model=await loadCastleLv11Parts();
