@@ -1817,14 +1817,6 @@ function dbuild(k){activeCityScale=k==='city'?3.6:1;VB=[];pk=[];pkr=[];lbl=[];
    pk.push({k:'b',id:p.id,min:[p.x-pw/2-2,y,p.z-pd/2-2],max:[p.x+pw/2+2,y+30*sc,p.z+pd/2+2]});
    const mainOpen=S.lv[p.id]>0,canBuildSite=p.slot===0?true:(mainOpen&&(Number(S.resourceCount?.[p.id])||0)<2);const siteText=built?`${B[p.id].n} · Lv.${S.lv[p.id]||1}`:!mainOpen&&p.slot===1?'🔒 Əvvəlcə əsas bina':canBuildSite?'TİK':'🔒 Sahə artıq açılıb';lab(siteText,[p.x,y+(built?29*sc:8),p.z],p.id,instance,!built,!built&&canBuildSite);
   });
-  /* Müvəqqəti təmiz şəhər: yalnız əsas qala, onun divarları və ümumi torpaq saxlanılır. */
-  const keepRanges=pkr.filter(o=>o.id==='castle'||o.id==='wall');
-  const sourceVB=VB;
-  VB=sourceVB.slice(0,36*12);
-  keepRanges.forEach(o=>VB.push(...sourceVB.slice(o.a*12,(o.a+o.n)*12)));
-  pkr=keepRanges;
-  pk=pk.filter(o=>o.id==='castle'||o.id==='wall');
-  lbl=lbl.filter(o=>/Qala divarı|Qala ·/.test(o.el.textContent));
   validateCityFootprints();
  }
  else{CP.forEach(p=>road(150,150,p[0],p[1],7,7.25));TR={x:150,y:hh(150,150),z:150,s:.9};GM.castle(S.lv.castle);
