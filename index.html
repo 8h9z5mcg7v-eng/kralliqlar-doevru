@@ -1813,11 +1813,11 @@ async function ensureCastleLv11Model(){
  if(CASTLE_LV11_LOADING||CASTLE_LV11_LOADED||Number(S.lv.castle||1)<11)return;
  CASTLE_LV11_LOADING=true;toast('🏰 Yeni qala modeli yüklənir...');
  try{
-  const model=await loadGLBBuilding('assets/castle/castle_sides.glb',{buildingId:'castle',position:[150,7.4,70],fitSize:500});
+  const model=await loadGLBBuilding('assets/castle/castle_lv11_20_v5.glb',{buildingId:'castle',position:[150,7.4,70],fitSize:500});
   if(!model)throw new Error('Model boş qayıtdı');
-  model.minLevel=11;
+  model.minLevel=11;model.maxLevel=20;
   const old=GLB_MODELS.find(m=>m!==model&&m.buildingId==='castle');
-  if(old)old.maxLevel=20;
+  if(old)old.maxLevel=10;
   CASTLE_LV11_LOADED=true;
   if(DB)attachGL();
   toast('✅ LV 11–20 qala modeli yükləndi');
