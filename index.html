@@ -2479,7 +2479,7 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});
 GLinit();render();
 /* Yeni kazarma: GLB tam yüklənəndə dbuild yenidən qurulur və köhnə procedural bina silinərək GLB ilə əvəz olunur. */
 if(GLOK){
- loadGLBBuilding('assets/castle/castle.glb',{buildingId:'castle',position:[150,7.4,70],fitSize:700}).then(()=>{CASTLE_GLB_PENDING=false;if(DB)attachGL();}).catch(e=>{CASTLE_GLB_PENDING=false;console.warn('Yeni şəhər qalası yüklənmədi:',e);if(DB)attachGL()});
+ loadGLBBuilding('assets/castle/castle.glb',{buildingId:'castle',position:[150,7.4,70],fitSize:500}).then(()=>{CASTLE_GLB_PENDING=false;if(DB)attachGL();}).catch(e=>{CASTLE_GLB_PENDING=false;console.warn('Yeni şəhər qalası yüklənmədi:',e);if(DB)attachGL()});
  loadGLBBuilding('buildings/barracks/Barracks.glb',{buildingId:'barracks',position:[320,9,-15],scale:10}).then(()=>{BARRACKS_GLB_PENDING=false;}).catch(e=>{BARRACKS_GLB_PENDING=false;console.warn('Yeni kazarma yüklənmədi:',e);if(DB)attachGL()});
  const stablePosition=[320,7.4,70];
  loadGLBBuilding('buildings/stable/Medieval_Horse_Stable.glb',{buildingId:'stable',position:stablePosition,scale:7}).then(()=>{STABLE_GLB_PENDING=false;}).catch(e=>{STABLE_GLB_PENDING=false;console.warn('Yeni ahır GLB yüklənmədi:',e);if(DB)attachGL()});
